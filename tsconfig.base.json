@@ -1,0 +1,25 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@esign-web/libs/utils": ["libs/utils/src/index.ts"],
+      "@esign-web/redux/auth": ["libs/redux/auth/src/index.ts"],
+      "@esign-web/redux/user": ["libs/redux/user/src/index.ts"],
+      "@esign-web/config": ["config.json"],
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "redux-auth",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/redux/auth/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/redux/auth/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  }
+}
