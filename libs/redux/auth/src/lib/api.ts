@@ -1,6 +1,7 @@
 import { baseApi } from '@esign-web/libs/utils';
 
 export const loginApi = (payload: { email: string; password: string }) => {
+  console.log('loginApi', payload);
   return baseApi.post('/auth/login', payload);
 };
 

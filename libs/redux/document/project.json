@@ -1,0 +1,16 @@
+{
+  "name": "redux-document",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/redux/document/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/redux/document/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  }
+}

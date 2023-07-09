@@ -1,9 +1,12 @@
 /* eslint-disable array-callback-return */
 import { combineReducers } from 'redux';
+import { reducers as auth } from '@esign-web/redux/auth';
 
-const eSignReducers =  {};
+const eSignReducers = {
+  auth,
+};
 
-const reducers = combineReducers({});
+const reducers = combineReducers(eSignReducers);
 
 export default reducers;
 

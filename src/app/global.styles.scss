@@ -1,0 +1,92 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+:root {
+  --shadow1: 0 0 20px #00000033;
+  --shadow2: 0 0 20px #0000001a;
+  --shadow3: 0 0 1.6rem #0000000f;
+  --shadow4: 0 0 1.2rem #d3bfbf0f;
+
+  --ligh-blue1: rgb(77, 105, 146);
+
+  --dark: rgb(2, 30, 52);
+
+  --dark1: rgba(2, 30, 52, 0.7);
+
+  --blue1: #253dac;
+  --blue2: rgb(6, 20, 87);
+  --blue3: #1071b7;
+
+  --error: #dc382c;
+
+  --white: #ffffff;
+  --color-gray1: #c1cbd9;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+}
+:root {
+  font-size: 62.5%;
+}
+
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+span {
+  color: var(--dark);
+}
+
+html {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+
+  line-height: 1.15;
+  // word-break: break-word;
+}
+
+body {
+  margin: 0;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  min-height: 100vh;
+}
+
+span {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.4rem;
+  line-height: 1.4;
+}
+
+[type='date'],
+[type='datetime-local'],
+[type='email'],
+[type='month'],
+[type='number'],
+[type='password'],
+[type='search'],
+[type='tel'],
+[type='text'],
+[type='time'],
+[type='url'],
+[type='week'],
+select,
+input,
+textarea {
+  transition: border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
+}

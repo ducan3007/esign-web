@@ -1,7 +1,8 @@
-import * as ACTION from './constants';
+import * as __ from './constants';
 
-const initialState = {
+export const initialState = {
   loading: false,
+  authenticating: false,
   error: null,
   data: null,
 
@@ -11,56 +12,62 @@ const initialState = {
 
 export default (state = initialState, action: any) => {
   switch (action.type) {
-    case ACTION.AUTHENTICATING:
+    case __.AUTHENTICATING:
       return {
         ...state,
         loading: true,
+        authenticating: true,
         error: null,
         data: null,
       };
-    case ACTION.LOGIN_SUCCESS:
+    case __.LOGIN_SUCCESS:
       return {
         ...state,
         loading: false,
+        authenticating: false,
         error: null,
         data: action.payload,
         isLoginSuccess: true,
         isLoginFail: false,
       };
-    case ACTION.LOGIN_FAILED:
+    case __.LOGIN_FAILED:
       return {
         ...state,
         loading: false,
+        authenticating: false,
         error: action.payload,
         data: null,
         isLoginSuccess: false,
         isLoginFail: true,
       };
-    case ACTION.LOGINGOUT:
+    case __.LOGINGOUT:
       return {
         ...state,
         loading: true,
         error: null,
         data: null,
       };
-    case ACTION.LOGOUT_SUCCESS:
+    case __.LOGOUT_SUCCESS:
       return {
         ...state,
         loading: false,
+        authenticating: false,
         error: null,
         data: null,
       };
-    case ACTION.REGISTER_SUCCESS:
+    case __.REGISTER_SUCCESS:
       return {
         ...state,
         loading: false,
+        authenticating: false,
         error: null,
         data: action.payload,
       };
-    case ACTION.REGISTER_FAILED:
+    case __.REGISTER_FAILED:
       return {
         ...state,
         loading: false,
+        authenticating: false,
         error: action.payload,
         data: null,
       };

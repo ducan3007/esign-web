@@ -15,10 +15,12 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@esign-web/config": ["config.json"],
       "@esign-web/libs/utils": ["libs/utils/src/index.ts"],
       "@esign-web/redux/auth": ["libs/redux/auth/src/index.ts"],
+      "@esign-web/redux/document": ["libs/redux/document/src/index.ts"],
       "@esign-web/redux/user": ["libs/redux/user/src/index.ts"],
-      "@esign-web/config": ["config.json"],
+      "@esign-web/template": ["libs/template/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

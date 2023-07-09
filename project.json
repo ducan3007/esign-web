@@ -13,6 +13,7 @@
         "outputPath": "dist/esign-web",
         "index": "src/index.html",
         "baseHref": "/",
+        "polyfills": "src/polyfills.ts",
         "main": "src/main.tsx",
         "tsConfig": "tsconfig.app.json",
         "assets": ["src/favicon.ico", "src/assets"],
@@ -49,7 +50,8 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "esign-web:build",
-        "hmr": true
+        "hmr": true,
+        "port": 4002
       },
       "configurations": {
         "development": {

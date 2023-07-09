@@ -1,0 +1,16 @@
+{
+  "name": "template",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/template/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/template/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  }
+}
