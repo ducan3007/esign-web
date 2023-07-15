@@ -1,0 +1,10 @@
+#document-page {
+  overflow: auto;
+
+  .secondary {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 2rem;
+    min-height: min-content;
+  }
+}

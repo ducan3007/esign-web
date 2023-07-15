@@ -10,11 +10,29 @@ body {
   --shadow3: 0 0 1.6rem #0000000f;
   --shadow4: 0 0 1.2rem #d3bfbf0f;
 
+  --shadow-blue1: 0 0 1.2rem rgb(37, 61, 172);
+
+  --shadow_bottom: 0 0.2rem 0.4rem #0000000f;
+
   --ligh-blue1: rgb(77, 105, 146);
+  --ligh-blue3: rgb(37, 61, 172);
+
+  --light-bue2: #e8efff;
+
+  --blue5: #11009e;
+  --blue6: #4942e4;
+
+  --orange: #e55807;
+  --orange1: #f86f03;
+  --pink1: #ff6969;
+  --red: #d93025;
 
   --dark: rgb(2, 30, 52);
-
+  --dark2: rgb(2, 30, 52, 0.8);
   --dark1: rgba(2, 30, 52, 0.7);
+  --dark3: #494c4d;
+
+  --blue4: #f4f6f7;
 
   --blue1: #253dac;
   --blue2: rgb(6, 20, 87);
@@ -24,6 +42,16 @@ body {
 
   --white: #ffffff;
   --color-gray1: #c1cbd9;
+  --color-gray2: #d0d8e2;
+  --border-gray: rgb(234, 237, 242);
+
+  --gray2: #f7f9fc;
+
+  --gray3: #b4bbbf;
+
+  --trasnparent: transparent;
+  --dt-surface1-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 
 *,
@@ -48,6 +76,9 @@ h4,
 p,
 span {
   color: var(--dark);
+  margin: 0;
+  overflow: hidden;
+  letter-spacing: 0.25px;
 }
 
 html {
@@ -89,4 +120,13 @@ select,
 input,
 textarea {
   transition: border-color 0.5s ease-in-out, box-shadow 0.5s ease-in-out !important;
+}
+
+@keyframes krSvVP {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

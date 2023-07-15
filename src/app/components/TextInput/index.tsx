@@ -1,8 +1,6 @@
-import React from 'react';
-import InputBase, { InputBaseProps } from '@mui/material/InputBase';
-import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import styled from '@emotion/styled';
+import InputBase, { InputBaseProps } from '@mui/material/InputBase';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 interface Props extends InputBaseProps {
   label?: string;

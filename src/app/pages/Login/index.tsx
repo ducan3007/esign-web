@@ -1,26 +1,27 @@
+import { selectors } from '@esign-web/redux/auth';
 import { Box, Fade, Typography } from '@mui/material';
-import LoginFrame from 'src/assets/SignUpInShapesBg-94a15d60.svg';
-import AnimatedBlob from 'src/assets/aminated_blob.svg';
-import { selectors, actions, constants } from '@esign-web/redux/auth';
 import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { SignifyLogo } from 'src/app/components/Logo';
-import { LoginForm } from './components/LoginForm';
-import './styles.scss';
+import LoginFrame from 'src/assets/SignUpInShapesBg-94a15d60.svg';
+import AnimatedBlob from 'src/assets/aminated_blob.svg';
+
 import { useSelector } from 'react-redux';
-import { LoadingOverlay } from 'src/app/components/LoadingOverlay';
+import { LoginForm } from 'src/app/components/FormLogin';
+import { Overlay } from 'src/app/components/Overlay';
+import './styles.scss';
 
 export const LoginPage = () => {
-  const { authenticating } = useSelector(selectors.getAuthState);
+  const { authenticating, error } = useSelector(selectors.getAuthState);
   const submitRef = useRef<HTMLButtonElement | null>();
 
   return (
     <>
-      {authenticating && <LoadingOverlay />}
+      {authenticating && <Overlay />}
       <Box className="wrapper">
         <Box className="brand_side">
           <img src={LoginFrame} style={{ position: 'absolute', transform: 'scale(1.3)' }} alt="Login Background" />
-          <SignifyLogo />
+          <SignifyLogo text="esign"  />
         </Box>
         <Box className="login_side">
           <img src={AnimatedBlob} alt="Login Background" />
@@ -36,7 +37,7 @@ export const LoginPage = () => {
                 </Typography>
               </Box>
               {/* ------------------------------ Login Form -------------------------- */}
-              <LoginForm authenticating={authenticating} />
+              <LoginForm authenticating={authenticating} error={error} />
               {/* ------------------------------ Login Form -------------------------- */}
             </Box>
           </Fade>

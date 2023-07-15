@@ -71,6 +71,14 @@ export default (state = initialState, action: any) => {
         error: action.payload,
         data: null,
       };
+    case __.RESET_AUTH_STATE:
+      return {
+        ...state,
+        loading: false,
+        authenticating: false,
+        error: null,
+        data: null,
+      };
     default:
       return state;
   }

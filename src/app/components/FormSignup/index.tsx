@@ -1,11 +1,17 @@
+import { actions } from '@esign-web/redux/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { Box, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import { Box, IconButton, InputAdornment, Typography } from '@mui/material';
 import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import MButton from 'src/app/components/Button';
-import TextFieldStandard from 'src/app/components/Button/Textfileld';
+import TextFieldStandard from 'src/app/components/TextInput/Textfiled';
 import * as yup from 'yup';
+
+interface Props {
+  setIsSignupSuccess: (value: boolean) => void;
+}
 
 const signUpSchema = yup.object().shape({
   email: yup.string().email('Email must be in the format email@example.com').required('Email is required'),
@@ -20,16 +26,20 @@ const signUpSchema = yup.object().shape({
     .oneOf([yup.ref('password')], 'Passwords must match'),
 });
 
-export const SignupForm = () => {
+export const SignupForm = (props: Props) => {
+  const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(signUpSchema) });
 
-  const [showPassword, setShowPassword] = useState(false);
   const onSubmit: SubmitHandler<yup.InferType<typeof signUpSchema>> = (values) => {
     console.log(values);
+    dispatch(actions.signup(values));
+    props.setIsSignupSuccess(true);
   };
 
   return (

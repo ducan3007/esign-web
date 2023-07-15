@@ -8,7 +8,6 @@ interface Props extends ButtonBaseProps {
   color?: any;
   style?: any;
   sx?: SxProps;
-  handleClick?: () => void;
   children?: any;
 }
 
@@ -18,11 +17,47 @@ const StyledButton = styled(ButtonBase)(({ theme }: any) => ({
   },
 }));
 
-const MButton = ({ color, sx, style, content, handleClick, children, ...props }: Props) => {
+const MButton = ({ color, sx, style, content, children, ...props }: Props) => {
+  const defaultSx: SxProps = {
+    backgroundColor: 'var(--blue5)',
+    color: 'var(--white)',
+    fontSize: '1.6rem',
+    fontWeight: 400,
+    padding: '1rem 1.4rem',
+    borderRadius: '0.5rem',
+  };
   return (
-    <StyledButton sx={sx} style={style} {...props} onClick={handleClick}>
+    <StyledButton
+      sx={{
+        ...defaultSx,
+        ...sx,
+      }}
+      style={style}
+      {...props}
+    >
       {children}
     </StyledButton>
+  );
+};
+
+export const IconButton = (props: Props) => {
+  return (
+    <ButtonBase
+      sx={{
+        padding: '0',
+        backgroundColor: 'var(--gray2)',
+        color: 'var(--dark2)',
+        borderRadius: '99rem',
+        ':hover': {
+          backgroundColor: 'var(--gray3)',
+          opacity: 1,
+        },
+        ...props.sx,
+      }}
+      onClick={props.onClick}
+    >
+      {props.children}
+    </ButtonBase>
   );
 };
 

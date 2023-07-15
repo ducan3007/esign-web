@@ -1,42 +1,42 @@
+import { ThemeProvider } from '@mui/material';
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { LoginPage } from './pages/Login';
 import './global.styles.scss';
-import { ThemeProvider } from '@mui/material';
+import { RouteObject, appRoutes } from './routes';
 import { CustomTheme } from './theme';
-import { SignupPage } from './pages/Signup';
 
 export function App() {
   const customizedTheme = CustomTheme('default');
-  
+
   return (
     <ThemeProvider theme={customizedTheme}>
       <React.Fragment>
         <Routes>
-          <Route
-            path="/login"
-            element={
-              <PublicPage>
-                <LoginPage />
-              </PublicPage>
+          {appRoutes.map((route: RouteObject, index: number) => {
+            const Component = route.component;
+            const Layout = route.layout;
+            if (Layout) {
+              return (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={
+                    <Layout>
+                      <Component />
+                    </Layout>
+                  }
+                />
+              );
             }
-          />
-          <Route
-            path="/signup"
-            element={
-              <PublicPage>
-                <SignupPage />
-              </PublicPage>
-            }
-          />
+
+            return <Route key={route.path} path={route.path} element={<Component />} />;
+          })}
+          {/* <Route path="/login" element={<LoginPage />} /> */}
+          {/* <Route path="/signup" element={<SignupPage />} />M */}
         </Routes>
       </React.Fragment>
     </ThemeProvider>
   );
-}
-
-function PublicPage({ children }: { children: any }) {
-  return children;
 }
 
 export default App;

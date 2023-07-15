@@ -2,15 +2,17 @@ import { actions } from '@esign-web/redux/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Box, CircularProgress, IconButton, InputAdornment, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import MButton from 'src/app/components/Button';
-import TextFieldStandard from 'src/app/components/Button/Textfileld';
+import TextFieldStandard from 'src/app/components/TextInput/Textfiled';
 import * as yup from 'yup';
 
 interface props {
   authenticating: boolean;
+  error: any;
 }
 
 const schema = yup.object().shape({
@@ -19,18 +21,33 @@ const schema = yup.object().shape({
 });
 
 export const LoginForm = (props: props) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      dispatch(actions.resetAuthState());
+    };
+  }, []);
+
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
-  const dispatch = useDispatch();
-
-  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit: SubmitHandler<yup.InferType<typeof schema>> = (values) => {
     console.log(values);
-    dispatch(actions.login(values));
+    dispatch(
+      actions.login({
+        email: values.email,
+        password: values.password,
+        callBack: () => {
+          navigate('/dashboard');
+        },
+      })
+    );
   };
 
   return (
@@ -72,7 +89,14 @@ export const LoginForm = (props: props) => {
           />
         )}
       />
-
+      <Typography
+        variant="h4"
+        sx={{
+          color: 'var(--error)',
+        }}
+      >
+        {props.error && 'Email or password is incorrect'}
+      </Typography>
       <Box
         sx={{
           display: 'flex',
@@ -92,6 +116,7 @@ export const LoginForm = (props: props) => {
           Forgot your password?
         </Typography>
       </Box>
+
       <MButton
         type="submit"
         sx={{

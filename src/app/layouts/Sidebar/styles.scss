@@ -1,0 +1,32 @@
+
+.nav {
+  &_item {
+    display: flex;
+    transition: color 0.13s ease-in-out;
+    text-decoration: none;
+    white-space: nowrap;
+    div {
+      transition: all 0.2s;
+      width: 100%;
+      margin: 2px 10px 2px 10px;
+      padding: 5px 10px 5px 10px;
+      border-radius: 0.5rem;
+    }
+    color: var(--dark);
+  }
+
+  &_normal {
+    div {
+      &:hover {
+        color: var(--ligh-blue3);
+      }
+      color: var(--ligh-blue1);
+    }
+  }
+  &_active {
+    div {
+      background-color: var(--light-bue2);
+      color: var(--ligh-blue3);
+    }
+  }
+}
