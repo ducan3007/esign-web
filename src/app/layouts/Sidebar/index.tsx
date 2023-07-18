@@ -2,11 +2,11 @@ import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import KeyboardCapslockIcon from '@mui/icons-material/KeyboardCapslock';
 import { Box, Divider } from '@mui/material';
 import cn from 'classnames';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import MButton from 'src/app/components/Button';
 import { SignifyLogo } from 'src/app/components/Logo';
-import { $Tooltip } from 'src/app/components/Tooltip';
+import { MTooltip } from 'src/app/components/Tooltip';
 import { dashboardPaths } from 'src/app/routes';
 import './styles.scss';
 
@@ -64,13 +64,13 @@ export const Sidebar = () => {
         {dashboardPaths.map((path, index) => {
           const Icon = path.icon;
           return (
-            <>
+            <Fragment key={path.to}>
               {path.to === '/logs' && (
                 <Box sx={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
                   <Divider sx={{ marginTop: '1.5rem', marginBottom: '1.5rem' }} />
                 </Box>
               )}
-              <$Tooltip key={index} title={path.name} disableHoverListener={!toggle} placement="right">
+              <MTooltip title={path.name} disableHoverListener={!toggle} placement="right">
                 <div>
                   <NavLink
                     className={({ isActive }) => {
@@ -88,7 +88,6 @@ export const Sidebar = () => {
                       navigate(path.to);
                     }}
                     to={path.to}
-                    key={index}
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '1.0rem', transition: 'background 0.3s ease 0s' }}>
                       <Icon sx={{ fontSize: '2.5rem' }} />
@@ -109,8 +108,8 @@ export const Sidebar = () => {
                     </Box>
                   </NavLink>
                 </div>
-              </$Tooltip>
-            </>
+              </MTooltip>
+            </Fragment>
           );
         })}
       </Box>
@@ -120,7 +119,7 @@ export const Sidebar = () => {
         <Box sx={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
           <Divider sx={{ marginTop: '1.5rem', marginBottom: '1.5rem' }} />
         </Box>
-        <$Tooltip title={'Support'} disableHoverListener={!toggle} placement="right">
+        <MTooltip title={'Support'} disableHoverListener={!toggle} placement="right">
           <NavLink className="nav_item nav_normal" to="/">
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.9rem', transition: 'background 0.3s ease 0s' }}>
               <HelpOutlineOutlinedIcon sx={{ fontSize: '2.5rem' }} />
@@ -140,7 +139,7 @@ export const Sidebar = () => {
               )}
             </Box>
           </NavLink>
-        </$Tooltip>
+        </MTooltip>
         <Box sx={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
           <Divider sx={{ marginTop: '1.5rem', marginBottom: '1.5rem' }} />
         </Box>

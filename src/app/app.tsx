@@ -18,7 +18,7 @@ export function App() {
             if (Layout) {
               return (
                 <Route
-                  key={route.path}
+                  key={index}
                   path={route.path}
                   element={
                     <Layout>
@@ -29,7 +29,7 @@ export function App() {
               );
             }
 
-            return <Route key={route.path} path={route.path} element={<Component />} />;
+            return <Route key={index} path={route.path} element={<Component />} />;
           })}
           {/* <Route path="/login" element={<LoginPage />} /> */}
           {/* <Route path="/signup" element={<SignupPage />} />M */}

@@ -21,6 +21,7 @@ export const SignifyLogo = (props: any) => {
           style={{
             width: props.width ?? '155px',
             height: props.height ?? '155px',
+            overflow:'revert'
           }}
           alt="Login Background"
         />

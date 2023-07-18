@@ -3,13 +3,35 @@ import { Overlay } from '../Overlay';
 import MButton, { IconButton } from '../Button';
 import CloseIcon from '@mui/icons-material/Close';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+
 import ClearIcon from '@mui/icons-material/Clear';
 
 import { useState } from 'react';
-import { UploadDialogItem } from './docs.item';
+import { UploadDialogItem } from './upload.item';
+import { useDispatch, useSelector } from 'react-redux';
+import { actions, selectors } from '@esign-web/redux/document';
 
 export const UploadStatusDialog = () => {
-  const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const documentsStates = useSelector(selectors.getDocumentsStates);
+  const uploadingDocuments = useSelector(selectors.getUploadingDocuments);
+  const [open, setOpen] = useState(true);
+
+  if (!documentsStates.uploading_documents) {
+    return null;
+  }
+
+  const fileUploading = Object.values(uploadingDocuments).filter((doc) => doc.status === 'uploading').length;
+  const filesUploaded = Object.values(uploadingDocuments).filter((doc) => doc.status === 'success').length;
+  const filesFailed = Object.values(uploadingDocuments).filter((doc) => doc.status === 'failed').length;
+
+
+  const handleEvents = {
+    onClearAll: () => {
+      dispatch(actions.uploadDocumentCancelAll({}));
+    },
+  };
+
   return (
     <Overlay sx={{ bottom: '0', right: '24px' }}>
       <Box
@@ -39,7 +61,8 @@ export const UploadStatusDialog = () => {
               variant="h6"
               sx={{ color: 'var(--dark3)', letterSpacing: '0.25px', fontWeight: 'bold', fontSize: '1.4rem' }}
             >
-              Uploading 1 file
+              {fileUploading > 0 && `Uploading ${fileUploading} of ${fileUploading + fileUploading} files`}
+              {fileUploading === 0 && `${filesUploaded} files uploaded, ${filesFailed} files failed`}
             </Typography>
           </Box>
           <Box
@@ -57,12 +80,40 @@ export const UploadStatusDialog = () => {
               />
             </IconButton>
             <IconButton>
-              <ClearIcon sx={{ fontSize: '2.4rem', margin: '0.5rem' }} />
+              <ClearIcon onClick={handleEvents.onClearAll} sx={{ fontSize: '2.4rem', margin: '0.5rem' }} />
             </IconButton>
           </Box>
         </Box>
-        <Box sx={{ height: open ? 'fit-content' : '0px', transition: 'height 0.3s esae-in-out', overflow: 'hidden' }}>
-          <UploadDialogItem />
+        <Box
+          sx={{
+            height: open ? 'fit-content' : '0px',
+            maxHeight: '240px',
+            overflow: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '10px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: 'transparent',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: 'var(--gray4)',
+              borderRadius: '50px',
+              border: '1px solid var(--white)',
+            },
+          }}
+        >
+          {Object.values(uploadingDocuments).map((doc) => {
+            return (
+              <UploadDialogItem
+                key={doc.id}
+                id={doc.id}
+                status={doc.status}
+                name={doc.name}
+                error_message={doc.error_message}
+                type={doc.type}
+              />
+            );
+          })}
         </Box>
       </Box>
     </Overlay>

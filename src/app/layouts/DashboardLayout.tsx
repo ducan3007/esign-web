@@ -3,13 +3,17 @@ import { DashboardHeader } from './Header';
 import { Sidebar } from './Sidebar';
 import { Overlay } from '../components/Overlay';
 import { UploadStatusDialog } from '../components/UploadDialogStatus';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { selectors } from '@esign-web/redux/document';
 
 interface DashboardLayoutProps {
   children: any;
 }
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  // useUnSavedChangesWarning({ condition: true });
+  const documents = useSelector(selectors.getDocuments);
+
   return (
     <Box sx={{ display: 'flex', flexDirenction: 'row', width: '100vw', height: '100vh' }}>
       <Box sx={{ maxWidth: '23.25rem' }}>

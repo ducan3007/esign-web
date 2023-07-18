@@ -1,36 +1,87 @@
 import * as _ from './constants';
 
-type DocumentUploading = {
+export type DocumentUploading = {
   id: string;
-  name: string;
-  progress: number;
-  status: string;
-  size: number;
-  type: string;
-  url: string;
+  name?: string;
+  progress?: number;
+  status?: 'uploading' | 'success' | 'failed' | 'canceled';
+  size?: number;
+  error_message: string;
+  type?: string;
+  url?: string;
+  file: any;
 };
 
-type Document = {
+export type Document = {
   id: string;
   name: string;
   cid: string;
   size: number;
   type: string;
   url: string;
+  file: any;
 };
 
 type documentState = {
-  document_uploading: DocumentUploading[];
-  documents: Document[];
-  loading_document: boolean;
-  uploading_document: boolean;
+  document_uploading: {
+    [key: string]: DocumentUploading;
+  };
+  documents: {
+    [key: string]: Document;
+  };
+  loaded_documents_first_time: boolean;
+  loading_documents: boolean;
+  uploading_documents: boolean;
 };
 
 export const initialState: documentState = {
-  document_uploading: [],
-  documents: [],
-  uploading_document: false,
-  loading_document: false,
+  document_uploading: {},
+  documents: {},
+  loaded_documents_first_time: false,
+  uploading_documents: false,
+  loading_documents: false,
 };
 
-export default (state = initialState, action: any) => {};
+export default (state = initialState, action: any) => {
+  switch (action.type) {
+    case _.DOCUMENT_UPLOAD_RENDER:
+      return {
+        ...state,
+        document_uploading: {
+          ...state.document_uploading,
+          [action.payload.id]: action.payload,
+        },
+        uploading_documents: true,
+      };
+
+    case _.DOCUMENT_UPLOAD_FAILED:
+    case _.DOCUMENT_UPLOAD_SUCCESS:
+      return {
+        ...state,
+        document_uploading: {
+          ...state.document_uploading,
+          [action.payload.id]: {
+            ...state.document_uploading[action.payload.id],
+            ...action.payload,
+          },
+        },
+      };
+
+    case _.DOCUMENT_UPLOAD_CANCEL:
+      const copy = Object.assign({}, state.document_uploading);
+      delete copy[action.payload.id];
+      return {
+        ...state,
+        document_uploading: copy,
+      };
+
+    case _.DOCUMENT_UPLOAD_CANCEL_ALL:
+      return {
+        ...state,
+        uploading_documents: false,
+        document_uploading: {},
+      };
+    default:
+      return state;
+  }
+};

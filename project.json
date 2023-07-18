@@ -51,7 +51,7 @@
       "options": {
         "buildTarget": "esign-web:build",
         "hmr": true,
-        "port": 4002
+        "port": 4008
       },
       "configurations": {
         "development": {

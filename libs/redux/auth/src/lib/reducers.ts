@@ -1,4 +1,7 @@
 import * as __ from './constants';
+import { UserType } from '@esign-web/libs/utils';
+import { baseApi } from '@esign-web/libs/utils';
+import { Toast } from '@esign-web/libs/utils';
 
 export const initialState = {
   loading: false,
@@ -21,6 +24,9 @@ export default (state = initialState, action: any) => {
         data: null,
       };
     case __.LOGIN_SUCCESS:
+      console.log('LOGIN_SUCCESS ', action.payload)
+      localStorage.setItem('token', action.payload.access_token);
+      baseApi.defaults.headers.common['Authorization'] = `Bearer ${action.payload.access_token}`;
       return {
         ...state,
         loading: false,
