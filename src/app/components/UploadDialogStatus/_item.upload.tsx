@@ -1,10 +1,10 @@
 import ErrorIcon from '@mui/icons-material/Error';
-
+import { IconPDFImage } from '../Icons/pdf';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Box, Typography } from '@mui/material';
 import { IconPDF } from '../Icons/pdf';
 import { MTooltip } from '../Tooltip';
-import { CircularProcess } from './circularProcess';
+import { CircularProcess } from './_circularProcess';
 
 interface Props {
   id: string;
@@ -32,7 +32,7 @@ export const UploadDialogItem = (props: Props) => {
       }}
     >
       <Box>
-        <IconPDF sx={{ marginTop: '0.5rem' }} />
+        <IconPDFImage style={{ marginTop: '0.5rem' }} />
       </Box>
       <Box sx={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
         <MTooltip
@@ -68,7 +68,7 @@ export const UploadDialogItem = (props: Props) => {
             fontSize="1.3rem"
             background="var(--white)"
             fontWeight="bold"
-            placement='top'
+            placement="top"
             color="var(--red)"
             disableHoverListener={!!!props.error_message}
             nowrap="true"

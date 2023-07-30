@@ -45,15 +45,14 @@ export const IconButton = (props: Props) => {
     <ButtonBase
       sx={{
         padding: '0',
+        overflow: 'hidden',
         backgroundColor: 'var(--gray2)',
         color: 'var(--dark2)',
         borderRadius: '99rem',
-        ':hover': {
-          backgroundColor: 'var(--gray3)',
-          opacity: 1,
-        },
+        opacity: props.disabled ? 0.5 : 1,
         ...props.sx,
       }}
+      disabled={props.disabled}
       onClick={props.onClick}
     >
       {props.children}

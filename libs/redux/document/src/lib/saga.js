@@ -3,6 +3,7 @@ import { Toast } from '@esign-web/libs/utils';
 import actions from './actions';
 import api from './api';
 import * as __ from './constants';
+import { keyBy } from 'lodash';
 import get from 'lodash/get';
 
 function* uploadDocumentSaga({ payload }) {
@@ -13,6 +14,7 @@ function* uploadDocumentSaga({ payload }) {
     const data = get(response, 'data');
     console.log('data', data);
     yield put(actions.uploadDocumentSuccess({ id: payload.id, status: 'success' }));
+    yield put(actions.documentGetAll());
   } catch (error) {
     const message = get(error, 'response.data.message');
     Toast({ message: message, type: 'error' });
@@ -22,15 +24,64 @@ function* uploadDocumentSaga({ payload }) {
 
 function* getDocumentAllSaga({ payload }) {
   try {
-    const response = yield call(api.getDocumentAll, payload);
+    const response = yield call(api.getDocuments, payload);
     const data = get(response, 'data');
+
+    let documents = get(data, 'documents');
+
+    documents = keyBy(
+      documents.map((doc) => {
+        return {
+          level: 0,
+          ...doc,
+          child: keyBy(
+            doc.document_clone.map((doc) => {
+              return {
+                level: 1,
+                ...doc,
+              };
+            }),
+            'id'
+          ),
+        };
+      }),
+      'id'
+    );
+
+    data.documents = documents;
+
     yield put({ type: __.DOCUMENT_GET_ALL_SUCCESS, payload: data });
   } catch (error) {}
+}
+
+function* cloneDocumentSaga({ payload }) {
+  try {
+    const { documentId, setLoading } = payload;
+    const response = yield call(api.cloneDocument, { documentId: documentId });
+    setLoading(false);
+    yield put({ type: __.DOCUMENT_GET_ALL });
+  } catch (error) {
+    const message = get(error, 'response.data.message');
+    Toast({ message: 'Clone Document Failed !', type: 'error' });
+  }
+}
+
+function* getDocumentDetailSaga({ payload }) {
+  try {
+    const { documentId } = payload;
+    const response = yield call(api.getDocumentDetail, { documentId: documentId });
+    const data = get(response, 'data');
+    yield put({ type: __.DOCUMENT_GET_DETAIL, payload: data });
+  } catch (error) {
+    Toast({ message: 'Get Document Detail Failed !', type: 'error' });
+  }
 }
 
 function* watchDocumentSaga() {
   yield takeEvery(__.DOCUMENT_UPLOAD_FILES, uploadDocumentSaga);
   yield takeLatest(__.DOCUMENT_GET_ALL, getDocumentAllSaga);
+  yield takeEvery(__.DOCUMENT_CREATE_CLONE, cloneDocumentSaga);
+  yield takeLatest(__.DOCUMENT_GET_DETAIL, getDocumentDetailSaga);
 }
 
 export default {

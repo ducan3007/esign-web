@@ -11,7 +11,7 @@ interface DashboardLayoutProps {
   children: any;
 }
 
-export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const documents = useSelector(selectors.getDocuments);
 
   return (
@@ -27,3 +27,5 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     </Box>
   );
 };
+
+export default DashboardLayout;

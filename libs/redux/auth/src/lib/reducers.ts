@@ -2,6 +2,7 @@ import * as __ from './constants';
 import { UserType } from '@esign-web/libs/utils';
 import { baseApi } from '@esign-web/libs/utils';
 import { Toast } from '@esign-web/libs/utils';
+import _ from 'lodash';
 
 export const initialState = {
   loading: false,
@@ -11,6 +12,7 @@ export const initialState = {
 
   isLoginSuccess: false,
   isLoginFail: false,
+  isSidebarOpen: false,
 };
 
 export default (state = initialState, action: any) => {
@@ -23,8 +25,14 @@ export default (state = initialState, action: any) => {
         error: null,
         data: null,
       };
+    case __.TOGGLE_SIDEBAR:
+      return {
+        ...state,
+        isSidebarOpen: !state.isSidebarOpen,
+      };
+
     case __.LOGIN_SUCCESS:
-      console.log('LOGIN_SUCCESS ', action.payload)
+      console.log('LOGIN_SUCCESS ', action.payload);
       localStorage.setItem('token', action.payload.access_token);
       baseApi.defaults.headers.common['Authorization'] = `Bearer ${action.payload.access_token}`;
       return {

@@ -3,7 +3,7 @@ import axios from 'axios';
 const appConfig = require('@esign-web/config');
 
 const axiosInstance = axios.create({
-  baseURL: appConfig.apiBaseUrl,
+  baseURL: process.env.NX_SERVER_URL,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

@@ -9,3 +9,5 @@ export const RESET_AUTH_STATE = 'RESET_AUTH_STATE';
 export const SIGNUP = 'SIGNUP';
 export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS';
 export const SIGNUP_FAILED = 'SIGNUP_FAILED';
+
+export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR';

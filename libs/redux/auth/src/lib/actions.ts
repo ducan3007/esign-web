@@ -14,4 +14,8 @@ export default {
   logout:         () => fn(_.LOGINGOUT, null),
   logoutSuccess:  () => fn(_.LOGOUT_SUCCESS, null),
   resetAuthState: () => fn(_.RESET_AUTH_STATE, null),
+
+  toggleSidebar:  () => fn(_.TOGGLE_SIDEBAR, null),
+  
 };
+

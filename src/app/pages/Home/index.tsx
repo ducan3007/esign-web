@@ -1,5 +1,8 @@
 import { Navigate } from 'react-router-dom';
 
-export const HomePage = () => {
+ const HomePage = () => {
   return <Navigate to="/dashboard" />;
+
 };
+
+export default HomePage;

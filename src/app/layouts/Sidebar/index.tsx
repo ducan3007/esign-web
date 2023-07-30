@@ -9,12 +9,16 @@ import { SignifyLogo } from 'src/app/components/Logo';
 import { MTooltip } from 'src/app/components/Tooltip';
 import { dashboardPaths } from 'src/app/routes';
 import './styles.scss';
+import { useDispatch, useSelector } from 'react-redux';
+import { actions, selectors } from '@esign-web/redux/auth';
 
 export const Sidebar = () => {
-  const navigate = useNavigate();
-  const [toggle, setToggle] = useState(false);
+  const dispatch = useDispatch();
+  const isSidebarOpen = useSelector(selectors.getSidebarState);
 
-  console.log('toggle', toggle);
+  const navigate = useNavigate();
+
+  console.log('isSidebarOpen', isSidebarOpen);
 
   return (
     <Box
@@ -23,7 +27,7 @@ export const Sidebar = () => {
         flexDirection: 'column',
         position: 'relative',
         height: '100%',
-        width: toggle ? '6rem' : '22rem',
+        width: isSidebarOpen ? '6rem' : '22rem',
         transition: 'width 0.4s ease 0s',
         borderColor: 'var(--gray2)',
         backgroundColor: 'var(--white)',
@@ -44,7 +48,7 @@ export const Sidebar = () => {
       >
         <SignifyLogo
           sx={{
-            paddingLeft: toggle ? '0.2rem' : '2.3rem',
+            paddingLeft: isSidebarOpen ? '0.2rem' : '2.3rem',
             transition: 'padding-left 0.4s ease-in-out',
             zIndex: 100,
             gap: '1.5rem',
@@ -70,7 +74,7 @@ export const Sidebar = () => {
                   <Divider sx={{ marginTop: '1.5rem', marginBottom: '1.5rem' }} />
                 </Box>
               )}
-              <MTooltip title={path.name} disableHoverListener={!toggle} placement="right">
+              <MTooltip title={path.name} disableHoverListener={!isSidebarOpen} placement="right">
                 <div>
                   <NavLink
                     className={({ isActive }) => {
@@ -91,11 +95,11 @@ export const Sidebar = () => {
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '1.0rem', transition: 'background 0.3s ease 0s' }}>
                       <Icon sx={{ fontSize: '2.5rem' }} />
-                      {!toggle && (
+                      {!isSidebarOpen && (
                         <span
                           style={{
-                            opacity: toggle ? 0 : 1,
-                            width: toggle ? '0px' : 'auto',
+                            opacity: isSidebarOpen ? 0 : 1,
+                            width: isSidebarOpen ? '0px' : 'auto',
                             color: 'inherit',
                             overflow: 'hidden',
                             fontSize: '1.6rem',
@@ -119,15 +123,15 @@ export const Sidebar = () => {
         <Box sx={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
           <Divider sx={{ marginTop: '1.5rem', marginBottom: '1.5rem' }} />
         </Box>
-        <MTooltip title={'Support'} disableHoverListener={!toggle} placement="right">
+        <MTooltip title={'Support'} disableHoverListener={!isSidebarOpen} placement="right">
           <NavLink className="nav_item nav_normal" to="/">
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.9rem', transition: 'background 0.3s ease 0s' }}>
               <HelpOutlineOutlinedIcon sx={{ fontSize: '2.5rem' }} />
-              {!toggle && (
+              {!isSidebarOpen && (
                 <span
                   style={{
-                    opacity: toggle ? 0 : 1,
-                    width: toggle ? '0px' : 'auto',
+                    opacity: isSidebarOpen ? 0 : 1,
+                    width: isSidebarOpen ? '0px' : 'auto',
                     color: 'inherit',
                     overflow: 'hidden',
                     fontSize: '1.6rem',
@@ -143,6 +147,8 @@ export const Sidebar = () => {
         <Box sx={{ paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
           <Divider sx={{ marginTop: '1.5rem', marginBottom: '1.5rem' }} />
         </Box>
+
+        {/* --------------------------- Toggle Button ---------------------------- */}
         <MButton
           disableRipple
           sx={{
@@ -156,17 +162,17 @@ export const Sidebar = () => {
             zIndex: 1001,
             ':hover': { opacity: 0.8 },
           }}
-          onClick={() => setToggle(!toggle)}
+          onClick={() => dispatch(actions.toggleSidebar())}
         >
           <KeyboardCapslockIcon
             sx={{
-              transform: toggle ? 'rotate(90deg)' : 'rotate(-90deg)',
+              transform: isSidebarOpen ? 'rotate(90deg)' : 'rotate(-90deg)',
               transition: 'transform 0.3s ease-in-out',
               fontSize: '2.8rem',
               padding: '0.1rem',
               borderRadius: '99rem',
-              color: 'var(--ligh-blue1)',
-              ':hover': { color: 'var(--ligh-blue3)' },
+              color: 'var(--orange)',
+              fontWeight: 'bold',
             }}
           />
         </MButton>

@@ -11,7 +11,7 @@ import { LoginForm } from 'src/app/components/FormLogin';
 import { Overlay } from 'src/app/components/Overlay';
 import './styles.scss';
 
-export const LoginPage = () => {
+const LoginPage = () => {
   const { authenticating, error } = useSelector(selectors.getAuthState);
   const submitRef = useRef<HTMLButtonElement | null>();
 
@@ -21,13 +21,13 @@ export const LoginPage = () => {
       <Box className="wrapper">
         <Box className="brand_side">
           <img src={LoginFrame} style={{ position: 'absolute', transform: 'scale(1.3)' }} alt="Login Background" />
-          <SignifyLogo text="esign"  />
+          <SignifyLogo text="esign" />
         </Box>
         <Box className="login_side">
           <img src={AnimatedBlob} alt="Login Background" />
 
           <Fade in>
-            <Box className="right_container_content">
+            <Box className="login_side_content">
               <Box sx={{ marginBottom: '3rem' }}>
                 <Typography color="var(--blue3)" variant="h2" fontWeight="bold">
                   SIGN IN
@@ -77,3 +77,4 @@ export const LoginPage = () => {
     </>
   );
 };
+export default LoginPage;

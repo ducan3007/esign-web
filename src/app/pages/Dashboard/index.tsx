@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 
-export const DashboardPage = () => {
+const DashboardPage = () => {
   return (
     <Box
       sx={{
@@ -15,3 +15,5 @@ export const DashboardPage = () => {
     </Box>
   );
 };
+
+export default DashboardPage;

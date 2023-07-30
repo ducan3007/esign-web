@@ -8,7 +8,7 @@ export const CustomTheme = (theme: any) => {
       },
     },
     typography: {
-      fontFamily: "'Nunito Sans', sans-serif",
+      fontFamily: "'Plus Jakarta Sans', sans-serif",
     },
   });
 };

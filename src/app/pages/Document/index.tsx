@@ -5,16 +5,15 @@ import { Box, Fade } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MButton from 'src/app/components/Button';
-import { CircularProcess } from 'src/app/components/UploadDialogStatus/circularProcess';
+import { CircularProcess } from 'src/app/components/UploadDialogStatus/_circularProcess';
 import './styles.scss';
-import { DocumentTable } from './_Table';
-import { DocumentSearch } from './_Search';
+import { DocumentTable } from './__Table';
+import { DocumentSearch } from './__Search';
+import { Loading } from 'src/app/components/Loading';
 
-export const DocumentPage = () => {
+const DocumentPage = () => {
   const dispatch = useDispatch();
   const uploadingDocuments = useSelector(selectors.getUploadingDocuments);
-  const documents = useSelector(selectors.getDocuments);
-  
   const uploadRef = useRef<HTMLInputElement>(null);
 
   const EventHandlers = {
@@ -61,15 +60,11 @@ export const DocumentPage = () => {
     },
   };
 
-  useEffect(() => {
-    return () => {
-      dispatch(actions.uploadDocumentCancelAll({}));
-    };
-  }, []);
+  console.log('>>Doc page Render ');
 
   return (
     <Fade in>
-      <Box id="document-page" sx={{ flex: 1, width: '100%' }}>
+      <Box id="document-page" sx={{ flex: 1, width: '100%', padding: '2rem', overflow: 'hidden' }}>
         <Box className="secondary">
           <MButton
             onClick={() => {
@@ -100,7 +95,10 @@ export const DocumentPage = () => {
         <DocumentSearch />
 
         <DocumentTable />
+        {/* <Loading /> */}
       </Box>
     </Fade>
   );
 };
+
+export default DocumentPage;

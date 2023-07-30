@@ -29,15 +29,15 @@ type documentState = {
   documents: {
     [key: string]: Document;
   };
-  loaded_documents_first_time: boolean;
   loading_documents: boolean;
   uploading_documents: boolean;
 };
 
 export const initialState: documentState = {
   document_uploading: {},
-  documents: {},
-  loaded_documents_first_time: false,
+  documents: {
+    document: null as any,
+  },
   uploading_documents: false,
   loading_documents: false,
 };
@@ -81,6 +81,20 @@ export default (state = initialState, action: any) => {
         uploading_documents: false,
         document_uploading: {},
       };
+
+    case _.DOCUMENT_GET_ALL:
+      return {
+        ...state,
+        loading_documents: true,
+      };
+
+    case _.DOCUMENT_GET_ALL_SUCCESS:
+      return {
+        ...state,
+        documents: action.payload,
+        loading_documents: false,
+      };
+
     default:
       return state;
   }

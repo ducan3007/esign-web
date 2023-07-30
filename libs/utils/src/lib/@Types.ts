@@ -48,3 +48,39 @@ const default_feature_permission = {
     enable: false,
   },
 };
+
+export type Document = {
+  id: string;
+  cid: string;
+  hash256: string;
+  is_scanned: boolean;
+  number_of_clone: number;
+  group_id: string;
+  description: string;
+  user: UserType;
+  group: {
+    id: string;
+    name: string;
+  };
+  name: string;
+  mime_type: string;
+  status: string;
+  size: number;
+  updatedAt: string;
+  createdAt: string;
+  document_clone: Document_clone[];
+  document_signer: Document_signer[];
+};
+
+export type Document_clone = {
+  id: string;
+  cid: string;
+  hash256: string;
+  createdAt: string;
+  updatedAt: string;
+  status: string;
+  document_id: string;
+  document_signer: Document_signer[];
+};
+
+export type Document_signer = {};

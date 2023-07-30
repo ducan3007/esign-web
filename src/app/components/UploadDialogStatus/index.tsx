@@ -7,7 +7,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ClearIcon from '@mui/icons-material/Clear';
 
 import { useState } from 'react';
-import { UploadDialogItem } from './upload.item';
+import { UploadDialogItem } from './_item.upload';
 import { useDispatch, useSelector } from 'react-redux';
 import { actions, selectors } from '@esign-web/redux/document';
 
@@ -24,7 +24,6 @@ export const UploadStatusDialog = () => {
   const fileUploading = Object.values(uploadingDocuments).filter((doc) => doc.status === 'uploading').length;
   const filesUploaded = Object.values(uploadingDocuments).filter((doc) => doc.status === 'success').length;
   const filesFailed = Object.values(uploadingDocuments).filter((doc) => doc.status === 'failed').length;
-
 
   const handleEvents = {
     onClearAll: () => {
@@ -65,11 +64,7 @@ export const UploadStatusDialog = () => {
               {fileUploading === 0 && `${filesUploaded} files uploaded, ${filesFailed} files failed`}
             </Typography>
           </Box>
-          <Box
-            sx={{
-              width: 'fit-content',
-            }}
-          >
+          <Box sx={{ width: 'fit-content' }}>
             <IconButton sx={{ marginRight: '1rem' }} onClick={() => setOpen(!open)}>
               <KeyboardArrowUpIcon
                 sx={{
@@ -84,6 +79,7 @@ export const UploadStatusDialog = () => {
             </IconButton>
           </Box>
         </Box>
+
         <Box
           sx={{
             height: open ? 'fit-content' : '0px',

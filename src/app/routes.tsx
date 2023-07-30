@@ -6,18 +6,34 @@ import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
 import RestoreOutlinedIcon from '@mui/icons-material/RestoreOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import WalletOutlinedIcon from '@mui/icons-material/WalletOutlined';
-import { DashboardLayout } from './layouts/DashboardLayout';
-import { AccountSettingsPage } from './pages/Account';
-import { CeritificatePage } from './pages/Certificate';
-import { DashboardPage } from './pages/Dashboard';
-import { DocumentPage } from './pages/Document';
-import { HomePage } from './pages/Home';
-import { LogPage } from './pages/Log';
-import { LoginPage } from './pages/Login';
-import { SignaturePage } from './pages/Signature';
-import { SignupPage } from './pages/Signup';
-import { UMSPage } from './pages/UMS';
-import { WalletPage } from './pages/Wallet';
+
+// const DashboardLayout = React.lazy(() => import('./layouts/DashboardLayout'));
+import DashboardLayout from './layouts/DashboardLayout';
+// const AccountSettingsPage = React.lazy(() => import('./pages/Account'));
+import AccountSettingsPage from './pages/Account';
+// const CeritificatePage = React.lazy(() => import('./pages/Certificate'));
+import CeritificatePage from './pages/Certificate';
+// const DashboardPage = React.lazy(() => import('./pages/Dashboard'));
+import DashboardPage from './pages/Dashboard';
+// const DocumentPage = React.lazy(() => import('./pages/Document'));
+import DocumentPage from './pages/Document';
+// const HomePage = React.lazy(() => import('./pages/Home'));
+import HomePage from './pages/Home';
+// const LogPage = React.lazy(() => import('./pages/Log'));
+import LogPage from './pages/Log';
+// const LoginPage = React.lazy(() => import('./pages/Login'));
+import LoginPage from './pages/Login';
+// const SignaturePage = React.lazy(() => import('./pages/Signature'));
+import SignaturePage from './pages/Signature';
+// const SignupPage = React.lazy(() => import('./pages/Signup'));
+import SignupPage from './pages/Signup';
+// const UMSPage = React.lazy(() => import('./pages/UMS'));
+import UMSPage from './pages/UMS';
+// const WalletPage = React.lazy(() => import('./pages/Wallet'));
+import { NotFoundPage } from './pages/404NotFound';
+import { DocumentDetail } from './pages/Document/DocumentDetail';
+import WalletPage from './pages/Wallet';
+import { DocumentSignningPage } from './pages/Document/Sign';
 
 export interface RouteObject {
   path: string;
@@ -27,43 +43,61 @@ export interface RouteObject {
 }
 
 export const dashboardPaths = [
-  { to: '/dashboard',         name: 'Dashboard',          icon: InsertChartOutlinedOutlinedIcon },
-  { to: '/document',          name: 'Documents',          icon: FolderCopyOutlinedIcon },
-  { to: '/signatures',        name: 'Signatures',         icon: KeyOutlinedIcon },
-  { to: '/certificate',       name: 'Certificates',       icon: CardMembershipOutlinedIcon },
-  { to: '/wallet',            name: 'Wallets Address',    icon: WalletOutlinedIcon },
-  { to: '/ums',               name: 'Organization',       icon: BusinessOutlinedIcon },
-  { to: '/logs',              name: 'Logs',               icon: RestoreOutlinedIcon },
-  { to: '/account-setting',   name: 'Account Settings',   icon: SettingsOutlinedIcon },
+  { to: '/dashboard',             name: 'Dashboard',          icon: InsertChartOutlinedOutlinedIcon },
+  { to: '/document',              name: 'Documents',          icon: FolderCopyOutlinedIcon },
+  { to: '/signatures',            name: 'Signatures',         icon: KeyOutlinedIcon },
+  { to: '/certificate',           name: 'Certificates',       icon: CardMembershipOutlinedIcon },
+  { to: '/wallet',                name: 'Wallets Address',    icon: WalletOutlinedIcon },
+  { to: '/ums',                   name: 'Organization',       icon: BusinessOutlinedIcon },
+  { to: '/logs',                  name: 'Logs',               icon: RestoreOutlinedIcon },
+  { to: '/account-setting',       name: 'Account Settings',   icon: SettingsOutlinedIcon },
+];
+
+export const headerTitles = [
+  { to: '/dashboard',             name: 'Dashboard',               },
+  { to: '/document',              name: 'Documents',               },
+  { to: '/signatures',            name: 'Signatures',              },
+  { to: '/certificate',           name: 'Certificates',            },
+  { to: '/wallet',                name: 'Wallets Address',         },
+  { to: '/ums',                   name: 'Organization',            },
+  { to: '/logs',                  name: 'Logs',                    },
+  { to: '/account-setting',       name: 'Account Settings',        },
+  { to: '/document/info',         name: 'Document Detail',         },
+  { to: '/document/sign',         name: 'Document Signning Page',  },
 ];
 
 export const paths = {
-  home:           '/',
-  dashboard:      '/dashboard',
-  login:          '/login',
-  signup:         '/signup',
-  document:       '/document',
-  ums:            '/ums',
-  logs:           '/logs',
-  accountSetting: '/account-setting',
-  wallet:         '/wallet',
-  signatures:     '/signatures',
-  certificate:    '/certificate',
+  home:                           '/',
+  dashboard:                      '/dashboard',
+  login:                          '/login',
+  signup:                         '/signup',
+  document:                       '/document',
+  document_detail:                '/document/info',
+  document_sign:                  '/document/sign',
+  ums:                            '/ums',
+  logs:                           '/logs',
+  accountSetting:                 '/account-setting',
+  wallet:                         '/wallet',
+  signatures:                     '/signatures',
+  certificate:                    '/certificate',
+  notFound:                       '/*',
 };
 
 const appRoutes: RouteObject[] = [
-  { path: paths.login,          layout: null,            component: LoginPage },
-  { path: paths.signup,         layout: null,            component: SignupPage },
-  { path: paths.home,           layout: null,            component: HomePage },
-  { path: paths.dashboard,      layout: DashboardLayout, component: DashboardPage },
-  { path: paths.document,       layout: DashboardLayout, component: DocumentPage },
-  { path: paths.wallet,         layout: DashboardLayout, component: WalletPage },
-  { path: paths.ums,            layout: DashboardLayout, component: UMSPage },
-  { path: paths.logs,           layout: DashboardLayout, component: LogPage },
-  { path: paths.accountSetting, layout: DashboardLayout, component: AccountSettingsPage },
-  { path: paths.signatures,     layout: DashboardLayout, component: SignaturePage },
-  { path: paths.certificate,    layout: DashboardLayout, component: CeritificatePage },
-
+  { path: paths.login,            layout: null,               component: LoginPage },
+  { path: paths.signup,           layout: null,               component: SignupPage },
+  { path: paths.home,             layout: null,               component: HomePage },
+  { path: paths.dashboard,        layout: DashboardLayout,    component: DashboardPage },
+  { path: paths.document,         layout: DashboardLayout,    component: DocumentPage },
+  { path: paths.wallet,           layout: DashboardLayout,    component: WalletPage },
+  { path: paths.ums,              layout: DashboardLayout,    component: UMSPage },
+  { path: paths.logs,             layout: DashboardLayout,    component: LogPage },
+  { path: paths.accountSetting,   layout: DashboardLayout,    component: AccountSettingsPage },
+  { path: paths.signatures,       layout: DashboardLayout,    component: SignaturePage },
+  { path: paths.certificate,      layout: DashboardLayout,    component: CeritificatePage },
+  { path: paths.document_detail,  layout: DashboardLayout,    component: DocumentDetail},
+  { path: paths.notFound,         layout: null,               component: NotFoundPage},
+  { path: paths.document_sign,    layout: DashboardLayout,    component: DocumentSignningPage}
 ];
 
 export { appRoutes };

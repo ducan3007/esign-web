@@ -8,7 +8,7 @@ import { SignifyLogo } from 'src/app/components/Logo';
 import { SignupSuccessPage } from './_SignupSuccess';
 import './styles.scss';
 
-export const SignupPage = () => {
+const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isSignupSuccess, setIsSignupSuccess] = useState(false);
 
@@ -82,3 +82,5 @@ export const SignupPage = () => {
     </Box>
   );
 };
+
+export default SignupPage;

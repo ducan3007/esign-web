@@ -1,15 +1,14 @@
 import { Logout, PersonAdd, Settings } from '@mui/icons-material';
 import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
-import { deepOrange } from '@mui/material/colors';
-import { useState } from 'react';
-import { dashboardPaths } from 'src/app/routes';
 import * as _ from 'lodash';
+import { useState } from 'react';
+import { headerTitles } from 'src/app/routes';
 
 export const DashboardHeader = () => {
   const localtion = window.location.pathname;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const dashBoardObject = _.find(dashboardPaths, (o) => o.to === localtion);
+  const dashBoardObject = _.find(headerTitles, (o) => o.to === localtion);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -38,7 +37,7 @@ export const DashboardHeader = () => {
           paddingLeft: '2rem',
         }}
       >
-        <Typography variant="h6" sx={{ color: 'var(--dark3)', fontWeight: 'bold',fontSize:'2.4rem' }}>
+        <Typography variant="h6" sx={{ color: 'var(--dark3)', fontWeight: 'bold', fontSize: '2.4rem' }}>
           {dashBoardObject?.name}
         </Typography>
       </Box>
