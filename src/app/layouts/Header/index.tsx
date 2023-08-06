@@ -3,6 +3,7 @@ import { Avatar, Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip
 import * as _ from 'lodash';
 import { useState } from 'react';
 import { headerTitles } from 'src/app/routes';
+import { DefaultHeader } from './__DefaultHeader';
 
 export const DashboardHeader = () => {
   const localtion = window.location.pathname;
@@ -20,7 +21,7 @@ export const DashboardHeader = () => {
       sx={{
         display: 'flex',
         flexDirection: 'row',
-        height: '7.75rem',
+        height: '8.75rem',
         zIndex: 100,
         justifyContent: 'flex-end',
         borderBottom: '1px solid var(--border-gray)',
@@ -28,19 +29,7 @@ export const DashboardHeader = () => {
       }}
     >
       {/* Avatar */}
-      <Box
-        sx={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          paddingLeft: '2rem',
-        }}
-      >
-        <Typography variant="h6" sx={{ color: 'var(--dark3)', fontWeight: 'bold', fontSize: '2.4rem' }}>
-          {dashBoardObject?.name}
-        </Typography>
-      </Box>
+      <DefaultHeader title={dashBoardObject?.name} to={dashBoardObject?.to} />
 
       <Box>
         <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>

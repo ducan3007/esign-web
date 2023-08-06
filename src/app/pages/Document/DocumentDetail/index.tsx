@@ -11,10 +11,13 @@ export const DocumentDetail = () => {
   console.log('>>>>>>', searchParams.get('id'));
 
   useEffect(() => {
-    dispatch(actions.documentGetAll());
+    dispatch(
+      actions.documentGetAll({
+        limit: 20,
+        offset: 0,
+      })
+    );
   }, []);
-
-  
 
   return (
     <Box sx={{ overflowY: 'auto', flex: 1, width: '100%' }}>

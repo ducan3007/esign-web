@@ -1,138 +1,219 @@
-import { Box, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { Document, Outline, Page, Thumbnail } from 'react-pdf';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+import { roundToHalf } from '@esign-web/libs/utils';
+import { Box } from '@mui/material';
+import { PDFDocumentProxy } from 'pdfjs-dist/types/src/pdf';
+import { useEffect, useRef, useState } from 'react';
+import { Document } from 'react-pdf';
+import { AutoSizer, List } from 'react-virtualized';
+import { PDFPage } from './__PDFPage';
+import PDFThumbnail from './__PDFThumbnaiil';
+import { nanoid } from 'nanoid';
 
 interface RenderPDFProps {
   documentId: string;
 }
 
+enum SignatureType {
+  SIGNATURE = 'SIGNATURE',
+  IMAGE = 'IMAGE',
+  TEXT = 'TEXT',
+  DATE = 'DATE',
+  CHECKBOX = 'CHECKBOX',
+}
+
+export type Singature = {
+  id: string;
+
+  top: number;
+  left: number;
+
+  pageNumber: number;
+  width?: number;
+  height?: number;
+
+  type: SignatureType;
+
+  isMetadata?: boolean;
+
+  // For User
+  userName?: string;
+  userColor?: string;
+  userEamil?: string;
+
+  // For Image
+  imageUri?: string;
+
+  // For Text
+  text?: string;
+
+  // For Date
+  date?: string;
+
+  // For Checkbox
+  isChecked?: boolean;
+};
+
 export const RenderPDF = (props: RenderPDFProps) => {
-  const [numPages, setNumPages] = useState(null);
-  const [pdfUrl, setPdfUrl] = useState('');
-  const onDocumentLoadSuccess = ({ numPages }) => {
-    setNumPages(numPages);
+  const [numPages, setNumPages] = useState(0);
+  const [pageHeight, setPageHeight] = useState<any>(null);
+  const [pageWidth, setPageWidth] = useState<any>(null);
+
+  const [index1, setIndex1] = useState<any>(0);
+  const [index2, setIndex2] = useState<any>();
+
+  const documentRef = useRef<any>(null);
+
+  const [focusedItem, setFocusedItem] = useState<any>(null);
+
+  /* Temporary State, store Ids only of signatures */
+  const [signatures, setSignatures] = useState<{ [key: string]: { [key: string]: Singature } }>({});
+
+  /* To save data of signatures, everytime Drag item is moved, it update this ref */
+  const signatureDataRefs = useRef<{ [key: string]: { [key: string]: Singature } }>({});
+
+  useEffect(() => {
+    setSignatures({
+      page_1: {
+        sdfsdf: {
+          id: 'sdfsdf',
+          top: 10,
+          left: 234,
+          pageNumber: 1,
+          width: 200,
+          height: 100,
+          type: SignatureType.SIGNATURE,
+        },
+      },
+    });
+    signatureDataRefs.current = {
+      page_1: {
+        sdfsdf: {
+          id: 'sdfsdf',
+          top: 10,
+          left: 234,
+          pageNumber: 1,
+          width: 200,
+          height: 100,
+          type: SignatureType.SIGNATURE,
+        },
+      },
+    };
+  }, []);
+
+  /* Main Event Handlers */
+  const Events = {
+    onDocumentLoadSuccess: async (nexPdf: PDFDocumentProxy) => {
+      setNumPages(nexPdf.numPages);
+      const page = await nexPdf.getPage(1);
+      const viewport = page.getViewport({ scale: 1.65 });
+      const pageHeight = viewport.height;
+      const pageWidth = viewport.width;
+      console.log('>> pageHeight', pageHeight);
+      console.log('>> pageWidth', pageWidth);
+
+      setPageHeight(pageHeight);
+      setPageWidth(pageWidth);
+    },
   };
 
-  // useEffect(() => {
-  //   // Fetch the document as a blob
-  //   fetch(`http://localhost:4009/api/document/get/${props.documentId}`)
-  //     .then((response) => response.blob())
-  //     .then((blob) => {
-  //       const url = URL.createObjectURL(blob);
-  //       console.log('>>>>>> url', url);
-  //       setPdfUrl(url);
-  //     });
-  // }, [props.documentId]);
+  useEffect(() => {
+    document.addEventListener('click', detectClickOutside);
 
-  // if (!pdfUrl) return null;
+    return () => {
+      document.removeEventListener('click', detectClickOutside);
+    };
+  }, [numPages]);
+
+  const detectClickOutside = (e: any) => {
+    e.preventDefault();
+
+    const pdfContent = document.querySelector('#pdf-content');
+    if (!pdfContent) return;
+
+    const isClickInside = pdfContent.contains(e.target);
+
+    if (isClickInside) {
+      console.log('>> detectClickOutside');
+    }
+  };
+  console.log('>>>>>>>>>>>>>> signatures', signatures);
+  console.log('>>>>>>>>>>>>>> signatureDataRefs', signatureDataRefs.current);
 
   return (
-    <Box
-      sx={{
-        flex: 1,
-        border: '1px solid var(--gray3)',
-        // height: 'calc(100vh - 13rem)',
-        // overflowY: 'auto',
-        backgroundColor: 'var(--gray3)',
-      }}
-    >
+    <Box sx={{ flex: 1, border: '1px solid var(--gray3)', backgroundColor: 'var(--gray6)' }}>
       <Document
-        className={`pdf-document`}
+        ref={documentRef}
+        className="pdf-document"
         file={`http://localhost:4009/api/document/get/${props.documentId}`}
-        onLoadSuccess={onDocumentLoadSuccess}
-        loading="Loading..."
+        onLoadSuccess={Events.onDocumentLoadSuccess}
       >
-        <Box
-          sx={{
-            flex: 1,
-            overflowY: 'auto',
-            height: 'calc(100vh - 12.25rem)',
-            '&::-webkit-scrollbar': {
-              width: '15px',
-            },
-            '&::-webkit-scrollbar-track': {
-              background: 'transparent',
-            },
-            '&::-webkit-scrollbar-thumb': {
-              background: 'var(--orange)',
-            },
-            // display: 'flex',
-            // justifyContent: 'center',
-            // alignItems: 'center',
-            // flexDirection: 'column',
-          }}
-        >
-          {Array.from(new Array(numPages), (el, index) => (
-            <Page
-              className="pdf-page"
-              // width={window.innerWidth > 1200 ? 1200 : window.innerWidth}
-              // width={window.innerWidth}
-              scale={1.7}
-              // width=
-              key={`page_${index + 1}`}
-              pageNumber={index + 1}
-              renderAnnotationLayer={false}
-            />
-          ))}
-        </Box>
-        <Box
-          sx={{
-            overflowY: 'auto',
-            height: 'calc(100vh - 12.25rem)',
-            backgroundColor: 'var(--gray3)',
-            '&::-webkit-scrollbar': {
-              width: '15px',
-            },
-            '&::-webkit-scrollbar-track': {
-              background: 'transparent',
-            },
-            '&::-webkit-scrollbar-thumb': {
-              background: 'var(--orange)',
-            },
-          }}
-          className="pdf-thumbnail-container"
-        >
-          {Array.from(new Array(numPages), (el, index) => (
-            <Thumbnail
-              key={`thumbnail_${index + 1}`}
-              className="pdf-thumbnail"
-              width={window.innerWidth > 260 ? 260 : window.innerWidth}
-              pageNumber={index + 1}
-              onItemClick={(e) => {
-                const page = document.querySelector(`.pdf-page[data-page-number="${e.pageNumber}"]`);
-                const thumbnail = document.querySelector(`.react-pdf__Thumbnail__page[data-page-number="${e.pageNumber}"]`);
-                const selectedThumbnail = document.querySelector('.react-pdf__Thumbnail__page.selected');
+        {pageHeight && pageWidth && (
+          <>
+            <Box id="pdf-content" sx={{ flex: 1 }}>
+              <AutoSizer>
+                {({ width }) => (
+                  <List
+                    height={window.innerHeight - 9 * 10}
+                    width={width}
+                    rowCount={numPages}
+                    rowHeight={pageHeight + 60}
+                    onScroll={(e) => {
+                      const currentPage = roundToHalf(e.scrollTop / (pageHeight + 60));
+                      const thumbnail = document.querySelector(
+                        `.react-pdf__Thumbnail__page[data-page-number="${currentPage + 1}"]`
+                      );
+                      const selectedThumbnail = document.querySelector('.react-pdf__Thumbnail__page.selected');
 
-                if (selectedThumbnail) {
-                  selectedThumbnail.classList.remove('selected');
-                }
+                      if (selectedThumbnail) {
+                        selectedThumbnail.classList.remove('selected');
+                      }
 
-                if (thumbnail) {
-                  thumbnail.classList.add('selected');
-                }
+                      if (thumbnail) {
+                        thumbnail.classList.add('selected');
+                      }
 
-                if (page) {
-                  page.scrollIntoView({ block: 'center', inline: 'center' });
-                }
-              }}
-            >
-              <Typography
-                sx={{
-                  position: 'absolute',
-                  bottom: '-50px',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  color: 'var(--dark)',
-                  fontSize: '2rem',
-                }}
-              >
-                {index + 1}
-              </Typography>
-            </Thumbnail>
-          ))}
-        </Box>
+                      setIndex1(currentPage);
+                      setIndex2(undefined);
+                    }}
+                    overscanColumnCount={10}
+                    scrollToIndex={index2}
+                    rowRenderer={({ index, key, style }) => (
+                      <PDFPage
+                        signatures={signatures}
+                        setSignatures={setSignatures}
+                        signatureDataRefs={signatureDataRefs}
+                        pageHeight={pageHeight}
+                        pageWidth={pageWidth}
+                        key={key}
+                        index={index}
+                        style={style}
+                      />
+                    )}
+                  ></List>
+                )}
+              </AutoSizer>
+            </Box>
+
+            <Box sx={{ height: 'calc(100vh - 8.25rem)', width: '250px' }} className="pdf-thumbnail-container">
+              <AutoSizer>
+                {({ width }) => (
+                  <List
+                    height={window.innerHeight - 9 * 10}
+                    width={width}
+                    rowCount={numPages}
+                    rowHeight={280}
+                    overscanColumnCount={10}
+                    scrollToIndex={index1}
+                    rowRenderer={({ index, key, style }) => (
+                      <div style={{ ...style, width: 'auto', right: '0px' }} key={key}>
+                        <PDFThumbnail index={index} indexToScroll={index1} setIndexToScroll={setIndex2} />
+                      </div>
+                    )}
+                  ></List>
+                )}
+              </AutoSizer>
+            </Box>
+          </>
+        )}
       </Document>
     </Box>
   );

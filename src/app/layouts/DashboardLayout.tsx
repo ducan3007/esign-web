@@ -15,8 +15,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const documents = useSelector(selectors.getDocuments);
 
   return (
-    <Box sx={{ display: 'flex', flexDirenction: 'row', width: '100vw', height: '100vh' }}>
-      <Box sx={{ maxWidth: '23.25rem' }}>
+    <Box
+      id="dashboard-layout"
+      sx={{ position: 'relative', display: 'flex', flexDirenction: 'row', width: '100vw', height: '100vh' }}
+    >
+      <Box id="sidebar" sx={{ maxWidth: '23.25rem' }}>
         <Sidebar />
       </Box>
       <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>

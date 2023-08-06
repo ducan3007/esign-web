@@ -12,7 +12,7 @@ export default {
   uploadDocumentCancelAll: (payload: any) => fn(_.DOCUMENT_UPLOAD_CANCEL_ALL, payload),
 
   documenStartUploading: (payload: any) => fn(_.DOCUMENT_UPLOAD_FILES, payload),
-  documentGetAll: () => fn(_.DOCUMENT_GET_ALL),
+  documentGetAll: (payload: any) => fn(_.DOCUMENT_GET_ALL, payload),
 
   cloneDocument: (payload: any) => fn(_.DOCUMENT_CREATE_CLONE, payload),
 

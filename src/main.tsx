@@ -7,6 +7,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import App from './app/app';
 import { configureReduxStore } from './app/redux/store';
 import { pdfjs } from 'react-pdf';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -16,7 +20,9 @@ root.render(
   <Provider store={configureReduxStore()}>
     <BrowserRouter>
       <CookiesProvider>
-        <App />
+        <DndProvider backend={HTML5Backend}>
+          <App />
+        </DndProvider>
         <ToastContainer
           transition={Flip}
           position="top-center"

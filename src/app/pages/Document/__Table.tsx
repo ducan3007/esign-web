@@ -30,7 +30,12 @@ export const DocumentTable = (props: any) => {
   const loadingDocuments = useSelector(selectors.getLoadingDocuments);
 
   useEffect(() => {
-    dispatch(actions.documentGetAll());
+    dispatch(
+      actions.documentGetAll({
+        limit: 20,
+        offset: 0,
+      })
+    );
   }, []);
 
   return (
