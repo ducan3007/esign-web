@@ -17,5 +17,6 @@ export default {
 
   toggleSidebar:  () => fn(_.TOGGLE_SIDEBAR, null),
   
+  authorize:      () => fn(_.AUTHORIZE_USER, null),
 };
 

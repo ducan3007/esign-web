@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { LoginForm } from 'src/app/components/FormLogin';
 import { Overlay } from 'src/app/components/Overlay';
 import './styles.scss';
+import { AuthenticationTokenHOC } from 'src/app/protected.routes';
 
 const LoginPage = () => {
   const { authenticating, error } = useSelector(selectors.getAuthState);
@@ -77,4 +78,4 @@ const LoginPage = () => {
     </>
   );
 };
-export default LoginPage;
+export default AuthenticationTokenHOC(LoginPage);

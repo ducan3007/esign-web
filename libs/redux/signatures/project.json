@@ -1,0 +1,16 @@
+{
+  "name": "redux-signatures",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/redux/signatures/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/redux/signatures/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  }
+}

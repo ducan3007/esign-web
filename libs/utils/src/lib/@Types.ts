@@ -84,3 +84,7 @@ export type Document_clone = {
 };
 
 export type Document_signer = {};
+
+
+
+export const PDF_SCALING_RATIO = 1.4

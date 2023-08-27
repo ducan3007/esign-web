@@ -33,13 +33,14 @@ import UMSPage from './pages/UMS';
 import { NotFoundPage } from './pages/404NotFound';
 import { DocumentDetail } from './pages/Document/DocumentDetail';
 import WalletPage from './pages/Wallet';
-import { DocumentSignningPage } from './pages/Document/Sign';
+import { DocumentSignningPage } from './pages/Document/SigningPage';
 
 export interface RouteObject {
   path: string;
   isPublish?: boolean;
   layout?: any;
   component: any;
+  protected?: boolean;
 }
 
 export const dashboardPaths = [
@@ -84,20 +85,20 @@ export const paths = {
 };
 
 const appRoutes: RouteObject[] = [
-  { path: paths.login,            layout: null,               component: LoginPage },
-  { path: paths.signup,           layout: null,               component: SignupPage },
-  { path: paths.home,             layout: null,               component: HomePage },
-  { path: paths.dashboard,        layout: DashboardLayout,    component: DashboardPage },
-  { path: paths.document,         layout: DashboardLayout,    component: DocumentPage },
-  { path: paths.wallet,           layout: DashboardLayout,    component: WalletPage },
-  { path: paths.ums,              layout: DashboardLayout,    component: UMSPage },
-  { path: paths.logs,             layout: DashboardLayout,    component: LogPage },
-  { path: paths.accountSetting,   layout: DashboardLayout,    component: AccountSettingsPage },
-  { path: paths.signatures,       layout: DashboardLayout,    component: SignaturePage },
-  { path: paths.certificate,      layout: DashboardLayout,    component: CeritificatePage },
-  { path: paths.document_detail,  layout: DashboardLayout,    component: DocumentDetail},
-  { path: paths.notFound,         layout: null,               component: NotFoundPage},
-  { path: paths.document_sign,    layout: DashboardLayout,    component: DocumentSignningPage}
+  { path: paths.login,            layout: null,               component: LoginPage                                      },
+  { path: paths.signup,           layout: null,               component: SignupPage                                     },
+  { path: paths.home,             layout: null,               component: HomePage                                       },
+  { path: paths.notFound,         layout: null,               component: NotFoundPage,                                  },
+  { path: paths.dashboard,        layout: DashboardLayout,    component: DashboardPage,              protected: true    },
+  { path: paths.document,         layout: DashboardLayout,    component: DocumentPage,               protected: true    },
+  { path: paths.wallet,           layout: DashboardLayout,    component: WalletPage,                 protected: true    },
+  { path: paths.ums,              layout: DashboardLayout,    component: UMSPage,                    protected: true    },
+  { path: paths.logs,             layout: DashboardLayout,    component: LogPage,                    protected: true    },
+  { path: paths.accountSetting,   layout: DashboardLayout,    component: AccountSettingsPage,        protected: true    },
+  { path: paths.signatures,       layout: DashboardLayout,    component: SignaturePage,              protected: true    },
+  { path: paths.certificate,      layout: DashboardLayout,    component: CeritificatePage,           protected: true    },
+  { path: paths.document_detail,  layout: DashboardLayout,    component: DocumentDetail,             protected: true    },
+  { path: paths.document_sign,    layout: DashboardLayout,    component: DocumentSignningPage,       protected: true    },
 ];
 
 export { appRoutes };

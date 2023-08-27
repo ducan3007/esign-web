@@ -22,7 +22,7 @@ export const DashboardHeader = () => {
         display: 'flex',
         flexDirection: 'row',
         height: '8.75rem',
-        zIndex: 100,
+        // zIndex: 100,
         justifyContent: 'flex-end',
         borderBottom: '1px solid var(--border-gray)',
         // boxShadow: 'var(--shadow_bottom)',

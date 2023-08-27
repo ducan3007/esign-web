@@ -1,267 +1,299 @@
-import React, { useState, useRef, useEffect } from 'react';
+import clsx from 'clsx';
+import Immutable from 'immutable';
+import PropTypes from 'prop-types';
+import * as React from 'react';
+import styles from './List.example.css';
+import AutoSizer from '../AutoSizer';
+import List from './List';
+import { ContentBox, ContentBoxHeader, ContentBoxParagraph } from '../demo/ContentBox';
+import { LabeledInput, InputRow } from '../demo/LabeledInput';
 
-function Draggable() {
-  // state variables for element position, dimensions, and class names
-  const [top, setTop] = useState(70);
-  const [left, setLeft] = useState(100);
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-  const [classes, setClasses] = useState('');
-  // state variable for mouse down status
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  // state variable for out of bounds counter
-  const [outOfBoundsCounter, setOutOfBoundsCounter] = useState(0);
-  // state variable for message text
-  const [message, setMessage] = useState('plz move me');
-  // ref variables for element and container DOM nodes
+// Import the hooks
+import { useContext, useState, useEffect } from 'react';
 
-  const elmRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const diffY = useRef(0);
-  const diffX = useRef(0);
+// Define a function component with the same name
+export default function ListExample(props) {
+  // Use useContext to access the list
+  const list = useContext(ListContext);
 
-  // constants for element and container background colors
-  const elmBg = '#474ec8';
-  const containerBg = '#767df9';
-  // constant for fainted background color
-  const faintedBg = 'rgba(255,255,255,0.3)';
+  // Use useState to create state variables
+  const [listHeight, setListHeight] = useState(300);
+  const [listRowHeight, setListRowHeight] = useState(50);
+  const [overscanRowCount, setOverscanRowCount] = useState(10);
+  const [rowCount, setRowCount] = useState(list.size);
+  const [scrollToIndex, setScrollToIndex] = useState(undefined);
+  const [showScrollingPlaceholder, setShowScrollingPlaceholder] = useState(false);
+  const [useDynamicRowHeight, setUseDynamicRowHeight] = useState(false);
 
-  // useEffect hook to get the element and container dimensions after initial render
+  // Use useEffect to replace the constructor and bind the methods
   useEffect(() => {
-    if (elmRef.current && containerRef.current) {
-      setWidth(elmRef.current.offsetWidth);
-      setHeight(elmRef.current.offsetHeight);
-    }
-  }, []);
+    // Bind the methods
+    _getRowHeight = _getRowHeight.bind(this);
+    _noRowsRenderer = _noRowsRenderer.bind(this);
+    _onRowCountChange = _onRowCountChange.bind(this);
+    _onScrollToRowChange = _onScrollToRowChange.bind(this);
+    _rowRenderer = _rowRenderer.bind(this);
 
-  // function to handle mouse down event
-  function mouseDown(e) {
-    setIsMouseDown(true);
-    setOutOfBoundsCounter(0);
-    // get initial mousedown coordinates
-    const mouseY = e.clientY;
-    const mouseX = e.clientX;
+    // No need to return anything
+  }, []); // Use an empty dependency array
 
-    if (!elmRef.current || !containerRef.current) {
-      console.log('>>> elmRef.current NOT FOUND', elmRef.current);
-      return;
-    }
-    // get element top and left positions
-    const elmY = elmRef.current.offsetTop;
-    const elmX = elmRef.current.offsetLeft;
-
-    // get diff from (0,0) to mousedown point
-    diffY.current = mouseY - elmY;
-    diffX.current = mouseX - elmX;
-  }
-
-  // function to handle mouse move event
-  function mouseMove(e) {
-    if (!isMouseDown) return;
-    // get new mouse coordinates
-    const newMouseY = e.clientY;
-    const newMouseX = e.clientX;
-
-    // calc new top, left pos of elm
-    let newElmTop = newMouseY - diffY.current,
-      newElmLeft = newMouseX - diffX.current;
-
-    // calc new bottom, right pos of elm
-    let newElmBottom = newElmTop + height,
-      newElmRight = newElmLeft + width;
-
-    // get container dimensions
-
-    if (!containerRef.current) {
-      console.log('>>> containerRef.current NOT FOUND', containerRef.current);
-      return;
-    }
-
-    const containerWidth = containerRef.current.offsetWidth;
-    const containerHeight = containerRef.current.offsetHeight;
-
-    if (newElmTop < 0 || newElmLeft < 0 || newElmTop + height > containerHeight || newElmLeft + width > containerWidth) {
-      // if elm is being dragged off top of the container...
-      if (newElmTop < 0) {
-        newElmTop = 0;
-      }
-
-      // if elm is being dragged off left of the container...
-      if (newElmLeft < 0) {
-        newElmLeft = 0;
-      }
-
-      // if elm is being dragged off bottom of the container...
-      if (newElmBottom > containerHeight) {
-        newElmTop = containerHeight - height;
-      }
-
-      // if elm is being dragged off right of the container...
-      if (newElmRight > containerWidth) {
-        newElmLeft = containerWidth - width;
-      }
-      setOutOfBoundsFace();
-    } else {
-      resetFace();
-    }
-
-    moveElm(newElmTop, newElmLeft);
-  }
-
-  // function to handle mouse up event
-  function mouseUp() {
-    setIsMouseDown(false);
-    setMessage('plz move me');
-  }
-
-  // function to move elm
-  function moveElm(yPos, xPos) {
-    setTop(yPos);
-    setLeft(xPos);
-  }
-
-  // function to set out of bounds face and message
-  function setOutOfBoundsFace() {
-    if (!classes.includes('pained') && !classes.includes('fainted')) {
-      setOutOfBoundsCounter((prev) => prev + 1);
-      if (outOfBoundsCounter < 5) {
-        setClasses('pained');
-        setMessage('ouch!');
-      } else {
-        setClasses('fainted');
-        setMessage('zzz');
-        setTimeout(() => {
-          setOutOfBoundsCounter(0);
-        }, 3000);
-      }
-    }
-  }
-
-  // function to reset face and message
-  function resetFace() {
-    if (outOfBoundsCounter < 5) {
-      setClasses('');
-      setMessage('yay!');
-    }
-  }
-
-  // inline styles for container and element
-  const containerStyle = {
-    margin: 0,
-    padding: 0,
-    border: 0,
-    position: 'relative',
-    backgroundColor: containerBg,
-    width: '100%',
-    height: '100%',
-  };
-
-  const elmStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    top,
-    left,
-    boxSizing: 'border-box',
-    border: '2px solid currentColor',
-    color: '#000',
-    backgroundColor: classes.includes('fainted') && isMouseDown ? faintedBg : elmBg,
-    width: 150,
-    height: 150,
-    fontFamily: "'PT Mono', monospace",
-    fontSize: 16,
-    cursor: isMouseDown ? 'move' : 'pointer',
-    userSelect: 'none',
-    textAlign: 'center',
-  };
-
-  // inline style for face
-  const faceStyle = {
-    width: 125,
-    height: 70,
-    fontSize: 35,
-    lineHeight: '70px',
-  };
-
-  // function to get face content based on classes and mouse down status
-  function getFaceContent() {
-    if (classes.includes('fainted') && isMouseDown) {
-      return 'X ~ X';
-    } else if (classes.includes('pained') && isMouseDown) {
-      return 'ಥ﹏ಥ';
-    } else if (isMouseDown) {
-      return ' ͡ ͜ ͡ ';
-    } else {
-      return '◉_◉';
-    }
-  }
-
+  // Return the JSX from the render method
   return (
-    <div
-      className="container"
-      ref={containerRef}
-      style={{
-        margin: 0,
-        padding: 0,
-        border: 0,
-        position: 'relative',
-        backgroundColor: containerBg,
-        width: '100%',
-        height: '100%',
-      }}
-    >
-      <div
-        className={`box ${classes}`}
-        ref={elmRef}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          position: 'absolute',
-          top,
-          left,
-          boxSizing: 'border-box',
-          border: '2px solid currentColor',
-          color: '#000',
-          backgroundColor: classes.includes('fainted') && isMouseDown ? faintedBg : elmBg,
-          width: 150,
-          height: 150,
-          fontFamily: "'PT Mono', monospace",
-          fontSize: 16,
-          cursor: isMouseDown ? 'move' : 'pointer',
-          userSelect: 'none',
-          textAlign: 'center',
-        }}
-        onMouseDown={mouseDown}
-        onMouseUp={mouseUp}
-      >
-        <div className="face" style={faceStyle}>
-          {getFaceContent()}
-        </div>
-        <p id="message">{message}</p>
+    <ContentBox>
+      <ContentBoxHeader
+        text="List"
+        sourceLink="https://github.com/bvaughn/react-virtualized/blob/master/source/List/List.example.js"
+        docsLink="https://github.com/bvaughn/react-virtualized/blob/master/docs/List.md"
+      />
+
+      <ContentBoxParagraph>
+        The list below is windowed (or "virtualized") meaning that only the visible rows are rendered. Adjust its configurable
+        properties below to see how it reacts.
+      </ContentBoxParagraph>
+
+      <ContentBoxParagraph>
+        <label className={styles.checkboxLabel}>
+          <input
+            aria-label="Use dynamic row heights?"
+            checked={useDynamicRowHeight}
+            className={styles.checkbox}
+            type="checkbox"
+            onChange={(event) => setUseDynamicRowHeight(event.target.checked)}
+          />
+          Use dynamic row heights?
+        </label>
+
+        <label className={styles.checkboxLabel}>
+          <input
+            aria-label="Show scrolling placeholder?"
+            checked={showScrollingPlaceholder}
+            className={styles.checkbox}
+            type="checkbox"
+            onChange={(event) => setShowScrollingPlaceholder(event.target.checked)}
+          />
+          Show scrolling placeholder?
+        </label>
+      </ContentBoxParagraph>
+
+      <InputRow>
+        <LabeledInput label="Num rows" name="rowCount" onChange={_onRowCountChange} value={rowCount} />
+        <LabeledInput
+          label="Scroll to"
+          name="onScrollToRow"
+          placeholder="Index..."
+          onChange={_onScrollToRowChange}
+          value={scrollToIndex || ''}
+        />
+        <LabeledInput
+          label="List height"
+          name="listHeight"
+          onChange={(event) => setListHeight(parseInt(event.target.value, 10) || 1)}
+          value={listHeight}
+        />
+        <LabeledInput
+          disabled={useDynamicRowHeight}
+          label="Row height"
+          name="listRowHeight"
+          onChange={(event) => setListRowHeight(parseInt(event.target.value, 10) || 1)}
+          value={listRowHeight}
+        />
+        <LabeledInput
+          label="Overscan"
+          name="overscanRowCount"
+          onChange={(event) => setOverscanRowCount(parseInt(event.target.value, 10) || 0)}
+          value={overscanRowCount}
+        />
+      </InputRow>
+
+      <div>
+        <AutoSizer disableHeight>
+          {({ width }) => (
+            <List
+              ref="List"
+              className={styles.List}
+              height={listHeight}
+              overscanRowCount={overscanRowCount}
+              noRowsRenderer={_noRowsRenderer}
+              rowCount={rowCount}
+              rowHeight={useDynamicRowHeight ? _getRowHeight : listRowHeight}
+              rowRenderer={_rowRenderer}
+              scrollToIndex={scrollToIndex}
+              width={width}
+            />
+          )}
+        </AutoSizer>
       </div>
-      {/* add event listeners for mouse move to the document */}
-      {isMouseDown && (
-        <>
-          <style>{`* { cursor: move !important; }`}</style>
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              zIndex: -1,
-            }}
-            onMouseMove={mouseMove}
-          ></div>
-        </>
-      )}
-    </div>
+    </ContentBox>
   );
+
+  // Define the methods as usual
+  function _getDatum(index) {
+    return list.get(index % list.size);
+  }
+
+  function _getRowHeight({ index }) {
+    return _getDatum(index).size;
+  }
+
+  function _noRowsRenderer() {
+    return <div className={styles.noRows}>No rows</div>;
+  }
+
+  function _onRowCountChange(event) {
+    const rowCount = parseInt(event.target.value, 10) || 0;
+
+    setRowCount(rowCount);
+  }
+
+  function _onScrollToRowChange(event) {
+    let scrollToIndex = Math.min(rowCount - 1, parseInt(event.target.value, 10));
+
+    if (isNaN(scrollToIndex)) {
+      scrollToIndex = undefined;
+    }
+
+    setScrollToIndex(scrollToIndex);
+  }
+
+  function _rowRenderer({ index, isScrolling, key, style }) {
+    if (showScrollingPlaceholder && isScrolling) {
+      return (
+        <div className={clsx(styles.row, styles.isScrollingPlaceholder)} key={key} style={style}>
+          Scrolling...
+        </div>
+      );
+    }
+
+    const datum = _getDatum(index);
+
+    let additionalContent;
+
+    if (useDynamicRowHeight) {
+      switch (datum.size) {
+        case 75:
+          additionalContent = <div>It is medium-sized.</div>;
+          break;
+        case 100:
+          additionalContent = (
+            <div>
+              It is large-sized.
+              <br />
+              It has a 3rd row.
+            </div>
+          );
+          break;
+      }
+    }
+
+    return (
+      <div className={styles.row} key={key} style={style}>
+        <div
+          className={styles.letter}
+          style={{
+            backgroundColor: datum.color,
+          }}
+        >
+          {datum.name.charAt(0)}
+        </div>
+        <div>
+          <div className={styles.name}>{datum.name}</div>
+          <div className={styles.index}>This is row {index}</div>
+          {additionalContent}
+        </div>
+        {useDynamicRowHeight && <span className={styles.height}>{datum.size}px</span>}
+      </div>
+    );
+  }
 }
 
-export default Draggable;
+
+// const TargetDropAera = (props: any) => {
+//   const targetBoxes = props.targetBoxes;
+//   const setTargetBoxes = props.setTargetBoxes;
+//   const id = props.id;
+
+//   const [{ canDrop, isOver }, drop] = useDrop(() => {
+//     return {
+//       accept: ItemTypes.BOX,
+//       drop(item: DragItem, monitor) {
+//         const delta = monitor.getDifferenceFromInitialOffset() as XYCoord;
+//         console.log('Target:item >>', item);
+//         console.log('Target:item >>', delta);
+
+//         const left = Math.round(item.left + delta.x);
+//         const top = Math.round(item.top + delta.y);
+
+//         console.log('Target:coord', { left, top });
+
+//         const box = document.getElementById('target');
+//         const rect = box?.getBoundingClientRect();
+
+//         const x = monitor.getClientOffset()?.x || 0;
+//         const y = monitor.getClientOffset()?.y || 0;
+
+//         if (rect) {
+//           const relativeX = x - rect.left;
+//           const relativeY = y - rect.top;
+//           console.log('Target:relative', { relativeX, relativeY });
+
+//           const itemFound = targetBoxes[`${item.id}`];
+//           console.log('111111111111111111111111 ', itemFound);
+
+//           if (!itemFound) {
+//             console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ', item.id);
+//             return setTargetBoxes((prevState: { [key: string]: { top: number; left: number; title: string } }) => ({
+//               ...prevState,
+//               [item.id]: { top: relativeY, left: relativeX, title: targetBoxes[item.id]?.title },
+//             }));
+//           }
+//         }
+
+//         console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<', item.id);
+//         setTargetBoxes((prevState: { [key: string]: { top: number; left: number; title: string } }) => ({
+//           ...prevState,
+//           [item.id]: { top: top, left: left, title: targetBoxes[item.id]?.title },
+//         }));
+
+//         // search for the item found
+//       },
+//       collect: (monitor) => ({
+//         isOver: monitor.isOver(),
+//         canDrop: monitor.canDrop(),
+//       }),
+//     };
+//   }, [targetBoxes]);
+
+//   return (
+//     <Box
+//       id="target"
+//       ref={drop}
+//       sx={{ width: 250, height: 250, border: '5px solid black', position: 'relative', borderColor: isOver ? 'green' : 'black' }}
+//       onMouseDown={(event) => {
+//         const target = document.getElementById('target');
+//         const rect = target?.getBoundingClientRect();
+//         const x = event.clientX;
+//         const y = event.clientY;
+
+//         if (!rect) return;
+
+//         const relativeX = x - rect?.left;
+//         const relativeY = y - rect?.top;
+
+//         console.log('>>>>>>>:relative', { relativeX, relativeY });
+//       }}
+//     >
+//       {Object.keys(targetBoxes).map((key) => {
+//         const { left, top, title } = targetBoxes[key] as {
+//           top: number;
+//           left: number;
+//           title: string;
+//         };
+//         return (
+//           <BoxItem key={key} id={key} left={left} top={top} hideSourceOnDrag={false}>
+//             {title}
+//           </BoxItem>
+//         );
+//       })}
+//     </Box>
+//   );
+// };

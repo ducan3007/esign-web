@@ -1,14 +1,14 @@
-import { ThemeProvider } from '@mui/material';
-import React, { Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { FallbackLoading } from './components/Loading';
-import './global.styles.scss';
-import { RouteObject, appRoutes } from './routes';
-import { CustomTheme } from './theme';
-import DashboardLayout from './layouts/DashboardLayout';
+import { ThemeProvider } from '@mui/material'
+import React, { Suspense } from 'react'
+import { Route, Routes } from 'react-router-dom'
+import { FallbackLoading } from './components/Loading'
+import './global.styles.scss'
+import { ProtectedRoute } from './protected.routes'
+import { RouteObject, appRoutes } from './routes'
+import { CustomTheme } from './theme'
 
 export function App() {
-  const customizedTheme = CustomTheme('default');
+  const customizedTheme = CustomTheme('default')
 
   return (
     <ThemeProvider theme={customizedTheme}>
@@ -16,8 +16,20 @@ export function App() {
         <Suspense fallback={<FallbackLoading />}>
           <Routes>
             {appRoutes.map((route: RouteObject, index: number) => {
-              const Component = route.component;
-              const Layout = route.layout;
+              let Component = route.component
+
+              if (route.protected) {
+                Component = () => {
+                  return (
+                    <ProtectedRoute>
+                      <route.component />
+                    </ProtectedRoute>
+                  )
+                }
+              }
+
+              const Layout = route.layout
+
               if (Layout) {
                 return (
                   <Route
@@ -29,10 +41,10 @@ export function App() {
                       </Layout>
                     }
                   />
-                );
+                )
               }
 
-              return <Route key={index} path={route.path} element={<Component />} />;
+              return <Route key={index} path={route.path} element={<Component />} />
             })}
             {/* 404 */}
             {/* <Route path="/login" element={<LoginPage />} /> */}
@@ -41,7 +53,7 @@ export function App() {
         </Suspense>
       </React.Fragment>
     </ThemeProvider>
-  );
+  )
 }
 
-export default App;
+export default App

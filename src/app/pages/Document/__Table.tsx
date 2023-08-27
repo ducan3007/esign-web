@@ -92,8 +92,8 @@ export const DocumentTable = (props: any) => {
                   <TableRow key={nanoid()}>
                     {Object.keys(Columns).map((key) => {
                       return (
-                        <TableBodyCell key={nanoid()} _sx={{ height: '60px' }}>
-                          <Skeleton animation="wave" height="50px" />
+                        <TableBodyCell key={nanoid()} _sx={{ height: '100px' }}>
+                          <Skeleton animation="wave" height="100px" />
                         </TableBodyCell>
                       );
                     })}

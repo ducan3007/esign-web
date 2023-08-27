@@ -1,21 +1,23 @@
-import ButtonBase from '@mui/material/ButtonBase';
-import { ButtonBaseProps } from '@mui/material/ButtonBase';
-import styled from '@emotion/styled';
-import { SxProps } from '@mui/material';
+import ButtonBase from '@mui/material/ButtonBase'
+import { ButtonBaseProps } from '@mui/material/ButtonBase'
+import styled from '@emotion/styled'
+import { SxProps } from '@mui/material'
+import { forwardRef } from 'react'
 
 interface Props extends ButtonBaseProps {
-  content?: any;
-  color?: any;
-  style?: any;
-  sx?: SxProps;
-  children?: any;
+  content?: any
+  color?: any
+  style?: any
+  sx?: SxProps
+  children?: any
+  ref?: any
 }
 
 const StyledButton = styled(ButtonBase)(({ theme }: any) => ({
   '&:hover': {
     opacity: 0.8,
   },
-}));
+}))
 
 const MButton = ({ color, sx, style, content, children, ...props }: Props) => {
   const defaultSx: SxProps = {
@@ -25,7 +27,7 @@ const MButton = ({ color, sx, style, content, children, ...props }: Props) => {
     fontWeight: 400,
     padding: '1rem 1.4rem',
     borderRadius: '0.5rem',
-  };
+  }
   return (
     <StyledButton
       sx={{
@@ -37,8 +39,8 @@ const MButton = ({ color, sx, style, content, children, ...props }: Props) => {
     >
       {children}
     </StyledButton>
-  );
-};
+  )
+}
 
 export const IconButton = (props: Props) => {
   return (
@@ -57,7 +59,7 @@ export const IconButton = (props: Props) => {
     >
       {props.children}
     </ButtonBase>
-  );
-};
+  )
+}
 
-export default MButton;
+export default MButton

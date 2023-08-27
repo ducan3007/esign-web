@@ -6,7 +6,7 @@ body {
 }
 
 :root {
-  --shadow1: 0 0 20px #00000033;
+  --shadow1: 0 0 5px 2px #00000033;
   --shadow2: 0 0 20px #0000001a;
   --shadow3: 0 0 1.6rem #0000000f;
   --shadow4: 0 0 1.2rem #d3bfbf0f;
@@ -27,6 +27,7 @@ body {
 
   --light-bue2: #e8efff;
 
+  --light-blue3: '#F9FAFB';
   --blue5: #11009e;
   --blue6: #4942e4;
   --blue7: #8ab4f8;
@@ -40,7 +41,10 @@ body {
   --dark2: rgb(2, 30, 52, 0.8);
   --dark1: rgba(2, 30, 52, 0.7);
   --dark3: #494c4d;
+  --dark5: #576365;
   --dark4: rgb(16, 17, 17, 0.85);
+
+  --signer-me: rgb(15, 192, 197);
 
   --blue4: #f4f6f7;
 
@@ -50,27 +54,33 @@ body {
 
   --error: #dc382c;
 
+  --red1: #e34d4d;
+
   --white: #ffffff;
   --color-gray1: #c1cbd9;
   --color-gray2: #d0d8e2;
   --border-gray: rgb(234, 237, 242);
 
+  --gray11: #F0F0F0;
+
   --gray2: #f7f9fc;
 
   --gray3: #b4bbbf;
 
+  --canvas: #f4f4f4;
+
   --gray4: #c7c7c7;
 
   --light-gray: #e8e8e8;
-  --light-gray-darker:  #f7f9fc;
-
+  --light-gray-darker: #f7f9fc;
 
   --gray5: #323639;
   --gray6: #5b5e61;
 
+  --sx1: #dfe6ed;
+
   --trasnparent: transparent;
-  --dt-surface1-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
-    0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  --dt-surface1-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
 }
 
 *,
@@ -94,11 +104,38 @@ h2,
 h3,
 h4,
 p,
-span {
+span,
+textarea {
   color: var(--dark);
   margin: 0;
   overflow: hidden;
   letter-spacing: 0.25px;
+}
+
+textarea::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  :hover {
+    cursor: pointer;
+  }
+}
+
+textarea::-webkit-scrollbar-button {
+  display: none;
+}
+
+textarea::-webkit-scrollbar-track {
+  background-color: transparent;
+  :hover {
+    cursor: pointer;
+  }
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: #adacac;
+  :hover {
+    cursor: pointer;
+  }
 }
 
 html {
@@ -122,6 +159,61 @@ span {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.4rem;
   line-height: 1.4;
+}
+
+/* Font Family for Signatures */
+
+.font_dancing_script {
+  font-family: 'Dancing Script', cursive;
+  input {
+    font-family: 'Dancing Script', cursive;
+  }
+}
+
+.font_satisfy {
+  font-family: 'Satisfy', cursive;
+  input {
+    font-family: 'Satisfy', cursive;
+  }
+}
+
+.font_plus_jakarta_sans {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  input {
+    font-family: 'Plus Jakarta Sans', cursive;
+  }
+}
+
+.font_times_new_roman {
+  font-family: 'Tinos', serif;
+  input {
+    font-family: 'Tinos', serif;
+  }
+}
+
+.font_ephesis {
+  font-family: 'Ephesis', cursive;
+  input {
+    font-family: 'Ephesis', cursive;
+  }
+}
+
+.font_charmonman {
+  font-family: 'Charmonman', cursive;
+  input {
+    font-family: 'Charmonman', cursive;
+  }
+}
+
+.font_sofia {
+  font-family: 'Sofia', cursive;
+  input {
+    font-family: 'Sofia', cursive;
+  }
+}
+
+.disabled_button {
+  cursor: not-allowed;
 }
 
 [type='date'],
@@ -166,3 +258,76 @@ textarea {
   top: 5px;
   width: fit-content;
 }
+
+.react-resizable {
+  position: relative;
+  border: none !important;
+}
+.react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 0;
+  right: 0;
+  background: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pg08IS0tIEdlbmVyYXRvcjogQWRvYmUgRmlyZXdvcmtzIENTNiwgRXhwb3J0IFNWRyBFeHRlbnNpb24gYnkgQWFyb24gQmVhbGwgKGh0dHA6Ly9maXJld29ya3MuYWJlYWxsLmNvbSkgLiBWZXJzaW9uOiAwLjYuMSAgLS0+DTwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DTxzdmcgaWQ9IlVudGl0bGVkLVBhZ2UlMjAxIiB2aWV3Qm94PSIwIDAgNiA2IiBzdHlsZT0iYmFja2dyb3VuZC1jb2xvcjojZmZmZmZmMDAiIHZlcnNpb249IjEuMSINCXhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbDpzcGFjZT0icHJlc2VydmUiDQl4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjZweCIgaGVpZ2h0PSI2cHgiDT4NCTxnIG9wYWNpdHk9IjAuMzAyIj4NCQk8cGF0aCBkPSJNIDYgNiBMIDAgNiBMIDAgNC4yIEwgNCA0LjIgTCA0LjIgNC4yIEwgNC4yIDAgTCA2IDAgTCA2IDYgTCA2IDYgWiIgZmlsbD0iIzAwMDAwMCIvPg0JPC9nPg08L3N2Zz4=');
+  background-position: bottom right;
+  padding: 0 3px 3px 0;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  cursor: se-resize;
+}
+
+/* -------------------------------- */
+
+// .react-resizable-handle-sw {
+//   bottom: 0;
+//   left: 0;
+//   cursor: sw-resize;
+//   transform: rotate(90deg);
+// }
+// .react-resizable-handle-se {
+//   bottom: 0;
+//   right: 0;
+//   cursor: se-resize;
+// }
+// .react-resizable-handle-nw {
+//   top: 0;
+//   left: 0;
+//   cursor: nw-resize;
+//   transform: rotate(180deg);
+// }
+// .react-resizable-handle-ne {
+//   top: 0;
+//   right: 0;
+//   cursor: ne-resize;
+//   transform: rotate(270deg);
+// }
+// .react-resizable-handle-w,
+// .react-resizable-handle-e {
+//   top: 50%;
+//   margin-top: -10px;
+//   cursor: ew-resize;
+// }
+// .react-resizable-handle-w {
+//   left: 0;
+//   transform: rotate(135deg);
+// }
+// .react-resizable-handle-e {
+//   right: 0;
+//   transform: rotate(315deg);
+// }
+// .react-resizable-handle-n,
+// .react-resizable-handle-s {
+//   left: 50%;
+//   margin-left: -10px;
+//   cursor: ns-resize;
+// }
+// .react-resizable-handle-n {
+//   top: 0;
+//   transform: rotate(225deg);
+// }
+// .react-resizable-handle-s {
+//   bottom: 0;
+//   transform: rotate(45deg);
+// }

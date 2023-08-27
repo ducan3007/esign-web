@@ -33,13 +33,15 @@ export const Sidebar = () => {
         backgroundColor: 'var(--white)',
         borderStyle: 'solid',
         boxShadow: 'rgba(0, 0, 0, 0.06) 0px -9px 9px',
+        borderRight: '1px solid var(--border-gray)',
       }}
     >
       {/* -------------------------------------- Esign Logo ------------------------------- */}
       <Box
         sx={{
           borderBottom: '1px solid var(--border-gray)',
-          height: '7.75rem',
+          borderRight: '1px solid var(--border-gray)',
+          height: '8.75rem',
           position: 'relative',
           display: 'flex',
           alignItems: 'center',
@@ -83,6 +85,7 @@ export const Sidebar = () => {
                     }}
                     onClick={(event) => {
                       event.preventDefault();
+                      /* TODO: check if there is any unsaved work */
                       // if (haveUnsavedWork) {
                       //   const a = confirm('Are you sure you want to leave?');
                       //   if (a) {

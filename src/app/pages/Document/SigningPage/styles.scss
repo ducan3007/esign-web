@@ -13,7 +13,7 @@
     width: fit-content;
 
     border-width: 10px;
-    border-color: var(--gray6);
+    border-color: var(--light-gray);
 
     &.isOver {
       border-color: var(--blue7);
@@ -28,12 +28,14 @@
     display: flex;
 
     .pdf-thumbnail-container {
-      background-color: var(--gray6);
+      background-color: var(--white);
+
       .pdf-thumbnail {
         div {
           width: fit-content;
           margin: auto;
-          border: 8px solid var(--gray6);
+          border: 8px solid var(--white);
+          box-shadow: var(--shadow1);
         }
 
         .selected {
@@ -53,3 +55,5 @@
     }
   }
 }
+
+

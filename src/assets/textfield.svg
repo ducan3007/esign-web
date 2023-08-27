@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg class="icon glyph" width="100px" height="100px" fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<g fill="#494c4d">
+<path d="m12 22a1 1 0 0 1-1-1v-18a1 1 0 0 1 2 0v18a1 1 0 0 1-1 1z"/>
+<path d="m14 22h-4a1 1 0 0 1 0-2h4a1 1 0 0 1 0 2z"/>
+<path d="M19,6a1,1,0,0,1-1-1V4H6V5A1,1,0,0,1,4,5V4A2,2,0,0,1,6,2H18a2,2,0,0,1,2,2V5A1,1,0,0,1,19,6Z"/>
+</g>
+</svg>

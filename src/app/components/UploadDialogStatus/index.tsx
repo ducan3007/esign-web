@@ -1,35 +1,35 @@
-import { Box, Typography } from '@mui/material';
-import { Overlay } from '../Overlay';
-import MButton, { IconButton } from '../Button';
-import CloseIcon from '@mui/icons-material/Close';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { Box, Typography } from '@mui/material'
+import { Overlay } from '../Overlay'
+import MButton, { IconButton } from '../Button'
+import CloseIcon from '@mui/icons-material/Close'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
-import ClearIcon from '@mui/icons-material/Clear';
+import ClearIcon from '@mui/icons-material/Clear'
 
-import { useState } from 'react';
-import { UploadDialogItem } from './_item.upload';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions, selectors } from '@esign-web/redux/document';
+import { useState } from 'react'
+import { UploadDialogItem } from './_item.upload'
+import { useDispatch, useSelector } from 'react-redux'
+import { actions, selectors } from '@esign-web/redux/document'
 
 export const UploadStatusDialog = () => {
-  const dispatch = useDispatch();
-  const documentsStates = useSelector(selectors.getDocumentsStates);
-  const uploadingDocuments = useSelector(selectors.getUploadingDocuments);
-  const [open, setOpen] = useState(true);
+  const dispatch = useDispatch()
+  const documentsStates = useSelector(selectors.getDocumentsStates)
+  const uploadingDocuments = useSelector(selectors.getUploadingDocuments)
+  const [open, setOpen] = useState(true)
 
   if (!documentsStates.uploading_documents) {
-    return null;
+    return null
   }
 
-  const fileUploading = Object.values(uploadingDocuments).filter((doc) => doc.status === 'uploading').length;
-  const filesUploaded = Object.values(uploadingDocuments).filter((doc) => doc.status === 'success').length;
-  const filesFailed = Object.values(uploadingDocuments).filter((doc) => doc.status === 'failed').length;
+  const fileUploading = Object.values(uploadingDocuments).filter((doc) => doc.status === 'uploading').length
+  const filesUploaded = Object.values(uploadingDocuments).filter((doc) => doc.status === 'success').length
+  const filesFailed = Object.values(uploadingDocuments).filter((doc) => doc.status === 'failed').length
 
   const handleEvents = {
     onClearAll: () => {
-      dispatch(actions.uploadDocumentCancelAll({}));
+      dispatch(actions.uploadDocumentCancelAll({}))
     },
-  };
+  }
 
   return (
     <Overlay sx={{ bottom: '0', right: '24px' }}>
@@ -56,10 +56,7 @@ export const UploadStatusDialog = () => {
           }}
         >
           <Box>
-            <Typography
-              variant="h6"
-              sx={{ color: 'var(--dark3)', letterSpacing: '0.25px', fontWeight: 'bold', fontSize: '1.4rem' }}
-            >
+            <Typography variant="h6" sx={{ color: 'var(--dark3)', letterSpacing: '0.25px', fontWeight: 'bold', fontSize: '1.4rem' }}>
               {fileUploading > 0 && `Uploading ${fileUploading} of ${fileUploading + fileUploading} files`}
               {fileUploading === 0 && `${filesUploaded} files uploaded, ${filesFailed} files failed`}
             </Typography>
@@ -74,8 +71,8 @@ export const UploadStatusDialog = () => {
                 }}
               />
             </IconButton>
-            <IconButton>
-              <ClearIcon onClick={handleEvents.onClearAll} sx={{ fontSize: '2.4rem', margin: '0.5rem' }} />
+            <IconButton onClick={handleEvents.onClearAll}>
+              <ClearIcon sx={{ fontSize: '2.4rem', margin: '0.5rem' }} />
             </IconButton>
           </Box>
         </Box>
@@ -99,19 +96,10 @@ export const UploadStatusDialog = () => {
           }}
         >
           {Object.values(uploadingDocuments).map((doc) => {
-            return (
-              <UploadDialogItem
-                key={doc.id}
-                id={doc.id}
-                status={doc.status}
-                name={doc.name}
-                error_message={doc.error_message}
-                type={doc.type}
-              />
-            );
+            return <UploadDialogItem key={doc.id} id={doc.id} status={doc.status} name={doc.name} error_message={doc.error_message} type={doc.type} />
           })}
         </Box>
       </Box>
     </Overlay>
-  );
-};
+  )
+}

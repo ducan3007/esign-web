@@ -17,7 +17,7 @@ const StyledInput = styled(InputBase)(({ theme }: any) => ({
   '& .MuiInputBase-input:focus': {
     borderColor: 'var(--blue1)',
   },
-  width: '100%',
+  // width: '100%',
 }));
 
 const StyledOutlinedInput = styled(OutlinedInput)(({ theme }: any) => ({

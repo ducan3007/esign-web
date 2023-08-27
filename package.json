@@ -22,6 +22,7 @@
     "classnames": "^2.3.2",
     "core-js": "^3.31.1",
     "history": "^5.3.0",
+    "html2canvas": "^1.4.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "nanoid": "^4.0.2",
@@ -44,6 +45,7 @@
     "regenerator-runtime": "^0.13.11",
     "spark-md5": "^3.0.2",
     "tslib": "^2.3.0",
+    "uuid": "^9.0.0",
     "yup": "^1.2.0"
   },
   "devDependencies": {

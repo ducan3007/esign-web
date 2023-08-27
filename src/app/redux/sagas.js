@@ -1,10 +1,12 @@
 import { sagas as authSaga } from '@esign-web/redux/auth';
 import { sagas as documentSaga } from '@esign-web/redux/document';
+import { sagas as signaturesSaga } from '@esign-web/redux/signatures';
 import { all, fork } from 'redux-saga/effects';
 
 const rootSagas = {
   ...authSaga,
-  ...documentSaga
+  ...documentSaga,
+  ...signaturesSaga,
 };
 
 export default function* rootSaga(getState) {
