@@ -1,4 +1,4 @@
-import { PDF_SCALING_RATIO, axiosInstance, baseApi, rgba } from '@esign-web/libs/utils'
+import { PDF_SCALING_RATIO, axiosInstance, baseApi, getFontSizeWithScale, getFormatFromBase64, rgba } from '@esign-web/libs/utils'
 import { selectors as authSelectors } from '@esign-web/redux/auth'
 import { actions, selectors } from '@esign-web/redux/document'
 import ControlPointRoundedIcon from '@mui/icons-material/ControlPointRounded'
@@ -192,14 +192,16 @@ function RenderSigners(props: any) {
         disableRipple
         onClick={Events.handleOpen}
         // prettier-ignore
-        sx={{ width: '100%', backgroundColor: 'var(--white)', borderRadius: '5px', border: '3px solid var(--orange)', color: 'var(--orange)', '&:hover': { backgroundColor: 'var(--orange)', '& p': { color: 'var(--white)' } }, transition: 'all 0.4s ease-in-out', padding: '5px', }}
+        sx={{ 
+          width: '100%', 
+          backgroundColor: 'var(--orange1)', borderRadius: '7px', padding:'7px 12px', border: '2px solid var(--orange)', color: 'var(--orange)', '&:hover': { backgroundColor: 'var(--orange)', '& p': { color: 'var(--white)' } }, transition: 'all 0.4s ease-in-out',  }}
       >
         <Typography
           // prettier-ignore
-          sx={{ color: 'var(--orange)', fontSize: '1.7rem', fontWeight: 'bold', letterSpacing: '0.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', }}
+          sx={{ color: 'var(--white)', fontSize: '1.6rem', fontWeight: 'bold', letterSpacing: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center', }}
         >
-          <PersonAddAltRoundedIcon sx={{ fontSize: '2.4rem', fontWeight: 'bold', marginRight: '1rem' }} />
-          SIGNEES
+          {/* <PersonAddAltRoundedIcon sx={{ fontSize: '2.4rem', fontWeight: 'bold', marginRight: '1rem' }} /> */}
+          Invite Signee
         </Typography>
       </MButton>
     </>
@@ -224,11 +226,14 @@ function RenderSigners(props: any) {
   const getCanvasFromSignature = async () => {
     let ids: any = []
 
+    console.log('SAVE ', signatures)
+
     Object.keys(signatures).map((page) => {
       Object.keys(signatures[page]).map((key) => {
         ids.push({
           key: key,
           type: signatures[page][key].type,
+          page: signatures[page][key].pageNumber,
         })
       })
     })
@@ -236,43 +241,46 @@ function RenderSigners(props: any) {
     for (let i = 0; i < ids.length; i++) {
       const id = ids[i].key
       const type = ids[i].type
+      const page = ids[i].page
 
       if (type === 'textField') {
-        const signature = signatures[`page_${1}`][id]
+        const signature = signatures[`page_${page}`][id]
 
         if (!signature.signature_data) continue
 
-        const api = await baseApi.post('/file/upload/template', {
-          data: {
-            width: signature.width,
-            height: signature.height,
-            top: (signature.top + 2) / PDF_SCALING_RATIO,
-            left: (signature.left + 2) / PDF_SCALING_RATIO,
-            data: signature.signature_data.data,
-
-            fontSize: '18px',
-            lineHeight: 16,
-            color: '#000000',
-          },
-          type: 'text',
-        })
-        const base64 = api.data.base64
+        // const api = await baseApi.post('/file/upload/template', {
+        //   data: {
+        //     width: signature.width,
+        //     height: signature.height,
+        //     top: (signature.top + 2) / PDF_SCALING_RATIO,
+        //     left: (signature.left + 2) / PDF_SCALING_RATIO,
+        //     data: signature.signature_data.data,
+        //     fontFamily: signature?.fontFamily?.value,
+        //     fontSize: '18px',
+        //     lineHeight: 16,
+        //     color: '#000000',
+        //   },
+        //   type: 'text',
+        // })
+        // const base64 = api.data.base64
 
         if (!signature?.fontSize?.pixel) continue
 
         console.log('asdfdasfsdf', signature?.fontSize?.pixel.split('px')[0])
         console.log('asdfdasfsdf', signature?.fontSize?.pixel.split('px')[0])
-        console.log('asdfdasfsdf', Math.round(parseFloat(signature?.fontSize?.pixel.split('px')[0]) / PDF_SCALING_RATIO))
+        console.log('asdfdasfsdf', getFontSizeWithScale(signature?.fontSize?.pixel))
 
-        const fontSize = Math.round(parseFloat(signature?.fontSize?.pixel.split('px')[0]) / PDF_SCALING_RATIO)
+        // const fontSize = Math.round(parseFloat(signature?.fontSize?.pixel.split('px')[0]) / PDF_SCALING_RATIO)
+        const fontSize = getFontSizeWithScale(signature?.fontSize?.pixel)
 
         const api2 = await baseApi.post('/file/embed/text', {
           data: {
             width: signature.width,
             height: signature.height,
-            top: signature.top / PDF_SCALING_RATIO - 2,
-            left: signature.left / PDF_SCALING_RATIO + 2,
+            top: signature.top / PDF_SCALING_RATIO.value - 2,
+            left: signature.left / PDF_SCALING_RATIO.value + 2,
             data: signature.signature_data.data,
+            page: signature.pageNumber,
             fontSize: fontSize,
             lineHeight: fontSize * 1.2,
             fontFamily: signature?.fontFamily?.value,
@@ -323,12 +331,6 @@ function RenderSigners(props: any) {
           ref1.current.style.height = signature.height + 'px'
         }
 
-        if (ref2.current) {
-          ref2.current.src = base64
-          ref2.current.style.width = signature.width + 'px'
-          ref2.current.style.height = signature.height + 'px'
-        }
-
         // let element = document.getElementById(`${id}_text`)
         // console.log('getCanvasFromSignature element', element)
         // if (element) {
@@ -340,6 +342,59 @@ function RenderSigners(props: any) {
         //   const base64 = canvas.toDataURL('image/png')
         //   console.log('getCanvasFromSignature canvas', base64)
         // }
+      }
+      if (type === 'checkbox') {
+        let sig = signatures[`page_${page}`][id]
+
+        const svg = document.getElementById(`${id}_checkbox`)
+
+        console.log('checkbox svg', svg)
+
+        if (!svg) continue
+
+        svg.setAttribute('width', `${sig.width}px`)
+        svg.setAttribute('height', `${sig.height}px`)
+
+        var svgString = new XMLSerializer().serializeToString(svg)
+
+        // Encode the string into base64 format
+        var base64Data = window.btoa(svgString)
+
+        // Create a data URL for the image source
+        var dataUrl = 'data:image/svg+xml;base64,' + base64Data
+
+        const canvas = await html2canvas(svg, {
+          allowTaint: true,
+          backgroundColor: 'transparent',
+        })
+
+        svg.setAttribute('width', `100%`)
+        svg.setAttribute('height', `100%`)
+
+        console.log('checkbox dataUrl', dataUrl)
+
+        console.log('canvas dataUrl', canvas.toDataURL('image/png'))
+
+        const payload = {
+          data: {
+            top: sig.top / PDF_SCALING_RATIO.value,
+            left: sig.left / PDF_SCALING_RATIO.value,
+            width: sig.width / PDF_SCALING_RATIO.value,
+            height: sig.height / PDF_SCALING_RATIO.value,
+            base64: canvas.toDataURL('image/png'),
+            page: sig.pageNumber,
+          },
+          document_id: documentId,
+          format: getFormatFromBase64(canvas.toDataURL('image/png')),
+          type: 'base64',
+        }
+        const response = await baseApi.post('/file/embed/image', payload)
+
+        console.log('localhost:8080/ipfs/' + response.data.cid)
+
+        console.log('checkbox payload', payload)
+
+        ref2.current.src = canvas.toDataURL('image/png')
       }
     }
 
@@ -363,6 +418,7 @@ function RenderSigners(props: any) {
       <>{component}</>
 
       <MButton onClick={getCanvasFromSignature}>GET CANVAS</MButton>
+
       <img ref={ref1} src={temp} alt="" />
       <img ref={ref2} src={temp} alt="" />
 

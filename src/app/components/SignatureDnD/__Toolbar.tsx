@@ -23,6 +23,7 @@ import CopyAllIcon from '@mui/icons-material/CopyAll'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import AlertDialog from '../Dialog'
 import { MUIMenu } from '../Menu'
+import { SIGNATURE_SET } from 'libs/redux/document/src/lib/constants'
 
 type props = {
   type: string
@@ -39,15 +40,15 @@ type props = {
 
 export const FontSize = [
   // { pt: `${Math.floor(6 * PDF_SCALING_RATIO)}`, pixel: `${6 * PDF_SCALING_RATIO}px` },
-  { pt: `${Math.floor(12 * PDF_SCALING_RATIO)}`,    pixel: `${12 * PDF_SCALING_RATIO}px` ,     lineHeight: `${Math.floor(12 * PDF_SCALING_RATIO) * 1.2}px` },
-  { pt: `${Math.floor(13 * PDF_SCALING_RATIO)}`,    pixel: `${13 * PDF_SCALING_RATIO}px`  ,    lineHeight: `${Math.floor(13 * PDF_SCALING_RATIO) * 1.2}px` },
-  { pt: `${Math.floor(14 * PDF_SCALING_RATIO)}`,    pixel: `${14 * PDF_SCALING_RATIO}px`  ,    lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO) * 1.2}px` },
-  { pt: `${Math.floor(16 * PDF_SCALING_RATIO)}`,  pixel: `${16 * PDF_SCALING_RATIO}px`,    lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO) * 1.2}px` },
-  { pt: `${Math.floor(18 * PDF_SCALING_RATIO)}`,    pixel: `${18 * PDF_SCALING_RATIO}px` ,     lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO) * 1.2}px` },
-  { pt: `${Math.floor(20 * PDF_SCALING_RATIO)}`,    pixel: `${20 * PDF_SCALING_RATIO}px` ,     lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO) * 1.2}px` },
-  { pt: `${Math.floor(22 * PDF_SCALING_RATIO)}`,    pixel: `${22 * PDF_SCALING_RATIO}px` ,     lineHeight: `${Math.floor(22 * PDF_SCALING_RATIO) * 1.2}px` },
+  { pt: `${Math.floor(12 * PDF_SCALING_RATIO.value)}`, pixel: `${12 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(12 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(13 * PDF_SCALING_RATIO.value)}`, pixel: `${13 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(13 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`, pixel: `${14 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`, pixel: `${16 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`, pixel: `${18 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`, pixel: `${20 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(22 * PDF_SCALING_RATIO.value)}`, pixel: `${22 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(22 * PDF_SCALING_RATIO.value) * 1.2}px` },
 ]
-export const FontStyle = [
+export const FontFamily = [
   { fontFamily: 'Plus Jakarta Sans', value: 'font_plus_jakarta_sans' },
   { fontFamily: 'Dancing Script', value: 'font_dancing_script' },
   { fontFamily: 'Time New Roman', value: 'font_times_new_roman' },
@@ -60,6 +61,11 @@ export const FontStyle = [
 export const BaseToolbar = (props: props) => {
   const dispatch = useDispatch()
   const signatureData = props.signatureDataRefs.current[`page_${props.pageNumber}`][props.id]
+
+  const [fontState, setFontState] = useState({
+    fontFamily: signatureData.fontFamily,
+    fontSize: signatureData.fontSize,
+  })
 
   const top = {
     signature: -100,
@@ -191,7 +197,7 @@ export const BaseToolbar = (props: props) => {
               }}
               content1={
                 <span
-                  className={signatureData.fontFamily.value}
+                  className={fontState.fontFamily.value}
                   style={{
                     fontSize: '1.4rem',
                     fontWeight: 'bold',
@@ -199,11 +205,11 @@ export const BaseToolbar = (props: props) => {
                     textAlign: 'center',
                   }}
                 >
-                  {signatureData.fontFamily.fontFamily}
+                  {fontState.fontFamily.fontFamily}
                 </span>
               }
               content2={({ handleClose }) => {
-                return FontStyle.map((item, index) => {
+                return FontFamily.map((item, index) => {
                   return (
                     <Box
                       sx={{
@@ -219,7 +225,25 @@ export const BaseToolbar = (props: props) => {
                       key={index}
                       onClick={() => {
                         // setFontStyle(item)
+                        setFontState({
+                          ...fontState,
+                          fontFamily: item,
+                        })
+                        dispatch({
+                          type: SIGNATURE_SET,
+                          payload: {
+                            ...signatureData,
+                            fontFamily: item,
+                          },
+                        })
 
+                        const textAera = document.getElementById(`${props.id}_text`)
+                        if (textAera) {
+                          setTimeout(function () {
+                            textAera.focus()
+                            textAera.className = item.value
+                          }, 100)
+                        }
                         handleClose()
                       }}
                     >
@@ -279,7 +303,7 @@ export const BaseToolbar = (props: props) => {
                         letterSpacing: '0.2rem',
                       }}
                     >
-                      {signatureData.fontSize.pt}pt
+                      {fontState.fontSize.pt}pt
                     </span>
                   </>
                 }
@@ -298,7 +322,28 @@ export const BaseToolbar = (props: props) => {
                         }}
                         key={index}
                         onClick={() => {
-                          // setFontSize(item)
+                          setFontState({
+                            ...fontState,
+                            fontSize: item,
+                          })
+
+                          dispatch({
+                            type: SIGNATURE_SET,
+                            payload: {
+                              ...signatureData,
+                              fontSize: item,
+                            },
+                          })
+
+                          const textAera = document.getElementById(`${props.id}_text`)
+                          if (textAera) {
+                            setTimeout(function () {
+                              textAera.focus()
+                              textAera.style.fontSize = item.pixel
+                              textAera.style.lineHeight = item.lineHeight
+                            }, 100)
+                          }
+
                           handleClose()
                         }}
                       >
@@ -367,7 +412,7 @@ export const BaseToolbar = (props: props) => {
         position: 'absolute',
         border: '1px solid var(--gray3)',
         backgroundColor: 'var(--white)',
-        // borderRadius: '4px',
+        borderRadius: '4px',
         // boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.3)',
         top: top[props.type],
         left: 0,

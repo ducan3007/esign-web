@@ -5,9 +5,9 @@ import { useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import { Page } from 'react-pdf'
 import { useDispatch, useSelector } from 'react-redux'
-import DraggableItem from 'src/app/components/DnD'
+import DraggableItem from 'src/app/components/SignatureDnD'
 import { DragItem } from './__RenderSignature'
-import { FontSize, FontStyle } from 'src/app/components/DnD/__Toolbar'
+import { FontSize, FontFamily } from 'src/app/components/SignatureDnD/__Toolbar'
 
 type Props = {
   index: number
@@ -76,21 +76,39 @@ export const PDFPage = (props: Props) => {
           console.log('>>>>>>>>>>>> Page:relative', { relativeX, relativeY })
           const id = getHTMLID()
 
+          const sizeMapping = {
+            signature: {
+              width: 250,
+              height: 70,
+            },
+            textField: {
+              width: 250,
+              height: 50,
+            },
+            dateField: {
+              width: 200,
+              height: 50,
+            },
+            checkbox: {
+              width: 200,
+              height: 50,
+            },
+          }
+
           const newSingature = {
             id: id,
             top: relativeY,
             left: relativeX,
             pageNumber: index + 1,
-            width: 200,
-            height: 100,
             type: item.id,
             user: item.user,
             signature_data: {},
+            ...sizeMapping[item.id],
           }
 
           if (item.id === 'textField') {
             newSingature['fontSize'] = FontSize[1]
-            newSingature['fontFamily'] = FontStyle[0]
+            newSingature['fontFamily'] = FontFamily[0]
           }
 
           const fields = signer2[item.user.id].fields
@@ -286,6 +304,7 @@ export const PDFPage = (props: Props) => {
                   moveToPage={moveItemToPage}
                   copySignature={copySignature}
                   setSelectedSignature={setSelectedSignature}
+                  data={signatures_by_page[key].signature_data}
                 />
               )
             })}

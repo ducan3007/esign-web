@@ -6,6 +6,8 @@
   height: 100%;
   justify-content: center;
   align-items: center;
+  user-select: none;
+  text-align: center;
 }
 .loader-demo-box {
   border-radius: 0.25rem !important;
@@ -17,8 +19,8 @@
 }
 
 .jumping-dots-loader {
-  width: 100px;
-  height: 100px;
+  width: 250px;
+  height: 250px;
   border-radius: 100%;
   position: relative;
   margin: 0 auto;
@@ -26,10 +28,10 @@
 
 .jumping-dots-loader span {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   border-radius: 100%;
-  background-color: var(--orange1);
+  background-color: var(--orange2);
   margin: 35px 5px;
 }
 
@@ -56,9 +58,9 @@
   }
 
   25% {
-    -webkit-transform: translateY(-20px);
-    -ms-transform: translateY(-20px);
-    -o-transform: translateY(-20px);
-    transform: translateY(-20px);
+    -webkit-transform: translateY(-30px);
+    -ms-transform: translateY(-30px);
+    -o-transform: translateY(-30px);
+    transform: translateY(-30px);
   }
 }

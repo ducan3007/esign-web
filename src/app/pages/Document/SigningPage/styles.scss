@@ -12,7 +12,8 @@
     // background-color: red !important;
     width: fit-content;
 
-    border-width: 10px;
+    border-width: 7px;
+    border-radius: 6px;
     border-color: var(--light-gray);
 
     &.isOver {
@@ -34,7 +35,8 @@
         div {
           width: fit-content;
           margin: auto;
-          border: 8px solid var(--white);
+          border: 6px solid var(--white);
+          border-radius: 4px;
           box-shadow: var(--shadow1);
         }
 

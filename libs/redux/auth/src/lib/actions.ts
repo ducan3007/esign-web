@@ -1,9 +1,9 @@
-import * as _ from './constants';
+import * as _ from './constants'
 
 const fn = <T>(type: string, payload: T) => {
-  return { type, payload };
-};
-
+  return { type, payload }
+}
+// prettier-ignore
 export default {
   login:          (payload: any) => fn(_.AUTHENTICATING, payload),
   loginSuccess:   (payload: any) => fn(_.LOGIN_SUCCESS, payload),
@@ -18,5 +18,6 @@ export default {
   toggleSidebar:  () => fn(_.TOGGLE_SIDEBAR, null),
   
   authorize:      () => fn(_.AUTHORIZE_USER, null),
-};
 
+  toggleBackdrop: () => fn(_.TOOGLE_BACKDROP, null),
+};

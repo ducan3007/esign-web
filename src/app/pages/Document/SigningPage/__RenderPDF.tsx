@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectors } from '@esign-web/redux/auth'
 import { actions, selectors as documentSelectors } from '@esign-web/redux/document'
 import { actions as sigActions, selectors as sigSelectors } from '@esign-web/redux/signatures'
-import SignatureEditModal from '../../../components/DnD/__SignatureModal'
+import SignatureEditModal from '../../../components/SignatureDnD/__SignatureModal'
 import { SignatureType } from 'libs/redux/document/src/lib/reducers'
 import { Signature } from 'libs/redux/signatures/src/lib/reducers'
 
@@ -37,6 +37,8 @@ const RenderPDF = (props: RenderPDFProps) => {
   const containerRef = useRef<any>()
 
   const [sigModalOpen, setOpen] = useState(true)
+
+  const [render, setRender] = useState(false)
 
   /* Temporary State, store Ids only of signatures */
   // const [signatures, setSignatures] = useState<{ [key: string]: { [key: string]: Singature } }>({})
@@ -66,24 +68,36 @@ const RenderPDF = (props: RenderPDFProps) => {
     Effect to sync signatures from redux to refState
   */
   useEffect(() => {
-    console.log('>> signatures', signatures)
-    console.log('>> signaturesDataRefs', signatureDataRefs.current)
+    console.log('>>>>>>>>> signatures', signatures)
     const copySignature = Object.assign({}, signatures)
     signatureDataRefs.current = copySignature
+    console.log('>>>>>>>>> signaturesDataRefs', signatureDataRefs.current)
+    setRender(!render)
   }, [signatures])
 
   /* Event Handlers */
   const onDocumentLoadSuccess = async (nexPdf: PDFDocumentProxy) => {
     setNumPages(nexPdf.numPages)
     const page = await nexPdf.getPage(1)
-    const viewport = page.getViewport({ scale: PDF_SCALING_RATIO })
+    const viewport = page.getViewport({ scale: 1 })
     const pageHeight = viewport.height
     const pageWidth = viewport.width
 
-    setPageHeight(pageHeight)
-    setPageWidth(pageWidth)
+    let newScale = 1000 / pageWidth
+
+    if (newScale) {
+      let newViewport = page.getViewport({ scale: newScale })
+      PDF_SCALING_RATIO.value = newScale
+      let newPageHeight = newViewport.height
+      let newPageWidth = newViewport.width
+      setPageHeight(newPageHeight)
+      setPageWidth(newPageWidth)
+    }
+
     props.setIsPDFLoaded(true)
   }
+
+  console.log('>> PDF_SCALING_RATIO', PDF_SCALING_RATIO)
 
   const detectClickOutside = (e: any) => {
     e.preventDefault()
@@ -106,10 +120,12 @@ const RenderPDF = (props: RenderPDFProps) => {
   console.log('>> PageSize', {
     pageHeight: pageHeight,
     pageWidth: pageWidth,
-    originWidth: pageWidth / PDF_SCALING_RATIO,
-    originHeight: pageHeight / PDF_SCALING_RATIO
+    originWidth: pageWidth / PDF_SCALING_RATIO.value,
+    originHeight: pageHeight / PDF_SCALING_RATIO.value,
   })
   console.log('>> selectedSignature', selectedSignature)
+
+  const PAGE_GAP = 40 * PDF_SCALING_RATIO.value
 
   return (
     <Box
@@ -137,9 +153,9 @@ const RenderPDF = (props: RenderPDFProps) => {
                     height={window.innerHeight - 9 * 10}
                     width={width}
                     rowCount={numPages}
-                    rowHeight={pageHeight + 60}
+                    rowHeight={pageHeight + PAGE_GAP}
                     onScroll={(e) => {
-                      const currentPage = roundToHalf(e.scrollTop / (pageHeight + 60))
+                      const currentPage = roundToHalf(e.scrollTop / (pageHeight + PAGE_GAP))
                       const thumbnail = document.querySelector(`.react-pdf__Thumbnail__page[data-page-number="${currentPage + 1}"]`)
                       const selectedThumbnail = document.querySelector('.react-pdf__Thumbnail__page.selected')
 
@@ -175,14 +191,14 @@ const RenderPDF = (props: RenderPDFProps) => {
               </AutoSizer>
             </Box>
 
-            <Box sx={{ height: 'calc(100vh - 8.25rem)', width: '250px' }} className="pdf-thumbnail-container">
+            <Box sx={{ height: 'calc(100vh - 8.25rem)', width: '250px', paddingTop: '5px' }} className="pdf-thumbnail-container">
               <AutoSizer>
                 {({ width }) => (
                   <List
                     width={width}
                     height={window.innerHeight - 9 * 10}
                     rowCount={numPages}
-                    rowHeight={280}
+                    rowHeight={183 + 60 * PDF_SCALING_RATIO.value}
                     overscanColumnCount={10}
                     scrollToIndex={index1}
                     rowRenderer={({ index, key, style }) => (

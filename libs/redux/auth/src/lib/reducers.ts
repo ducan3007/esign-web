@@ -13,6 +13,7 @@ export type AuthType = {
   isAuthorized: boolean
   isLoginFail: boolean
   isSidebarOpen: boolean
+  isBackDropOpen: boolean
 }
 
 export const initialState = {
@@ -23,7 +24,8 @@ export const initialState = {
 
   isAuthorized: false,
   isLoginFail: false,
-  isSidebarOpen: localStorage.getItem('sidebar') === 'true' ? true : false
+  isSidebarOpen: localStorage.getItem('sidebar') === 'true' ? true : false,
+  isBackDropOpen: false,
 }
 
 export default (state = initialState, action: any) => {
@@ -111,6 +113,18 @@ export default (state = initialState, action: any) => {
         ...state,
         data: action.payload,
         isAuthorized: true,
+      }
+
+    case __.TOOGLE_BACKDROP:
+      return {
+        ...state,
+        isBackDropOpen: !state.isBackDropOpen,
+      }
+
+    case __.BACKDROP_OFF:
+      return {
+        ...state,
+        isBackDropOpen: false,
       }
 
     default:

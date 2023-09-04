@@ -1,24 +1,20 @@
-import { Box } from '@mui/material';
-import { DashboardHeader } from './Header';
-import { Sidebar } from './Sidebar';
-import { Overlay } from '../components/Overlay';
-import { UploadStatusDialog } from '../components/UploadDialogStatus';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { selectors } from '@esign-web/redux/document';
+import { selectors } from '@esign-web/redux/auth'
+import { Backdrop, Box } from '@mui/material'
+import { useSelector } from 'react-redux'
+import { Loading } from '../components/Loading'
+import { UploadStatusDialog } from '../components/UploadDialogStatus'
+import { DashboardHeader } from './Header'
+import { Sidebar } from './Sidebar'
 
 interface DashboardLayoutProps {
-  children: any;
+  children: any
 }
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const documents = useSelector(selectors.getDocuments);
+  const isBackdropOpen = useSelector(selectors.getBackgroundState)
 
   return (
-    <Box
-      id="dashboard-layout"
-      sx={{ position: 'relative', display: 'flex', flexDirenction: 'row', width: '100vw', height: '100vh' }}
-    >
+    <Box id="dashboard-layout" sx={{ position: 'relative', display: 'flex', flexDirenction: 'row', width: '100vw', height: '100vh' }}>
       <Box id="sidebar" sx={{ maxWidth: '23.25rem' }}>
         <Sidebar />
       </Box>
@@ -27,8 +23,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {children}
       </Box>
       <UploadStatusDialog />
+      <Backdrop
+        sx={{
+          color: '#d0d8e2',
+          zIndex: 9999999,
+          backgroundColor: 'rgba(0, 0, 0, 0.07)',
+        }}
+        open={isBackdropOpen}
+      >
+        <Loading />
+      </Backdrop>
     </Box>
-  );
-};
+  )
+}
 
-export default DashboardLayout;
+export default DashboardLayout

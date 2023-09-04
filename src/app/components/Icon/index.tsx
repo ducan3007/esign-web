@@ -7,6 +7,7 @@ type Props = {
   color: string
   width: string
   height?: string
+  id?: string
 }
 
 export const CheckBoxIcon = ({ color, width, height }: Props) => {
@@ -19,6 +20,14 @@ export const CheckBoxIcon = ({ color, width, height }: Props) => {
         strokeLinejoin="round"
         strokeWidth="2"
       ></path>
+    </svg>
+  )
+}
+
+export const CheckIcon = ({ color, width, height, id }: Props) => {
+  return (
+    <svg id={id} fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width={width || '50px'} height={height || '50px'}>
+      <path d="M4 12.6111L8.92308 17.5L20 6.5" stroke={color || '#494C4D'} strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
     </svg>
   )
 }
@@ -36,7 +45,7 @@ const IconSVG = (props: props) => {
     case 'date':
       return <img src={DateField} alt="date" width={width || '31px'} />
     case 'checkbox':
-      return <CheckBoxIcon color="#494C4D" width='34px'  />
+      return <CheckBoxIcon color="#494C4D" width="34px" />
     case 'textField':
       return <img src={TextFieldIcon} alt="textField" width={width || '31px'} />
     default:

@@ -6,7 +6,7 @@ import MailOutlineSharpIcon from '@mui/icons-material/MailOutlineSharp'
 import PersonOutlineSharpIcon from '@mui/icons-material/PersonOutlineSharp'
 import { Box, IconButton } from '@mui/material'
 import { nanoid } from 'nanoid'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import MButton from 'src/app/components/Button'
@@ -58,6 +58,10 @@ export const RenderSignerAdd = (props: any) => {
       })
     )
     reset()
+    const input = document.getElementById('cljkseioj')
+    if (input) {
+      input.focus()
+    }
   }
 
   return (
@@ -82,6 +86,7 @@ export const RenderSignerAdd = (props: any) => {
             render={({ field }) => (
               <TextFieldFilled
                 {...field}
+                id="cljkseioj"
                 sx={{
                   '& .MuiInputBase-root': {
                     ':after': { borderBottom: 'none' },
@@ -214,8 +219,8 @@ export const AutoSave = () => {
           dispatch(signatureActions.toggleAutoSave({}))
         }}
       >
-        {isSignatureAuto && <BookmarkBorderIcon sx={{ fontSize: '3.5rem' }} />}
-        {!isSignatureAuto && <BookmarkIcon sx={{ fontSize: '3.5rem', color: 'var(--orange)' }} />}
+        {!isSignatureAuto && <BookmarkBorderIcon sx={{ fontSize: '3.5rem' }} />}
+        {isSignatureAuto && <BookmarkIcon sx={{ fontSize: '3.5rem', color: 'var(--orange)' }} />}
       </IconButton>
     </MTooltip>
   )

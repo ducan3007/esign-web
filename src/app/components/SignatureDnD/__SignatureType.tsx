@@ -1,38 +1,46 @@
-import { actions, selectors } from '@esign-web/redux/signatures'
-import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, InputBase, Typography } from '@mui/material'
+import { PDF_SCALING_RATIO } from '@esign-web/libs/utils'
+import { Box, InputBase } from '@mui/material'
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import MButton from '../Button'
-import { useOnDraw } from '../Canvas/Hook'
-import { IconSignature } from '../Icons/pdf'
-import { MUIMenu } from '../Menu'
-import { MInputBase } from '../TextInput'
-import './style.scss'
-import { Signature } from 'libs/redux/signatures/src/lib/reducers'
-import { Options } from './__SignatureModal'
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { AutoSave } from 'src/app/pages/Document/SigningPage/__RenderSignerAdd'
+import { MUIMenu } from '../Menu'
+import './style.scss'
 
 export const FontSize = [
-  { pt: '12', pixel: '16px' },
-  { pt: '14', pixel: '19px' },
-  { pt: '18', pixel: '24px' },
-  { pt: '24', pixel: '32px' },
-  { pt: '36', pixel: '48px' },
-  { pt: '48', pixel: '64px' },
-  { pt: '60', pixel: '80px' },
-  { pt: '72', pixel: '96px' },
+  // { pt: `${Math.floor(6 * PDF_SCALING_RATIO)}`, pixel: `${6 * PDF_SCALING_RATIO}px` },
+  // { pt: `${Math.floor(12 * PDF_SCALING_RATIO)}`, pixel: `${12 * PDF_SCALING_RATIO}px`, lineHeight: `${Math.floor(12 * PDF_SCALING_RATIO) * 1.2}px` },
+  // { pt: `${Math.floor(13 * PDF_SCALING_RATIO)}`, pixel: `${13 * PDF_SCALING_RATIO}px`, lineHeight: `${Math.floor(13 * PDF_SCALING_RATIO) * 1.2}px` },
+  { pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`, pixel: `${14 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`, pixel: `${16 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`, pixel: `${18 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`, pixel: `${20 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(24 * PDF_SCALING_RATIO.value)}`, pixel: `${24 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(24 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(28 * PDF_SCALING_RATIO.value)}`, pixel: `${28 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(28 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(34 * PDF_SCALING_RATIO.value)}`, pixel: `${34 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(34 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  { pt: `${Math.floor(37 * PDF_SCALING_RATIO.value)}`, pixel: `${37 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(37 * PDF_SCALING_RATIO.value) * 1.2}px` },
 ]
+// prettier-ignore
 export const FontStyle = [
-  { fontFamily: 'Time New Roman', value: 'font_times_new_roman' },
-  { fontFamily: 'Dancing Script', value: 'font_dancing_script' },
-  { fontFamily: 'Satisfy', value: 'font_satisfy' },
-  { fontFamily: 'Ephesis', value: 'font_ephesis' },
-  { fontFamily: 'Charmonman', value: 'font_charmonman' },
-  { fontFamily: 'Sofia', value: 'font_sofia' },
+  { fontFamily: 'Plus Jakarta Sans',  value: 'font_plus_jakarta_sans' },
+  { fontFamily: 'Dancing Script',     value: 'font_dancing_script' },
+  { fontFamily: 'Time New Roman',     value: 'font_times_new_roman' },
+  { fontFamily: 'Satisfy',            value: 'font_satisfy' },
+  { fontFamily: 'Ephesis',            value: 'font_ephesis' },
+  { fontFamily: 'Charmonman',         value: 'font_charmonman' },
+  { fontFamily: 'Sofia',              value: 'font_sofia' },
+]
+
+// prettier-ignore
+export const Color = [
+  { color: 'black',       value: '#080808' },
+  { color: 'red',         value: '#d9392e' },
+  { color: 'orange',      value: '#f05d13' },
+  { color: 'green',       value: '#129939' },
+  { color: 'yellow',      value: '#ebd217' },
+  { color: 'lightblue',   value: '#1ddbbf' },
+  { color: 'blue',        value: '#1f6eed' },
+  { color: 'purple',      value: '#9117e8' },
+  { color: 'pink',        value: '#db0bb5' },
+
 ]
 
 type props = {
@@ -49,6 +57,7 @@ export const SignatureType = (props: props) => {
 
   const [fontStyle, setFontStyle] = useState(FontStyle[0])
   const [fontSize, setFontSize] = useState(FontSize[3])
+  const [color, setColor] = useState(Color[0])
   const [text, setText] = useState('')
 
   console.log('>>> fontStyle', fontStyle)
@@ -81,6 +90,7 @@ export const SignatureType = (props: props) => {
       data: {
         fontStyle: fontStyle,
         fontSize: fontSize,
+        color: color,
         data: text,
       },
       callback: getSignaturePreSize,
@@ -118,9 +128,9 @@ export const SignatureType = (props: props) => {
       sx={{
         width: '100%',
         height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
+        // flexDirection: 'column',
         position: 'relative',
+        // paddingRight: '5px',
       }}
       onClick={() => {
         inputRef.current.focus()
@@ -136,8 +146,8 @@ export const SignatureType = (props: props) => {
           justifyContent: 'space-between',
         }}
       >
-        {/*  ------------------- Font style ---------------------------- */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {/*  ------------------- Font style ---------------------------- */}
           <MUIMenu
             sx1={{
               width: '200px',
@@ -146,6 +156,8 @@ export const SignatureType = (props: props) => {
               border: '1px solid var(--gray3)',
               padding: 0,
               paddingLeft: '5px',
+              borderRadius: '0px',
+              marginLeft: '5px',
               display: 'flex',
               justifyContent: 'flex-start',
             }}
@@ -153,11 +165,19 @@ export const SignatureType = (props: props) => {
               '& .MuiPaper-root': {
                 marginTop: '4px',
                 boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.4)',
-                borderRadius: '4px',
+                // borderRadius: '4px',
               },
             }}
             content1={
-              <span className={fontStyle.value} style={{ fontSize: '2rem', fontWeight: 'bold', letterSpacing: '0.2rem' }}>
+              <span
+                className={fontStyle.value}
+                style={{
+                  fontSize: '1.8rem',
+                  fontWeight: 'bold',
+                  letterSpacing: '0.2rem',
+                  marginRight: '5px',
+                }}
+              >
                 {fontStyle.fontFamily}
               </span>
             }
@@ -178,6 +198,13 @@ export const SignatureType = (props: props) => {
                     key={index}
                     onClick={() => {
                       inputRef.current.focus()
+                      signatureDataRef.current = {
+                        ...signatureDataRef.current,
+                        data: {
+                          ...signatureDataRef.current.data,
+                          fontStyle: item,
+                        },
+                      }
                       setFontStyle(item)
                       handleClose()
                     }}
@@ -208,17 +235,20 @@ export const SignatureType = (props: props) => {
             sx={{
               display: 'flex',
               border: '1px solid var(--gray3)',
+              borderLeft: 'none',
+              alignItems: 'center',
             }}
           >
             <MUIMenu
               sx1={{
                 width: '60px',
-                // height: '35px',
+                height: '35px',
                 padding: 0,
+                borderLeft: 'none',
               }}
               sx2={{
                 '& .MuiPaper-root': {
-                  marginTop: '2px',
+                  marginTop: '12px',
                   boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.4)',
                   borderRadius: '6px',
                 },
@@ -252,6 +282,13 @@ export const SignatureType = (props: props) => {
                       key={index}
                       onClick={() => {
                         inputRef.current.focus()
+                        signatureDataRef.current = {
+                          ...signatureDataRef.current,
+                          data: {
+                            ...signatureDataRef.current.data,
+                            fontSize: item,
+                          },
+                        }
                         setFontSize(item)
                         handleClose()
                       }}
@@ -307,6 +344,85 @@ export const SignatureType = (props: props) => {
 
           {/*  --------------------- Color ---------------------------- */}
 
+          <MUIMenu
+            sx1={{
+              width: '60px',
+              border: '1px solid var(--gray3)',
+              borderLeft: 'none',
+            }}
+            sx2={{
+              '& .MuiPaper-root': {
+                marginTop: '7px',
+                boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.4)',
+                borderRadius: '6px',
+              },
+            }}
+            content1={
+              <>
+                <div
+                  style={{
+                    backgroundColor: color.value,
+                    width: '25px',
+                    height: '25px',
+                    borderRadius: '50%',
+                  }}
+                ></div>
+              </>
+            }
+            content2={({ handleClose }) => {
+              return Color.map((item, index) => {
+                return (
+                  <Box
+                    sx={{
+                      width: '60px',
+                      height: '35px',
+                      backgroundColor: 'white',
+                      alignItems: 'center',
+                      color: 'var(--dark)',
+                      marginBottom: '0px',
+                      padding: '4px',
+                    }}
+                    key={index}
+                    onClick={() => {
+                      inputRef.current.focus()
+                      signatureDataRef.current = {
+                        ...signatureDataRef.current,
+                        data: {
+                          ...signatureDataRef.current.data,
+                          color: item,
+                        },
+                      }
+                      setColor(item)
+                      handleClose()
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: '100%',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        borderRadius: '5px',
+                        padding: '4px 0px',
+                        '&:hover': {
+                          backgroundColor: 'var(--light-gray)',
+                        },
+                      }}
+                    >
+                      <div
+                        style={{
+                          backgroundColor: item.value,
+                          width: '25px',
+                          height: '25px',
+                          borderRadius: '50%',
+                        }}
+                      ></div>
+                    </Box>
+                  </Box>
+                )
+              })
+            }}
+          ></MUIMenu>
+
           {/* ---------------------- Bold -------------------------- */}
         </Box>
 
@@ -314,33 +430,36 @@ export const SignatureType = (props: props) => {
       </Box>
 
       {/* --------------------------- Mock Element ------------------ */}
-      <Box
+      <pre
         ref={textRef}
-        sx={{
+        style={{
           height: 'fit-content',
-          whiteSpace: 'nowrap',
+          whiteSpace: 'pre',
           width: 'fit-content',
           position: 'absolute',
           fontSize: fontSize.pixel,
           fontFamily: fontStyle.fontFamily,
           // opacity: 0,
-          top: '-10px',
           letterSpacing: '1px',
-          // display: 'none',
+          margin: 0,
+          padding: 0,
+          top: '100px',
         }}
       >
-        {text.trim()}
-      </Box>
+        {text}
+      </pre>
 
       {/* -------------------  Text Board  -------------------- */}
 
       <Box
         sx={{
-          flex: 1,
-          backgroundColor: 'var(--canvas)',
-          width: '100%',
-          height: '100%',
-          border: '1px solid var(--blue1)',
+          // width: '100%',
+          height: '90%',
+          marginRight: '5px',
+          marginLeft: '5px',
+          marginTop: '5px',
+          border: '1px solid var(--gray3)',
+          borderRadius: '7px',
           '& .MuiInputBase-root': {
             justifyContent: 'center',
           },
@@ -388,6 +507,7 @@ export const SignatureType = (props: props) => {
             border: 'none',
             position: 'absolute',
             bottom: '42%',
+            color: color.value,
           }}
         ></InputBase>
       </Box>

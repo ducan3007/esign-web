@@ -1,8 +1,11 @@
-import { selectors as AuthSelector } from '@esign-web/redux/auth';
-import { actions, selectors } from '@esign-web/redux/document';
+import { selectors as AuthSelector } from '@esign-web/redux/auth'
+import { actions, selectors } from '@esign-web/redux/document'
 import {
   Box,
   Divider,
+  InputBase,
+  Pagination,
+  PaginationItem,
   Paper,
   Skeleton,
   Table,
@@ -11,23 +14,29 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-} from '@mui/material';
-import { useEffect, useTransition } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { TableBodyCell } from 'src/app/components/Table';
-import { Columns, TableRowExpandable } from './__TableColumns';
-import SearchIcon from '@mui/icons-material/Search';
-import './styles.scss';
-import { nanoid } from 'nanoid';
+} from '@mui/material'
+import { useEffect, useState, useTransition } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { TableBodyCell } from 'src/app/components/Table'
+import { Columns, TableRowExpandable } from './__TableColumns'
+import SearchIcon from '@mui/icons-material/Search'
+import './styles.scss'
+import { nanoid } from 'nanoid'
+import SearchSharpIcon from '@mui/icons-material/SearchSharp'
+
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 export const DocumentTable = (props: any) => {
-  const dispatch = useDispatch();
-  const [isPending, startTransition] = useTransition();
-  const uploadingDocuments = useSelector(selectors.getUploadingDocuments);
-  const isSidebarOpen = useSelector(AuthSelector.getSidebarState);
-  const { documents = null, totals = 0 as number } = useSelector(selectors.getDocuments);
+  const dispatch = useDispatch()
+  const [isPending, startTransition] = useTransition()
+  const uploadingDocuments = useSelector(selectors.getUploadingDocuments)
+  const isSidebarOpen = useSelector(AuthSelector.getSidebarState)
+  const documents = useSelector(selectors.getDocuments) || {}
+  const total = useSelector(selectors.getTotal)
 
-  const loadingDocuments = useSelector(selectors.getLoadingDocuments);
+  const loadingDocuments = useSelector(selectors.getLoadingDocuments)
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
     dispatch(
@@ -35,29 +44,138 @@ export const DocumentTable = (props: any) => {
         limit: 20,
         offset: 0,
       })
-    );
-  }, []);
+    )
+  }, [])
+
+  console.log('documents', documents)
+  console.log('documents', useSelector(selectors.getDocuments))
 
   return (
     <Box sx={{ width: '100%', position: 'relative', overflowX: 'auto', overflowY: 'auto' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: '10px ',
+        }}
+      >
+        <Box
+          sx={{
+            flex: '1',
+            height: '47px',
+          }}
+        >
+          <Box
+            sx={{
+              border: '1px solid var(--gray3)',
+              borderRadius: '7px',
+              height: '100%',
+              width: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              paddingLeft: '8px',
+              gap: '15px',
+            }}
+          >
+            <SearchSharpIcon
+              sx={{
+                fontSize: '34px',
+                color: 'var(--dark3)',
+              }}
+            />
+            <InputBase
+              sx={{
+                width: '100%',
+                height: '100%',
+                fontSize: '1.85rem',
+                paddingRight: '30px',
+                color: 'var(--dark3)',
+                '& .MuiInputBase-input': {
+                  '&::placeholder': {
+                    color: 'var(--dark3) !important',
+                    fontSize: '1.85rem !important',
+                    opacity: 0.9,
+                  },
+                },
+
+                // border: '1px solid var(--gray3)',
+              }}
+              placeholder="Search documents, hash, tags"
+            ></InputBase>
+          </Box>
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          position: 'absolute',
+          zIndex: 1000,
+          top: 10,
+          right: 0,
+        }}
+      >
+        {documents && Object.keys(documents).length > 0 && (
+          <Pagination
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              '& .MuiPaginationItem-root': {
+                color: 'var(--dark)',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+              },
+            }}
+            onChange={(e, page) => {
+              console.log('page', page)
+              setPage(page)
+            }}
+            renderItem={(item) => (
+              <PaginationItem
+                sx={{
+                  '&.Mui-selected': {
+                    color: 'var(--orange)',
+                  },
+                }}
+                slots={{
+                  previous: () => {
+                    return <ArrowBackIcon sx={{ fontSize: '2rem' }} />
+                  },
+                  next: () => {
+                    return <ArrowForwardIcon sx={{ fontSize: '2rem' }} />
+                  },
+                }}
+                {...item}
+              />
+            )}
+            variant="text"
+            shape="rounded"
+            size="large"
+            count={total}
+            page={page}
+          />
+        )}
+      </Box>
+
       <TableContainer
         sx={{
-          width: isSidebarOpen ? 'calc(100vw - 120px)' : 'calc(100vw - 270px)',
-          height: 'calc(100vh - 210px)',
+          width: isSidebarOpen ? 'calc(100vw - 63px)' : 'calc(100vw - 223px)',
+          border: '1px solid var(--gray3)',
+          height: 'calc(100vh - 153px)',
           position: 'relative',
-          transition: 'width 0.8s',
-          '&::-webkit-scrollbar': {
-            width: '6px',
-            height: '5px',
-          },
-          '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: 'var(--orange)',
-            borderRadius: '50px',
-            border: '1px solid var(--white)',
-          },
+          transition: 'width 0.6s',
+          // '&::-webkit-scrollbar': {
+          //   width: '10px',
+          //   height: '5px',
+          // },
+          // '&::-webkit-scrollbar-track': {
+          //   background: 'transparent',
+          // },
+          // '&::-webkit-scrollbar-thumb': {
+          //   background: 'var(--dark2)',
+          //   borderRadius: '2px',
+          //   border: '1px solid var(--white)',
+          // },
         }}
         id="document-table"
         component={Paper}
@@ -66,8 +184,8 @@ export const DocumentTable = (props: any) => {
           <TableHead>
             <TableRow>
               {Object.keys(Columns).map((key) => {
-                const column = Columns[key as keyof typeof Columns];
-                return column.renderHeader(column);
+                const column = Columns[key as keyof typeof Columns]
+                return column.renderHeader(column)
               })}
             </TableRow>
           </TableHead>
@@ -78,33 +196,33 @@ export const DocumentTable = (props: any) => {
             })} */}
 
             {/* ------------------ Main Table ------------------- */}
-            {documents !== null &&
+            {Object.keys(documents).length > 0 &&
               Object.keys(documents).map((key) => {
-                const row = documents[key as keyof typeof documents];
-                return <TableRowExpandable key={key} row={row} />;
+                const row = documents[key as keyof typeof documents]
+                return <TableRowExpandable key={key} row={row} />
               })}
             {/* ------------------ Main Table ------------------- */}
 
             {/* ------------------ Loading ------------------- */}
-            {documents === null &&
-              [...Array(8)].map((_, index) => {
+            {loadingDocuments &&
+              [...Array(5)].map((_, index) => {
                 return (
                   <TableRow key={nanoid()}>
                     {Object.keys(Columns).map((key) => {
                       return (
                         <TableBodyCell key={nanoid()} _sx={{ height: '100px' }}>
-                          <Skeleton animation="wave" height="100px" />
+                          <Skeleton sx={{ transform: 'scale(1.0)', marginBottom: '20px' }} animation="wave" height="157px" />
                         </TableBodyCell>
-                      );
+                      )
                     })}
                   </TableRow>
-                );
+                )
               })}
             {/* ------------------ Loading ------------------- */}
           </TableBody>
         </Table>
       </TableContainer>
-      {!loadingDocuments && documents && Object.keys(documents).length === 0 && (
+      {!loadingDocuments && documents && total === 0 && (
         <Box
           sx={{
             position: 'absolute',
@@ -121,21 +239,6 @@ export const DocumentTable = (props: any) => {
           <span style={{ color: 'var(--orange)', fontSize: '2rem', fontWeight: 'bold' }}>No Documents Found !</span>
         </Box>
       )}
-      {documents && Object.keys(documents).length > 0 && (
-        <TablePagination
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-          }}
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={10}
-          rowsPerPage={5}
-          page={1}
-          onPageChange={() => {}}
-          onRowsPerPageChange={() => {}}
-        />
-      )}
     </Box>
-  );
-};
+  )
+}

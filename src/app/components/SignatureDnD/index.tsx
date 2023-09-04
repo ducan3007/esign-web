@@ -35,6 +35,7 @@ interface props {
   signer: Signers
   isMySignature: boolean
   type: string
+  data: any
 
   moveToPage: (id: string, currentPage: number, nextPage: number, callback: Function) => void
   copySignature: (id: string, pageNumber: number, sigenr_id: string) => void
@@ -56,7 +57,7 @@ export interface DragItem {
 }
 
 const DraggableItem = (props: props) => {
-  console.log('______RraggleItem______')
+  console.log('______RraggleItem______', props.data)
 
   const dispatch = useDispatch()
   const signer2 = useSelector(selectors.getSigners2)
@@ -343,7 +344,7 @@ const DraggableItem = (props: props) => {
         )}
 
         {props.type === 'signature' && props.isMySignature && (
-          <SignatureImageType signatureDataRefs={props.signatureDataRefs} signature_id={props.id} pageNumber={props.pageNumber} />
+          <SignatureImageType data={props.data} signatureDataRefs={props.signatureDataRefs} signature_id={props.id} pageNumber={props.pageNumber} />
         )}
 
         {props.type === 'checkbox' && props.isMySignature && (
@@ -360,23 +361,24 @@ const DraggableItem = (props: props) => {
   )
 }
 
-// prettier-ignore
 export default memo(DraggableItem, (prevProps, nextProps) => {
-  if(prevProps.isSelected !== nextProps.isSelected) return false
-  if(prevProps.top !== nextProps.top) return false
-  if(prevProps.left !== nextProps.left) return false
-  if(prevProps.width !== nextProps.width) return false
-  if(prevProps.height !== nextProps.height) return false
-  if(prevProps.pageHeight !== nextProps.pageHeight) return false
-  if(prevProps.pageWidth !== nextProps.pageWidth) return false
-  if(prevProps.pageNumber !== nextProps.pageNumber) return false
-  if(prevProps.totalPage !== nextProps.totalPage) return false
-  if(prevProps.isMySignature !== nextProps.isMySignature) return false
-  if(prevProps.type !== nextProps.type) return false
-  if(prevProps.id !== nextProps.id) return false
-  if(prevProps.signer !== nextProps.signer) return false
-  if(prevProps.color !== nextProps.color) return false
+  if (prevProps.isSelected !== nextProps.isSelected) return false
+  if (prevProps.top !== nextProps.top) return false
+  if (prevProps.left !== nextProps.left) return false
+  if (prevProps.width !== nextProps.width) return false
+  if (prevProps.height !== nextProps.height) return false
+  if (prevProps.pageHeight !== nextProps.pageHeight) return false
+  if (prevProps.pageWidth !== nextProps.pageWidth) return false
+  if (prevProps.pageNumber !== nextProps.pageNumber) return false
+  if (prevProps.totalPage !== nextProps.totalPage) return false
+  if (prevProps.isMySignature !== nextProps.isMySignature) return false
+  if (prevProps.type !== nextProps.type) return false
+  if (prevProps.id !== nextProps.id) return false
+  if (prevProps.signer !== nextProps.signer) return false
+  if (prevProps.color !== nextProps.color) return false
+  if (prevProps.data !== nextProps.data) return false
 
   return true
-
 })
+
+// export default DraggableItem

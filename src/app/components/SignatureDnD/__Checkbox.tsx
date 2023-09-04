@@ -8,7 +8,7 @@ import TextFieldIcon from 'src/assets/textfield.svg'
 import Signature from 'src/assets/signature.svg'
 import DateField from 'src/assets/date.svg'
 import CheckBox from 'src/assets/checkbox.svg'
-import IconSVG, { CheckBoxIcon } from 'src/app/components/Icon'
+import IconSVG, { CheckBoxIcon, CheckIcon } from 'src/app/components/Icon'
 import { useSelector } from 'react-redux'
 import { selectors } from '@esign-web/redux/document'
 import { TypeMapping } from '.'
@@ -20,5 +20,15 @@ type CheckboxSignatureType = {
 }
 
 export const SignatureCheckboxType = (props: CheckboxSignatureType) => {
-  return <CheckBoxIcon color="#494C4D" width="100%" height="100%" />
+  return (
+    <div
+      id={`${props.signature_id}_checkbox`}
+      style={{
+        width: '100%',
+        height: '100%', 
+      }}
+    >
+      <CheckIcon color="#494C4D" width="100%" height="100%" />
+    </div>
+  )
 }

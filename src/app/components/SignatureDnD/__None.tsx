@@ -8,7 +8,7 @@ import TextFieldIcon from 'src/assets/textfield.svg'
 import Signature from 'src/assets/signature.svg'
 import DateField from 'src/assets/date.svg'
 import CheckBox from 'src/assets/checkbox.svg'
-import IconSVG from 'src/app/components/Icon'
+import IconSVG, { CheckIcon } from 'src/app/components/Icon'
 import { useSelector } from 'react-redux'
 import { selectors } from '@esign-web/redux/document'
 import { TypeMapping } from '.'
@@ -30,7 +30,7 @@ export const SignatureNoneType = (props: SignatureNoneType) => {
       Icon = <IconSVG type="date" width="30px" />
       break
     case 'checkbox':
-      Icon = <IconSVG type="checkbox" width="30px" />
+      Icon = <CheckIcon color="#494C4D" width="30px" height="30px" />
       break
     case 'textField':
       Icon = <IconSVG type="textField" width="30px" />
@@ -49,10 +49,14 @@ export const SignatureNoneType = (props: SignatureNoneType) => {
         alignItems: 'center',
         justifyContent: 'center',
         gap: '15px',
+        paddingLeft: '5px',
+        paddingRight: '5px',
       }}
     >
       {Icon}
-      <Typography sx={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{props.signer.email}</Typography>
+      <Typography sx={{ fontSize: '1.5rem', fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        {props.signer.email}
+      </Typography>
     </Box>
   )
 }

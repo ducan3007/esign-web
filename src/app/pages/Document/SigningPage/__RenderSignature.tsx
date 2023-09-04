@@ -92,7 +92,7 @@ export const RenderSignature = (props: props) => {
         children: (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '4px' }}>
             <IconSVG type="signature" width="35px" />
-            <span style={{ fontSize: '1.6rem' }}>Signature</span>
+            <span style={{ fontSize: '1.6rem', color: 'var(--dark)' }}>Signature</span>
           </Box>
         ),
       },
@@ -102,7 +102,7 @@ export const RenderSignature = (props: props) => {
         children: (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '1.6rem', marginLeft: '4px' }}>
             <IconSVG type="textField" width="31px" />
-            <span style={{ fontSize: '1.6rem' }}>Text Field</span>
+            <span style={{ fontSize: '1.6rem', color: 'var(--dark)' }}>Text Field</span>
           </Box>
         ),
       },
@@ -112,7 +112,7 @@ export const RenderSignature = (props: props) => {
         children: (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '1.7rem', marginLeft: '6px' }}>
             <IconSVG type="date" width="29px" />
-            <span style={{ fontSize: '1.6rem' }}>Date Field</span>
+            <span style={{ fontSize: '1.6rem', color: 'var(--dark)' }}>Date Field</span>
           </Box>
         ),
       },
@@ -122,7 +122,7 @@ export const RenderSignature = (props: props) => {
         children: (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginLeft: '4px' }}>
             <IconSVG type="checkbox" width="36px" />
-            <span style={{ fontSize: '1.6rem' }}>Checkbox</span>
+            <span style={{ fontSize: '1.6rem', color: 'var(--dark)' }}>Checkbox</span>
           </Box>
         ),
       },
@@ -190,8 +190,8 @@ export const BoxItem: FC<BoxProps> = ({ id, children, user, color, isZeroSigner 
         id={id}
         style={{
           border: '1px solid var(--gray3)',
-          borderLeft: `6px solid ${color}`,
-          borderRadius: '4px',
+          borderLeft: `4px solid ${color}`,
+          borderRadius: '7px',
           borderTopLeftRadius: '2px',
           borderBottomLeftRadius: '2px',
           cursor: isZeroSigner ? 'not-allowed' : 'move',
@@ -203,7 +203,7 @@ export const BoxItem: FC<BoxProps> = ({ id, children, user, color, isZeroSigner 
         }}
         ref={drag}
       >
-        <DragIndicatorIcon style={{ fontSize: '2.5rem', color: 'var(--dark3)', transform: 'translateY(50%)' }} />
+        <DragIndicatorIcon style={{ fontSize: '2.5rem', color: 'var(--dark2)', transform: 'translateY(50%)' }} />
         {children}
       </div>
     </>

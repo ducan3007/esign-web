@@ -22,7 +22,10 @@ export const Toast = (props: ToastProps) => {
       return toast.error(props.message, {
         style: {
           borderColor: 'var(--red)',
+          // backgroundColor:'transparent',
+          color:'red',
           ...props.options?.style,
+          
         },
         autoClose: 3500,
         ...propCopy.options,

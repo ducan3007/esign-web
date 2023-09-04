@@ -9,8 +9,8 @@ export const TableHeadCell = (props: { _sx?: SxProps; children: any }) => {
       _sx={{
         fontWeight: 'bold',
         color: 'var(--dark4)',
-        fontSize: '1.6rem',
-        padding: '0.75rem 1rem 0.75rem 1rem',
+        fontSize: '1.9rem',
+        padding: '0.75rem 1rem 1.25rem 1rem',
         borderBottom: 'none',
         // border: '2px solid var(--dark)',
         width: '150px',
@@ -19,7 +19,6 @@ export const TableHeadCell = (props: { _sx?: SxProps; children: any }) => {
         position: 'sticky',
         top: 0,
         zIndex: 1,
-        backgroundColor: 'var(--color-gray2)',
         ...props._sx,
       }}
     >

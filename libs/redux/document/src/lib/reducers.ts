@@ -1,3 +1,4 @@
+import { UserType } from '@esign-web/libs/utils'
 import * as _ from './constants'
 import { Signature } from 'libs/redux/signatures/src/lib/reducers'
 
@@ -24,10 +25,19 @@ export type DocumentUploading = {
 
 export type Document = {
   id: string
+  user_id: string
+  original_hash_256: string
+  hash_256: string
+  thumbnail: string
+  status: string
+  is_scanned: boolean
   name: string
+  createdAt: string
+  updatedAt: string
   cid: string
   size: number
   type: string
+  user: UserType
   url: string
   file: any
 }
@@ -96,24 +106,52 @@ type documentState = {
       [id: string]: Signature
     }
   }
+
+  total: number
+
+  document_detail: Document | null
+
+  isSaveDraftEnabled: Boolean
 }
 
 export const initialState: documentState = {
   document_uploading: {},
-  documents: {
-    document: null as any,
-  },
+
+  documents: {},
+
   uploading_documents: false,
+
   loading_documents: false,
 
   signers2: {},
+
   signers: {},
 
   signatures: {},
+
+  total: 0,
+
+  document_detail: null,
+
+  isSaveDraftEnabled: false,
 }
 
 export default (state = initialState, action: any) => {
   switch (action.type) {
+    case _.DISABLE_SAVE_DRAFT: {
+      return {
+        ...state,
+        isSaveDraftEnabled: false,
+      }
+    }
+
+    case _.ENABLE_SAVE_DRAFT: {
+      return {
+        ...state,
+        isSaveDraftEnabled: true,
+      }
+    }
+
     case _.DOCUMENT_UPLOAD_RENDER:
       return {
         ...state,
@@ -161,9 +199,17 @@ export default (state = initialState, action: any) => {
     case _.DOCUMENT_GET_ALL_SUCCESS:
       return {
         ...state,
-        documents: action.payload,
+        documents: action.payload.documents,
+        total: action.payload.total,
         loading_documents: false,
       }
+
+    case _.DOCUMENT_SET_DETAIL: {
+      return {
+        ...state,
+        document_detail: action.payload,
+      }
+    }
 
     /* ------------------------------ SIGNATURE---------------------------- */
 
@@ -198,6 +244,28 @@ export default (state = initialState, action: any) => {
           [`page_${pageNumber}`]: {
             ...state.signatures[`page_${pageNumber}`],
             [action.payload.id]: action.payload,
+          },
+        },
+      }
+    }
+
+    case _.SIGNATURES_UPDATE_DATA: {
+      let pageNumber = action.payload.pageNumber
+      let id = action.payload.id
+
+      return {
+        ...state,
+        signatures: {
+          ...state.signatures,
+          [`page_${pageNumber}`]: {
+            ...state.signatures[`page_${pageNumber}`],
+            [id]: {
+              ...state.signatures[`page_${pageNumber}`][id],
+              signature_data: {
+                type: action.payload.type,
+                data: action.payload.data,
+              },
+            },
           },
         },
       }

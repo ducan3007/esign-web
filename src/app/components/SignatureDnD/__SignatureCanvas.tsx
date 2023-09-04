@@ -10,7 +10,7 @@ import { MTooltip } from '../Tooltip'
 import { AutoSave } from 'src/app/pages/Document/SigningPage/__RenderSignerAdd'
 
 type props = {
-  signatureDataRef: MutableRefObject<{ type: string; data: any; callback?: any }>
+  signatureDataRef: MutableRefObject<{ type: string; data: any; callback?: any; callback2?: any }>
   containerRef: any
   disableSaveSignature: boolean
   setDisableSaveSignature: (disable: boolean) => void
@@ -21,8 +21,15 @@ export const SignatureCanvas = (props: props) => {
   const dispatch = useDispatch()
 
   const [color, setColor] = useState('black')
-  const [width, setWidth] = useState(0)
-  const { setCanvasRef, onCanvasMouseDown, clearCanvas, canvasRef, pointsRef } = useOnDraw(onDraw, drawDot, setDisableSaveSignature)
+  const [widthCanvas, setWidth] = useState(0)
+  const [heightCanvas, setheight] = useState(0)
+  const { setCanvasRef, onCanvasMouseDown, clearCanvas, canvasRef, pointsRef, boundRectRefMin, boundRectRefMax } = useOnDraw(
+    onDraw,
+    drawDot,
+    setDisableSaveSignature,
+    widthCanvas,
+    heightCanvas
+  )
 
   /* Effect to set signatureDataRef */
   useEffect(() => {
@@ -33,14 +40,23 @@ export const SignatureCanvas = (props: props) => {
           data: '',
         },
         callback: getDataUrl,
+        callback2: getActualSize,
       }
     }
   }, [])
 
+  console.log('boundRectRefMin', boundRectRefMin.current)
+  console.log('boundRectRefMax', boundRectRefMax.current)
+  console.log('boundRect', {
+    width: boundRectRefMax.current.left - boundRectRefMin.current.left,
+    height: boundRectRefMax.current.top - boundRectRefMin.current.top,
+  })
+
   /* Effect to get Canvas board width */
   useEffect(() => {
     if (props.containerRef.current) {
-      setWidth(props.containerRef.current.offsetWidth)
+      setWidth(props.containerRef.current.offsetWidth - 10)
+      setheight(props.containerRef.current.offsetHeight - 60)
     }
   }, [props.containerRef.current])
 
@@ -78,8 +94,73 @@ export const SignatureCanvas = (props: props) => {
     pointsRef.current = []
   }
 
-  function getDataUrl() {
-    return canvasRef.current?.toDataURL('image/png')
+  async function getDataUrl() {
+    const scale = 1.0
+    let ctx = canvasRef.current.getContext('2d')
+
+    boundRectRefMin.current.left = boundRectRefMin.current.left - 2.4
+    boundRectRefMin.current.top = boundRectRefMin.current.top - 2.4
+    boundRectRefMax.current.left = boundRectRefMax.current.left + 3
+    boundRectRefMax.current.top = boundRectRefMax.current.top + 2.8
+
+    const minRect = boundRectRefMin.current
+    const maxRect = boundRectRefMax.current
+
+    const left = minRect.left
+    const top = minRect.top
+    const width = maxRect.left - minRect.left
+    const height = maxRect.top - minRect.top
+
+    console.log({
+      left,
+      top,
+      width,
+      height,
+    })
+
+    const imageData = ctx.getImageData(left, top, width, height)
+
+    let temp_canvas = document.createElement('canvas')
+    temp_canvas.width = maxRect.left - minRect.left
+    temp_canvas.height = maxRect.top - minRect.top
+
+    let temp_ctx = temp_canvas.getContext('2d')
+
+    if (temp_ctx) {
+      temp_ctx.putImageData(imageData, 0, 0)
+      // Return the base64 data URL from the temp canvas
+      return temp_canvas.toDataURL('image/png')
+    }
+    // var image = new Image()
+    // image.src = canvasRef.current.toDataURL('image/png')
+
+    // Use the await keyword to wait for the image to load
+    // await new Promise((resolve, reject) => {
+    //   image.onload = resolve
+    //   image.onerror = reject
+    // })
+
+    // let temp_canvas = document.createElement('canvas')
+    // temp_canvas.width = image.width * scale
+    // temp_canvas.height = image.height * scale
+
+    // let temp_ctx = temp_canvas.getContext('2d')
+
+    // if (temp_ctx) {
+    //   temp_ctx.drawImage(image, 0, 0, image.width * scale, image.height * scale)
+    //   // Return the base64 data URL from the temp canvas
+    //   return temp_canvas.toDataURL('image/png')
+    // }
+    // return canvasRef.current.toDataURL('image/png')
+  }
+
+  async function getScaledDataUrl() {}
+
+  function getActualSize() {
+    return {
+      width: boundRectRefMax.current.left - boundRectRefMin.current.left,
+      height: boundRectRefMax.current.top - boundRectRefMin.current.top,
+    }
   }
 
   function drawLine(start: any, end: any, ctx: any, color: string, width: any) {
@@ -97,7 +178,10 @@ export const SignatureCanvas = (props: props) => {
     ctx.fill()
   }
 
-  console.log('width', width)
+  console.log('sizeeeeeeeeeee', {
+    width: widthCanvas,
+    height: heightCanvas,
+  })
 
   return (
     <Box
@@ -148,16 +232,19 @@ export const SignatureCanvas = (props: props) => {
       </Box>
 
       {/* ------------------- Canvas Board -------------------- */}
-      {width > 0 && (
+      {widthCanvas > 0 && (
         <>
           <canvas
-            width={width - 10}
-            height={500}
+            width={widthCanvas}
+            height={heightCanvas}
             onMouseDown={(e) => onCanvasMouseDown(e, color, pointsRef)}
             style={{
               flex: 1,
-              border: '1px solid var(--blue1)',
+              border: '1px solid var(--gray3)',
+              borderRadius: '7px',
+              // boxShadow: '0px 0px 6px rgba(0, 0, 0, 0.4)',
               backgroundColor: 'transparent',
+              margin: '5px 5px 5px 5px',
             }}
             ref={setCanvasRef}
           />

@@ -11,6 +11,7 @@ export enum SignatureContent {
   text = 'text',
   canvas = 'canvas',
   image = 'image',
+  mySignature = 'mySignature',
 }
 
 export type Signature = {
@@ -52,9 +53,10 @@ export type Signature = {
   date?: string
   // For Checkbox
   isChecked?: boolean
-  signature_data?: {
+  signature_data: {
     type?: SignatureContent
     data?: any
+    url?: string
   }
 }
 
@@ -69,7 +71,7 @@ type signatureState = {
 export const initialState: signatureState = {
   signatures1: {},
   isModalOpen: false,
-  isSignatureAuto: false,
+  isSignatureAuto: localStorage.getItem('signatureAutoSave') === 'true' ? true : false,
 }
 
 export default (state = initialState, action: any) => {
@@ -82,6 +84,7 @@ export default (state = initialState, action: any) => {
     }
 
     case _.SIGNATURE_AUTO_SAVE: {
+      localStorage.setItem('signatureAutoSave', !state.isSignatureAuto ? 'true' : 'false')
       return {
         ...state,
         isSignatureAuto: !state.isSignatureAuto,

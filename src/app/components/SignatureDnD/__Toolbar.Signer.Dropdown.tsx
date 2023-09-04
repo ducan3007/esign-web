@@ -65,7 +65,7 @@ export const ToolbarSignerDropDown = (props: props) => {
           width: '100%',
           height: '48px',
           position: 'relative',
-          backgroundColor: `${rgba(props.selectedSigner.color, 0.1)}`,
+          backgroundColor: `${rgba(props.selectedSigner.color, 0.4)}`,
           display: 'flex',
           alignItems: 'center',
           cursor: 'pointer',
