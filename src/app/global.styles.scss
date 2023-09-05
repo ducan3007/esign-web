@@ -7,9 +7,11 @@ body {
 
 :root {
   --shadow1: 0 0 5px 2px #00000033;
-  --shadow2: 0 0 20px #0000001a;
+  --shadow2: 0 0 10px 40px 8px #0000001a;
   --shadow3: 0 0 1.6rem #0000000f;
   --shadow4: 0 0 1.2rem #d3bfbf0f;
+
+  --shadow99: rgba(0, 0, 0, 0.2) 0px 6px 32px;
 
   --shadow-blue1: 0 0 1.2rem rgb(37, 61, 172);
 
@@ -23,6 +25,9 @@ body {
   --green2: #0fc00f;
   --green3: #34a853;
   --green11: #03c988;
+
+  --green14: rgba(3, 201, 136, 0.4);
+
   --green12: #285430;
 
   --yellow1: #f1c40f;
@@ -46,6 +51,7 @@ body {
   --error4: #ff4500;
 
   --dark: rgb(2, 30, 52);
+  --darkxx: #ccd2d6;
   --dark2: rgb(2, 30, 52, 0.8);
   --dark1: rgba(2, 30, 52, 0.7);
   --dark3: #494c4d;

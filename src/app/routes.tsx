@@ -7,6 +7,7 @@ import RestoreOutlinedIcon from '@mui/icons-material/RestoreOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import WalletOutlinedIcon from '@mui/icons-material/WalletOutlined';
 
+
 // const DashboardLayout = React.lazy(() => import('./layouts/DashboardLayout'));
 import DashboardLayout from './layouts/DashboardLayout';
 // const AccountSettingsPage = React.lazy(() => import('./pages/Account'));
@@ -35,6 +36,8 @@ import { DocumentDetail } from './pages/Document/DocumentDetail';
 import WalletPage from './pages/Wallet';
 import { DocumentSignningPage } from './pages/Document/SigningPage';
 
+
+
 export interface RouteObject {
   path: string;
   isPublish?: boolean;
@@ -59,7 +62,7 @@ export const headerTitles = [
   { to: '/document',              name: 'Documents',               },
   { to: '/signatures',            name: 'Signatures',              },
   { to: '/certificate',           name: 'Certificates',            },
-  { to: '/wallet',                name: 'Wallets',                 },
+  { to: '/wallet',                name: '',          },
   { to: '/ums',                   name: 'Organization',            },
   { to: '/logs',                  name: 'Logs',                    },
   { to: '/account-setting',       name: 'Account Settings',        },

@@ -1,21 +1,20 @@
 import { DndContext } from '@dnd-kit/core'
-import { actions, selectors } from '@esign-web/redux/document'
+import { baseApi, rgba } from '@esign-web/libs/utils'
 import { selectors as authSelectors } from '@esign-web/redux/auth'
-import { selectors as documentSelectors } from '@esign-web/redux/document'
+import { actions, selectors as documentSelectors, selectors } from '@esign-web/redux/document'
 import { Avatar, Box, Divider, Drawer, Skeleton, Typography } from '@mui/material'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { DOCUMENT_SET_DETAIL } from 'libs/redux/document/src/lib/constants'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
+import MButton from 'src/app/components/Button'
 import { NotFoundPage } from '../../404NotFound'
 import RenderPDF from './__RenderPDF'
 import RenderPDFSkeleton from './__RenderPDFSkeleton'
 import { RenderSignature } from './__RenderSignature'
-import RenderSigners, { signersProps } from './__RenderSigner'
+import RenderSigners from './__RenderSigner'
+import _ from 'lodash'
 import './styles.scss'
-import { useUnSavedChangesWarning } from 'src/app/components/hook/unSaveChangesWarning'
-import MButton from 'src/app/components/Button'
-import { baseApi, rgba } from '@esign-web/libs/utils'
-import { DOCUMENT_SET_DETAIL } from 'libs/redux/document/src/lib/constants'
 
 export const DocumentSignningPage = () => {
   const dispatch = useDispatch()
@@ -67,7 +66,12 @@ export const DocumentSignningPage = () => {
       <Box id="signing-container" sx={{ flex: 1, width: '100%', overflow: 'hidden' }}>
         <Box></Box>
         <Box sx={{ display: 'flex' }}>
-          <RenderLeftSide documentDetail={documentDetail} selectedSignerId={selectedSignerId} setSelectedSignerId={setSelectedSignerId} />
+          <RenderLeftSide
+            documentId={documentId}
+            documentDetail={documentDetail}
+            selectedSignerId={selectedSignerId}
+            setSelectedSignerId={setSelectedSignerId}
+          />
 
           <Box sx={{ flex: 1, position: 'relative' }}>
             <RenderPDF documentId={documentId} setIsPDFLoaded={setIsPDFLoaded} />
@@ -180,8 +184,58 @@ const RenderLeftSide = (props: any) => {
       console.log('>>> signatures', signatures)
       console.log('>>> messages', messages)
 
+      const payload: any = {
+        id: props.documentId,
+        signers: [],
+      }
+
+      Object.keys(signer2).forEach((key) => {
+        const signer = signer2[key]
+        payload.signers.push({
+          id: signer.id,
+          email: signer.email,
+          firstName: signer.firstName,
+          lastName: signer.lastName,
+          fields: signer.fields,
+          color: signer.color,
+          message: messages,
+          metadata: JSON.stringify({
+            id: signer.id,
+            email: signer.email,
+            firstName: signer.firstName,
+            lastName: signer.lastName,
+            fields: signer.fields,
+            color: signer.color,
+            message: messages,
+          }),
+          singatures: getSignaturesBySignerId(signer.id),
+        })
+      })
+
+      Object.keys(signatures).forEach((key) => {})
+
+      console.log('>>> payload', payload)
+
       setOpenDrawer(true)
     }
+  }
+
+  function getSignaturesBySignerId(signerId: string) {
+    let res: any = []
+    let isOtherSigner = signerId !== authState.data?.id
+    Object.keys(signatures).forEach((key) => {
+      if (Object.keys(signatures[key]).length > 0) {
+        Object.keys(signatures[key]).forEach((key2) => {
+          if (signatures[key][key2].user.id === signerId) {
+            res.push({
+              canDrag: signatures[key][key2].type === 'signature' && isOtherSigner ? false : true,
+              ...signatures[key][key2],
+            })
+          }
+        })
+      }
+    })
+    return res
   }
   /*------------------- Skeleton */
   if (!props.documentDetail) {
@@ -472,6 +526,7 @@ const RenderLeftSide = (props: any) => {
                   wrap="off"
                   tabIndex={-1}
                   style={{
+                    padding: '2px',
                     width: '100%',
                     height: '250px',
                     backgroundColor: 'transparent',
@@ -479,7 +534,6 @@ const RenderLeftSide = (props: any) => {
                     resize: 'none',
                     outline: 'none',
                     fontSize: '1.6rem',
-                    padding: '0px',
                     margin: '0px',
                     whiteSpace: 'nowrap',
                     letterSpacing: '0px',

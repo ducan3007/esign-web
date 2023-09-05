@@ -16,7 +16,7 @@ export const Columns = {
       return (
         <TableHeadCell
           _sx={{
-            backgroundColor: 'var(--gray2)',
+            backgroundColor: 'var(--darkxx)',
             left: 0,
             position: 'sticky',
             zIndex: 11,
@@ -86,7 +86,7 @@ export const Columns = {
       return (
         <TableHeadCell
           _sx={{
-            backgroundColor: 'var(--gray2)',
+            backgroundColor: 'var(--darkxx)',
             left: 0,
             position: 'sticky',
             zIndex: 11,
@@ -132,7 +132,19 @@ export const Columns = {
     id: 'signer',
     label: 'Signers',
     renderHeader: (props: any) => {
-      return <TableHeadCell key={nanoid()}>{props.label}</TableHeadCell>
+      return (
+        <TableHeadCell
+          _sx={{
+            backgroundColor: 'var(--darkxx)',
+            left: 0,
+            position: 'sticky',
+            zIndex: 11,
+          }}
+          key={nanoid()}
+        >
+          {props.label}
+        </TableHeadCell>
+      )
     },
     renderCell: (props: any) => {
       const key = nanoid()
@@ -144,7 +156,19 @@ export const Columns = {
     id: 'status',
     label: 'Status',
     renderHeader: (props: any) => {
-      return <TableHeadCell key={nanoid()}>{props.label}</TableHeadCell>
+      return (
+        <TableHeadCell
+          _sx={{
+            backgroundColor: 'var(--darkxx)',
+            left: 0,
+            position: 'sticky',
+            zIndex: 11,
+          }}
+          key={nanoid()}
+        >
+          {props.label}
+        </TableHeadCell>
+      )
     },
     renderCell: (props: any) => {
       const key = nanoid()
@@ -157,7 +181,19 @@ export const Columns = {
     id: 'owner',
     label: 'Owner',
     renderHeader: (props: any) => {
-      return <TableHeadCell key={nanoid()}>{props.label}</TableHeadCell>
+      return (
+        <TableHeadCell
+          _sx={{
+            backgroundColor: 'var(--darkxx)',
+            left: 0,
+            position: 'sticky',
+            zIndex: 11,
+          }}
+          key={nanoid()}
+        >
+          {props.label}
+        </TableHeadCell>
+      )
     },
     renderCell: (props: any) => {
       const key = nanoid()

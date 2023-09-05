@@ -429,7 +429,7 @@ function RenderSigners(props: any) {
         open={open}
         onClose={Events.handleClose}
         // prettier-ignore
-        sx={{ '& .MuiDialog-paper': { width: 1300, height: 950, maxWidth: 'none', maxHeight: 'none', borderRadius: '15px', boxShadow: 'none', }, '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.3)', }, }}
+        sx={{ '& .MuiDialog-paper': { width: 1200, height: 950, maxWidth: 'none', maxHeight: 'none', borderRadius: '15px', boxShadow: 'none', }, '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.3)', }, }}
       >
         {/* -----------------------------------------   Dialog Title  --------------------------------------------------- */}
 

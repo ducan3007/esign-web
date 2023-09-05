@@ -4,8 +4,8 @@ import DateField from 'src/assets/date.svg'
 import CheckBox from 'src/assets/checkbox.svg'
 
 type Props = {
-  color: string
-  width: string
+  color?: string
+  width?: string
   height?: string
   id?: string
 }
@@ -19,6 +19,20 @@ export const CheckBoxIcon = ({ color, width, height }: Props) => {
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth="2"
+      ></path>
+    </svg>
+  )
+}
+
+export const SignIcon = ({ color, width, height }: Props) => {
+  return (
+    <svg width={width || '50px'} height={height || '50px'} fill="none" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M3 27C6 19.333 13.5 5 18.5 5 23 5 10 26 15 26c3.5 0 6-10.5 8.5-10.5s-1 9 1 9c2.5 0 4-4 4-4"
+        stroke={color || '#021E34'}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2.472"
       ></path>
     </svg>
   )
