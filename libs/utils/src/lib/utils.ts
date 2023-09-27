@@ -1,4 +1,5 @@
 import { PDF_SCALING_RATIO } from './@Types'
+import html2canvas from 'html2canvas'
 
 export const FILE_SERVICE = process.env.NX_FILE_SERVER_URL
 
@@ -37,10 +38,31 @@ export const getFontSize = (px: string) => {
 
 export const getFontSizePx = (px: string): string => {
   const pixel = px.split('px')[0]
-  return `${Math.round((parseFloat(pixel) / PDF_SCALING_RATIO.value))}px`
+  return `${Math.round(parseFloat(pixel) / PDF_SCALING_RATIO.value)}px`
 }
 
 export const getFormatFromBase64 = (base64: string) => {
   const format = base64.split(';')[0].split('/')[1]
   return format
+}
+
+export const html2Canvas = async (id: string, options: any) => {
+  try {
+    let element = document.getElementById(id)
+    if (!element) return
+
+    element.setAttribute('width', `${options.width}px`)
+    element.setAttribute('height', `${options.height}px`)
+
+    let svgString = new XMLSerializer().serializeToString(element)
+
+    let canvas = await html2canvas(element, {
+      allowTaint: true,
+      backgroundColor: 'transparent',
+    })
+
+    return canvas.toDataURL('image/png')
+  } catch (error) {
+    console.log(error)
+  }
 }

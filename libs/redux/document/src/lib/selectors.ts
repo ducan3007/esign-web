@@ -21,4 +21,7 @@ export default {
 
   getSigners2:            (state: any): any => state[namespace]?.signers2,
   getDraftEnabled:        (state: any): boolean => state[namespace]?.isSaveDraftEnabled,
+
+  getSignStatus :         (state: any): any => state[namespace]?.signersStatus,
+  
 }

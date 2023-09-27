@@ -58,11 +58,11 @@ export const dashboardPaths = [
 ];
 
 export const headerTitles = [
-  { to: '/dashboard',             name: 'Dashboard',               },
+  { to: '/dashboard',             name: 'dfdf',                        },
   { to: '/document',              name: 'Documents',               },
   { to: '/signatures',            name: 'Signatures',              },
   { to: '/certificate',           name: 'Certificates',            },
-  { to: '/wallet',                name: '',          },
+  { to: '/wallet',                name: '',                        },
   { to: '/ums',                   name: 'Organization',            },
   { to: '/logs',                  name: 'Logs',                    },
   { to: '/account-setting',       name: 'Account Settings',        },

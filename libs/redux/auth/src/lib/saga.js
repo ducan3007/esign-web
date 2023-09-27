@@ -1,8 +1,9 @@
 import { get } from 'lodash'
 import { call, put, takeLatest } from 'redux-saga/effects'
-import { authorizeUserByToken, loginApi } from './api'
+import { authorizeUserByToken, loginApi, registerApi } from './api'
 import * as __ from './constants'
 import action from './actions'
+import { baseApi } from '@esign-web/libs/utils'
 
 function* loginSaga({ payload }) {
   try {
@@ -24,8 +25,8 @@ function* loginSaga({ payload }) {
 
 function* signupSaga({ payload }) {
   try {
-    const { email, password } = payload
-    const response = yield call(loginApi, { email, password })
+    const { email, password, confirmPassword, firstName, lastName } = payload
+    const response = yield call(registerApi, { email, password, confirmPassword, firstName, lastName })
 
     if (200 === get(response, 'status')) {
       const token = get(response, 'data.token')
@@ -40,10 +41,14 @@ function* signupSaga({ payload }) {
 }
 
 function* authorizeUserSaga() {
+  let token = window.localStorage.getItem('token')
+  let tokenFromUrl = new URLSearchParams(window.location.search).get('token')
   try {
-    const token = window.localStorage.getItem('token')
+    if (tokenFromUrl) {
+      token = tokenFromUrl
+      localStorage.setItem('signatureAutoSave', 'false')
+    }
     const response = yield call(authorizeUserByToken, { token })
-
     if (200 === get(response, 'status')) {
       const data = get(response, 'data')
       console.log('>> authorize data', data)
@@ -51,10 +56,11 @@ function* authorizeUserSaga() {
     }
   } catch (error) {
     console.log('error', error)
-    if (get(error, 'response.status') === 401) {
+    if (tokenFromUrl) {
+      return (window.location.href = `/404`)
+    } else if (get(error, 'response.status') === 401) {
       window.localStorage.removeItem('token')
-      // redirect to login page
-      window.location.href = '/login'
+      return (window.location.href = '/login')
     }
   }
 }

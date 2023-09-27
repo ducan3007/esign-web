@@ -1,10 +1,12 @@
+import { selectors as authSelector } from '@esign-web/redux/auth'
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined'
 import { Box } from '@mui/material'
 import { MutableRefObject, useEffect, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { AutoSave } from 'src/app/pages/Document/SigningPage/__RenderSignerAdd'
 import MButton from '../Button'
-import './style.scss'
 import { Toast } from '../Toast'
+import './style.scss'
 
 type props = {
   signatureDataRef: MutableRefObject<{ type: string; data: any; callback?: any }>
@@ -15,6 +17,7 @@ type props = {
 
 export const SignatureUpload = (props: props) => {
   const { signatureDataRef, setDisableSaveSignature, disableSaveSignature } = props
+  const authState = useSelector(authSelector.getAuthState)
 
   const inputRef = useRef<any>()
   const dataRef = useRef<any>({
@@ -158,7 +161,7 @@ export const SignatureUpload = (props: props) => {
             Upload a file
           </span>
         </MButton>
-        <AutoSave />
+        {authState.data?.is_registerd && <AutoSave />}
       </Box>
 
       {/* --------------------------------- Upload File ------------------------------ */}
@@ -175,7 +178,6 @@ export const SignatureUpload = (props: props) => {
             // border: '1px solid var(--gray3)',
             // borderRadius: '8px',
           }}
-          
         />
       )}
 

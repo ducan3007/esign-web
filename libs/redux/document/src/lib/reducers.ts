@@ -27,7 +27,8 @@ export type Document = {
   id: string
   user_id: string
   original_hash_256: string
-  hash_256: string
+  hash256: string
+  final_hash256: string
   thumbnail: string
   status: string
   is_scanned: boolean
@@ -40,6 +41,7 @@ export type Document = {
   user: UserType
   url: string
   file: any
+  document_signer?: any[]
 }
 export enum SignatureType {
   SIGNATURE = 'signature',
@@ -112,6 +114,8 @@ type documentState = {
   document_detail: Document | null
 
   isSaveDraftEnabled: Boolean
+
+  signersStatus: {}
 }
 
 export const initialState: documentState = {
@@ -134,6 +138,8 @@ export const initialState: documentState = {
   document_detail: null,
 
   isSaveDraftEnabled: false,
+
+  signersStatus: {},
 }
 
 export default (state = initialState, action: any) => {
@@ -195,6 +201,13 @@ export default (state = initialState, action: any) => {
         ...state,
         loading_documents: true,
       }
+
+    case _.SET_SIGNER_STATUS: {
+      return {
+        ...state,
+        signersStatus: action.payload,
+      }
+    }
 
     case _.DOCUMENT_GET_ALL_SUCCESS:
       return {

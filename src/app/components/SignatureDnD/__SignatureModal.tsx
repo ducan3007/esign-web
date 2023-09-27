@@ -130,9 +130,11 @@ const SignatureEditModal = (props: props) => {
               width: width,
               height: height,
             })
-            console.log('>>>>>>>> res', res)
-            reduxPayload.signature_data['signature_id'] = res['id']
             reduxPayload.signature_data.url = res.url
+            reduxPayload.signature_data['isBase64'] = false
+            reduxPayload.signature_data['signature_id'] = res['id']
+          } else {
+            reduxPayload.signature_data['isBase64'] = true
           }
           console.log('>>>>>>>> reduxPayload', reduxPayload)
 
@@ -191,6 +193,9 @@ const SignatureEditModal = (props: props) => {
           })
           reduxPayload.signature_data['signature_id'] = res['id']
           reduxPayload.signature_data.url = res.url
+          reduxPayload.signature_data['isBase64'] = false
+        } else {
+          reduxPayload.signature_data['isBase64'] = true
         }
         console.log('>>>>>>>> reduxPayload', reduxPayload)
 
@@ -230,6 +235,9 @@ const SignatureEditModal = (props: props) => {
           })
           reduxPayload.signature_data['signature_id'] = res['id']
           reduxPayload.signature_data.url = res.url
+          reduxPayload.signature_data['isBase64'] = false
+        } else {
+          reduxPayload.signature_data['isBase64'] = true
         }
 
         dispatch({

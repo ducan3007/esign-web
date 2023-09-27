@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@mui/material'
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { FallbackLoading } from './components/Loading'
 import './global.styles.scss'
@@ -9,7 +9,6 @@ import { CustomTheme } from './theme'
 
 export function App() {
   const customizedTheme = CustomTheme('default')
-
   return (
     <ThemeProvider theme={customizedTheme}>
       <React.Fragment>

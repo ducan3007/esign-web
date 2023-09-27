@@ -1,5 +1,7 @@
 import { useEffect, useLayoutEffect, useState } from 'react'
 import moment from 'moment'
+import { FontSizeToolbar } from './__Toolbar'
+import { FontSize, FontStyle } from './__SignatureType'
 
 type DateSignatureType = {
   signatureDataRefs: any
@@ -15,7 +17,11 @@ export const DateTextAreaType = (props: DateSignatureType) => {
   const formats = ['DD/MM/YYYY', 'DD/MM/YY', 'DD-MM-YYYY', 'DD-MM-YY', 'DD.MM.YYYY', 'DD.MM.YY']
 
   useEffect(() => {
-    setValue(moment().format('DD/MM/YYYY'))
+    if (signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.data === '') {
+      setValue(moment().format('DD/MM/YYYY'))
+    } else {
+      setValue(signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.data)
+    }
   }, [])
 
   console.log('DateTextAreaType', signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.data)
@@ -33,7 +39,7 @@ export const DateTextAreaType = (props: DateSignatureType) => {
         if (e.target.value === '') {
           setValue(moment().format('DD/MM/YYYY'))
         }
-        if (!moment(e.target.value.trim(), 'DD/MM/YYYY',true).isValid()) {
+        if (!moment(e.target.value.trim(), 'DD/MM/YYYY', true).isValid()) {
           setValue(moment().format('DD/MM/YYYY'))
         }
       }}
@@ -47,7 +53,10 @@ export const DateTextAreaType = (props: DateSignatureType) => {
         color: 'var(--dark)',
         resize: 'none',
         outline: 'none',
-        fontSize: '2.7rem',
+        margin: '0px',
+        padding: '0px',
+        fontSize: FontSize[1].pixel,
+        fontFamily: FontStyle[0].fontFamily,
       }}
       placeholder="Type something here..."
     ></textarea>

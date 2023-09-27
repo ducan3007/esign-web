@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import MButton from 'src/app/components/Button'
-
+import { ethers } from "ethers";
 import MetamaskIcon from 'src/assets/metamask.svg'
 import Coinbase from 'src/assets/coinbase.svg'
 import Walletconnect from 'src/assets/walletconnect.svg'

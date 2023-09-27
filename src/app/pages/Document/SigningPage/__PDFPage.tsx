@@ -7,7 +7,9 @@ import { Page } from 'react-pdf'
 import { useDispatch, useSelector } from 'react-redux'
 import DraggableItem from 'src/app/components/SignatureDnD'
 import { DragItem } from './__RenderSignature'
-import { FontSize, FontFamily } from 'src/app/components/SignatureDnD/__Toolbar'
+import { FontSizeToolbar, FontFamily } from 'src/app/components/SignatureDnD/__Toolbar'
+import moment from 'moment'
+import { FontSize } from 'src/app/components/SignatureDnD/__SignatureType'
 
 type Props = {
   index: number
@@ -107,8 +109,14 @@ export const PDFPage = (props: Props) => {
           }
 
           if (item.id === 'textField') {
-            newSingature['fontSize'] = FontSize[1]
-            newSingature['fontFamily'] = FontFamily[0]
+            newSingature.signature_data['fontSize'] = FontSizeToolbar[1]
+            newSingature.signature_data['fontFamily'] = FontFamily[0]
+          }
+
+          if (item.id === 'dateField') {
+            newSingature.signature_data['data'] = moment().format('DD/MM/YYYY')
+            newSingature.signature_data['fontSize'] = FontSize[1]
+            newSingature.signature_data['fontFamily'] = FontFamily[0]
           }
 
           const fields = signer2[item.user.id].fields
@@ -149,6 +157,8 @@ export const PDFPage = (props: Props) => {
   )
   console.log(`Page: ${index + 1} signatures:`, signatures)
   console.log(`Page: ${index + 1} signatureDataRefs:`, signatureDataRefs.current)
+  console.log('SIGNED 5signatures_by_page', signatures_by_page)
+  console.log('SIGNED signer2', signer2)
 
   /* ----------- MOVE ------------------ */
   const moveItemToPage = (id: string, currentPage: number, nextPage: number, callback: Function) => {
@@ -274,13 +284,24 @@ export const PDFPage = (props: Props) => {
               const left = signatureDataRefs_by_page[key].left
               const width = signatureDataRefs_by_page[key].width
               const height = signatureDataRefs_by_page[key].height
+
+              const is_hidden = signatureDataRefs_by_page[key].is_hidden
+              const can_move = signatureDataRefs_by_page[key].can_move
+              const can_select = signatureDataRefs_by_page[key].can_select
+              const can_delete = signatureDataRefs_by_page[key].can_delete
+              const can_copy = signatureDataRefs_by_page[key].can_copy
+              const is_signed = signatureDataRefs_by_page[key].is_signed === true
+
               const type = signatureDataRefs_by_page[key].type
               const user = signer2[signatures_by_page[key].user.id]
               const isSelected = selectedSignature?.id === signature.id
 
               const isMySignature = user.id === props.me_id
-
               // console.log('>>>>>>>>>>>> Page:signatures_by_page', signature)
+
+              if (is_hidden === true) {
+                return <Box key={key}></Box>
+              }
 
               return (
                 <DraggableItem
@@ -305,6 +326,12 @@ export const PDFPage = (props: Props) => {
                   copySignature={copySignature}
                   setSelectedSignature={setSelectedSignature}
                   data={signatures_by_page[key].signature_data}
+                  can_move={can_move}
+                  is_hidden={is_hidden}
+                  can_select={can_select}
+                  can_delete={can_delete}
+                  can_copy={can_copy}
+                  is_signed={is_signed}
                 />
               )
             })}

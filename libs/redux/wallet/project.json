@@ -1,0 +1,16 @@
+{
+  "name": "redux-wallet",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/redux/wallet/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/redux/wallet/**/*.{ts,tsx,js,jsx}"]
+      }
+    }
+  }
+}

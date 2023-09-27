@@ -65,6 +65,9 @@ function RenderSigners(props: any) {
   const isImNotSigner2 = useMemo(() => { for (let key in signers) { if (authState.data?.email === signers[key].email) { return false } } return true }, [signers]) // prettier-ignore
   const isOnlyMeSigner = signersNumber === 1 && !isImNotSigner
   const isMoreThanOneSigners = signersNumber >= 1
+  const isDisableAddSigner = props.document_status === 'READY_TO_SIGN'
+
+  console.log('isDisableAddSigner ', isDisableAddSigner)
 
   console.log({
     signersNumber,
@@ -215,6 +218,7 @@ function RenderSigners(props: any) {
   if ((!isOnlyMeSigner || isImNotSigner) && isMoreThanOneSigners && selectedSigner.id) {
     component = (
       <SignerDropDown
+        isDisableAddSigner={isDisableAddSigner}
         selectedSigner={selectedSigner}
         setSelectedSignerId={setSelectedSignerId}
         signersNumber={signersNumber}
@@ -264,14 +268,10 @@ function RenderSigners(props: any) {
         // })
         // const base64 = api.data.base64
 
-        if (!signature?.fontSize?.pixel) continue
-
-        console.log('asdfdasfsdf', signature?.fontSize?.pixel.split('px')[0])
-        console.log('asdfdasfsdf', signature?.fontSize?.pixel.split('px')[0])
-        console.log('asdfdasfsdf', getFontSizeWithScale(signature?.fontSize?.pixel))
+        if (!signature.signature_data.fontSize?.pixel) continue
 
         // const fontSize = Math.round(parseFloat(signature?.fontSize?.pixel.split('px')[0]) / PDF_SCALING_RATIO)
-        const fontSize = getFontSizeWithScale(signature?.fontSize?.pixel)
+        const fontSize = getFontSizeWithScale(signature.signature_data.fontSize?.pixel)
 
         const api2 = await baseApi.post('/file/embed/text', {
           data: {
@@ -283,7 +283,7 @@ function RenderSigners(props: any) {
             page: signature.pageNumber,
             fontSize: fontSize,
             lineHeight: fontSize * 1.2,
-            fontFamily: signature?.fontFamily?.value,
+            fontFamily: signature.signature_data.fontFamily?.value,
             color: '#000000',
           },
           type: 'text',
@@ -428,8 +428,17 @@ function RenderSigners(props: any) {
         disableEscapeKeyDown
         open={open}
         onClose={Events.handleClose}
-        // prettier-ignore
-        sx={{ '& .MuiDialog-paper': { width: 1200, height: 950, maxWidth: 'none', maxHeight: 'none', borderRadius: '15px', boxShadow: 'none', }, '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.3)', }, }}
+        sx={{
+          '& .MuiDialog-paper': {
+            width: 1200,
+            height: 950,
+            maxWidth: 'none',
+            maxHeight: 'none',
+            borderRadius: '15px',
+            boxShadow: 'none',
+          },
+          '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.3)' },
+        }}
       >
         {/* -----------------------------------------   Dialog Title  --------------------------------------------------- */}
 

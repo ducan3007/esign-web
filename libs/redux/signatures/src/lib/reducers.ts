@@ -15,28 +15,18 @@ export enum SignatureContent {
 }
 
 export type Signature = {
-  id?: string
+  id: string
   top: number
   left: number
   pageNumber?: number
   width: number
   height: number
-  type?: SignatureType
+  type: SignatureType
   isMetadata?: boolean
   // For User
   userName?: string
   userColor?: string
   userEmail?: string
-
-  fontSize?: {
-    pt: number
-    pixel: string
-  }
-
-  fontFamily?: {
-    fontFamily: string
-    value: string
-  }
 
   user: {
     id: string
@@ -57,6 +47,15 @@ export type Signature = {
     type?: SignatureContent
     data?: any
     url?: string
+    fontSize?: {
+      pt: number
+      pixel: string
+    }
+
+    fontFamily?: {
+      fontFamily: string
+      value: string
+    }
   }
 }
 

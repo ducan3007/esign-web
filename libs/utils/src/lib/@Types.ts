@@ -11,9 +11,10 @@ export type UserType = {
   }
   permission?: UserPermission[]
   is_active?: boolean
+  is_registerd?: boolean
   is_verified?: boolean
   is_master_group?: boolean
-  wallet_address?: any[]
+  wallet_address: any[]
   createdAt?: Date
   updatedAt?: Date
 }
@@ -87,4 +88,25 @@ export type Document_signer = {}
 
 export var PDF_SCALING_RATIO = {
   value: 1.4,
+}
+
+
+export const LOG_ACTION = {
+  DOCUMENT: {
+    SIGN_DOCUMENT: 'SIGN_DOCUMENT',
+    CREATE_DOCUMENT: 'CREATE_DOCUMENT',
+    DELETE_DOCUMENT: 'DELETE_DOCUMENT',
+    SIGN_DOCUMENT_BY_WALLLET: 'SIGN_BY_WALLLET'
+  },
+  CERTIFICATE: {
+    CREATE_CERTIFICATE: 'CREATE_CERTIFICATE',
+    DELETE_CERTIFICATE: 'DELETE_CERTIFICATE',
+    UPDATE_CERTIFICATE: 'UPDATE_CERTIFICATE',
+    SIGN_CERTIFICATE: 'SIGN_CERTIFICATE',
+    SIGN_CERTIFICATE_BY_WALLLET: 'SIGN_CERTIFICATE_BY_WALLLET'
+  },
+  WALLET: {
+    UPDATE_SIGN_WALLET: 'UPDATE_WALLET',
+    CONNECT_WALLET: 'CONNECT_WALLET',
+  }
 }

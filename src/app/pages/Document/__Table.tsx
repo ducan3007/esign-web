@@ -164,18 +164,6 @@ export const DocumentTable = (props: any) => {
           height: 'calc(100vh - 153px)',
           position: 'relative',
           transition: 'width 0.6s',
-          // '&::-webkit-scrollbar': {
-          //   width: '10px',
-          //   height: '5px',
-          // },
-          // '&::-webkit-scrollbar-track': {
-          //   background: 'transparent',
-          // },
-          // '&::-webkit-scrollbar-thumb': {
-          //   background: 'var(--dark2)',
-          //   borderRadius: '2px',
-          //   border: '1px solid var(--white)',
-          // },
         }}
         id="document-table"
         component={Paper}
@@ -190,20 +178,14 @@ export const DocumentTable = (props: any) => {
             </TableRow>
           </TableHead>
 
-          <TableBody sx={{ transition: 'all 0.8s' }}>
-            {/* {data.map((row, index) => {
-              return <TableRowExpandable key={index} row={row} />;
-            })} */}
-
+          <TableBody sx={{ transition: 'all 0.3s' }}>
             {/* ------------------ Main Table ------------------- */}
             {Object.keys(documents).length > 0 &&
               Object.keys(documents).map((key) => {
                 const row = documents[key as keyof typeof documents]
                 return <TableRowExpandable key={key} row={row} />
               })}
-            {/* ------------------ Main Table ------------------- */}
 
-            {/* ------------------ Loading ------------------- */}
             {loadingDocuments &&
               [...Array(5)].map((_, index) => {
                 return (

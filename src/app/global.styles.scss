@@ -12,7 +12,7 @@ body {
   --shadow4: 0 0 1.2rem #d3bfbf0f;
 
   --shadow99: rgba(0, 0, 0, 0.2) 0px 6px 32px;
-
+  --yellow111: #996e27;
   --shadow-blue1: 0 0 1.2rem rgb(37, 61, 172);
 
   --shadow_bottom: 0 0.2rem 0.4rem #0000000f;
@@ -24,6 +24,8 @@ body {
   --green1: #07bc0c;
   --green2: #0fc00f;
   --green3: #34a853;
+  --green15: #ccf5da;
+  --green16: #007a5c;
   --green11: #03c988;
 
   --green14: rgba(3, 201, 136, 0.4);
@@ -39,6 +41,9 @@ body {
   --blue6: #4942e4;
   --blue7: #8ab4f8;
 
+  --green8: #dde5fe;
+  --yellow8: #feecde;
+
   --orange3: #e55807;
   --orange: #e65202;
 
@@ -50,6 +55,10 @@ body {
   --red: #d93025;
   --error4: #ff4500;
 
+  --gray9999: #686868;
+
+  --gray99999: #b3b0b06c;
+
   --dark: rgb(2, 30, 52);
   --darkxx: #ccd2d6;
   --dark2: rgb(2, 30, 52, 0.8);
@@ -57,6 +66,12 @@ body {
   --dark3: #494c4d;
   --dark5: #576365;
   --dark4: rgb(16, 17, 17, 0.85);
+
+  --ac: #f2f6fc;
+
+  --bluexx: #e3ecfc;
+
+  --bluexxx: #e6ecfe;
 
   --signer-me: rgb(15, 192, 197);
 
@@ -75,6 +90,8 @@ body {
   --color-gray2: #d0d8e2;
   --border-gray: rgb(234, 237, 242);
 
+  --lightaa: #b3ddf9;
+
   --gray11: #f0f0f0;
 
   --dark11: #121212;
@@ -82,6 +99,7 @@ body {
   --gray2: #f7f9fc;
 
   --gray3: #b4bbbf;
+  --gray999: #bababa;
 
   --canvas: #f4f4f4;
 
@@ -171,6 +189,7 @@ body {
   min-height: 100vh;
 }
 
+a,
 span {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 1.4rem;

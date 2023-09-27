@@ -1,15 +1,14 @@
-import { Box, Typography } from '@mui/material'
-import MButton from 'src/app/components/Button'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
-import { useSelector } from 'react-redux'
 import { selectors } from '@esign-web/redux/document'
-import moment from 'moment'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined'
-import { SignIcon } from 'src/app/components/Icon'
-import WalletIcon from '@mui/icons-material/Wallet'
-import ClassIcon from '@mui/icons-material/Class'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
+import { Box, Typography } from '@mui/material'
+import { useSelector } from 'react-redux'
+import MButton from 'src/app/components/Button'
+import { ethers } from 'ethers'
 import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined'
+import moment from 'moment'
+import { useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { SignIcon } from 'src/app/components/Icon'
 interface DefaultHeaderProps {
   title?: string
   to?: string
@@ -50,11 +49,17 @@ const DocumentSignHeader = () => {
           Last modified: {moment(documentDetail?.updatedAt).format('DD MMM YYYY')} - {moment(documentDetail?.updatedAt).format('hh:mm A')}
         </Typography>
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-        }}
-      ></Box>
+      <Box sx={{ display: 'flex' }}>
+        <Typography
+          sx={{
+            fontSize: '1.2rem',
+            fontWeight: 'bold',
+            color: 'var(--gray6)',
+          }}
+        >
+          {documentDetail?.hash256}
+        </Typography>
+      </Box>
     </Box>
   )
 }
@@ -82,13 +87,13 @@ const DocumentHeader = () => {
           alignItems: 'center',
           borderRadius: '9px',
           justifyContent: 'center',
-          gap: '0.6rem',
+          gap: '12px',
           width: 'fit-content',
-          padding: '10px 30px',
+          padding: '10px 18px',
         }}
       >
-        <UploadFileIcon sx={{ fontSize: '2.8rem' }} />
-        <span style={{ color: 'var(--white)', fontSize: '1.67rem', fontWeight: 'bold', letterSpacing: '1px' }}>Upload Document</span>
+        <UploadFileIcon sx={{ fontSize: '2.5rem' }} />
+        <span style={{ color: 'var(--white)', fontSize: '1.6rem', fontWeight: 'bold', letterSpacing: '1px' }}>Upload Document</span>
       </MButton>
     </Box>
   )
@@ -131,6 +136,19 @@ const CerticateHeader = () => {
 }
 
 const WalletHeader = () => {
+  useEffect(() => {
+    ;(async () => {
+      try {
+        if (window.ethereum) {
+          const provider = new ethers.JsonRpcProvider()
+          const network = await provider.getNetwork()
+          const contract = 
+          console.log('network', network)
+        }
+      } catch (error) {}
+    })()
+  }, [])
+
   return (
     <Box
       sx={{

@@ -4,6 +4,7 @@ import { selectors, actions as signatureActions } from '@esign-web/redux/signatu
 import { yupResolver } from '@hookform/resolvers/yup'
 import MailOutlineSharpIcon from '@mui/icons-material/MailOutlineSharp'
 import PersonOutlineSharpIcon from '@mui/icons-material/PersonOutlineSharp'
+import { selectors as AuthSelectors } from '@esign-web/redux/auth'
 import { Box, IconButton } from '@mui/material'
 import { nanoid } from 'nanoid'
 import { useEffect, useState } from 'react'
@@ -208,6 +209,11 @@ export const RenderSignerAdd = (props: any) => {
 export const AutoSave = () => {
   const dispatch = useDispatch()
   const isSignatureAuto = useSelector(selectors.getAutoSave)
+  const authState = useSelector(AuthSelectors.getAuthState)
+
+  if (!authState) {
+    return null
+  }
 
   return (
     <MTooltip title={'Auto save'} fontSize="1.5rem" background="var(--white)" fontWeight="bold" color="var(--blue3)" nowrap="true">

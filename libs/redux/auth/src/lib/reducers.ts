@@ -14,6 +14,10 @@ export type AuthType = {
   isLoginFail: boolean
   isSidebarOpen: boolean
   isBackDropOpen: boolean
+
+  address: any[]
+  isConnected: boolean
+  provider: string
 }
 
 export const initialState = {
@@ -26,6 +30,10 @@ export const initialState = {
   isLoginFail: false,
   isSidebarOpen: localStorage.getItem('sidebar') === 'true' ? true : false,
   isBackDropOpen: false,
+
+  isConnected: false,
+  provider: '',
+  address: [],
 }
 
 export default (state = initialState, action: any) => {
@@ -125,6 +133,14 @@ export default (state = initialState, action: any) => {
       return {
         ...state,
         isBackDropOpen: false,
+      }
+
+    case __.SET_WALLET_ADDRESS:
+      return {
+        ...state,
+        address: action.payload.address,
+        provider: action.payload.provider,
+        isConnected: true,
       }
 
     default:

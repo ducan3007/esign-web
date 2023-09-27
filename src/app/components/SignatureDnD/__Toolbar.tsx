@@ -36,17 +36,48 @@ type props = {
   selectedSigner: Signers
   signatureDataRefs: any
   copySignature: (id: string, pageNumber: number, sigenr_id: string) => void
+
+  can_copy: boolean
+  can_delete: boolean
 }
 
-export const FontSize = [
+export const FontSizeToolbar = [
   // { pt: `${Math.floor(6 * PDF_SCALING_RATIO)}`, pixel: `${6 * PDF_SCALING_RATIO}px` },
-  { pt: `${Math.floor(12 * PDF_SCALING_RATIO.value)}`, pixel: `${12 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(12 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(13 * PDF_SCALING_RATIO.value)}`, pixel: `${13 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(13 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`, pixel: `${14 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`, pixel: `${16 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`, pixel: `${18 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`, pixel: `${20 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(22 * PDF_SCALING_RATIO.value)}`, pixel: `${22 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(22 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  {
+    pt: `${Math.floor(12 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${12 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(12 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(13 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${13 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(13 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${14 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${16 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${18 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${20 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(22 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${22 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(22 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
 ]
 export const FontFamily = [
   { fontFamily: 'Plus Jakarta Sans', value: 'font_plus_jakarta_sans' },
@@ -60,11 +91,14 @@ export const FontFamily = [
 
 export const BaseToolbar = (props: props) => {
   const dispatch = useDispatch()
-  const signatureData = props.signatureDataRefs.current[`page_${props.pageNumber}`][props.id]
+  const signatureDataRef = props.signatureDataRefs.current[`page_${props.pageNumber}`][props.id]
+
+  console.log('>> can_copy', props.can_copy)
+  console.log('>> can_delete', props.can_delete)
 
   const [fontState, setFontState] = useState({
-    fontFamily: signatureData.fontFamily,
-    fontSize: signatureData.fontSize,
+    fontFamily: signatureDataRef.signature_data.fontFamily,
+    fontSize: signatureDataRef.signature_data.fontSize,
   })
 
   const top = {
@@ -90,7 +124,7 @@ export const BaseToolbar = (props: props) => {
     },
     dateField: {
       minWidth: '250px',
-      minHeight: '100px',
+      minHeight: '90px',
     },
   }
 
@@ -225,6 +259,7 @@ export const BaseToolbar = (props: props) => {
                       key={index}
                       onClick={() => {
                         // setFontStyle(item)
+                        console.log('??????????????????????????? ', signatureDataRef, item)
                         setFontState({
                           ...fontState,
                           fontFamily: item,
@@ -232,8 +267,12 @@ export const BaseToolbar = (props: props) => {
                         dispatch({
                           type: SIGNATURE_SET,
                           payload: {
-                            ...signatureData,
-                            fontFamily: item,
+                            ...signatureDataRef,
+                            signature_data: {
+                              ...signatureDataRef.signature_data,
+                              fontFamily: item,
+                              fontSize: fontState.fontSize,
+                            },
                           },
                         })
 
@@ -308,7 +347,7 @@ export const BaseToolbar = (props: props) => {
                   </>
                 }
                 content2={({ handleClose }) => {
-                  return FontSize.map((item, index) => {
+                  return FontSizeToolbar.map((item, index) => {
                     return (
                       <Box
                         sx={{
@@ -326,12 +365,16 @@ export const BaseToolbar = (props: props) => {
                             ...fontState,
                             fontSize: item,
                           })
-
+                          console.log('??????????????????????????? ', signatureDataRef, item)
                           dispatch({
                             type: SIGNATURE_SET,
                             payload: {
-                              ...signatureData,
-                              fontSize: item,
+                              ...signatureDataRef,
+                              signature_data: {
+                                ...signatureDataRef.signature_data,
+                                fontSize: item,
+                                fontFamily: fontState.fontFamily,
+                              },
                             },
                           })
 
@@ -450,8 +493,8 @@ export const BaseToolbar = (props: props) => {
         }}
       >
         {ToolbarContent[props.type] && ToolbarContent[props.type]()}
-        {BaseOptions.copy}
-        {BaseOptions.delete}
+        {props.can_copy !== false && BaseOptions.copy}
+        {props.can_delete !== false && BaseOptions.delete}
       </Box>
     </Box>
   )

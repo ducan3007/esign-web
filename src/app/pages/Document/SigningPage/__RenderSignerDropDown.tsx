@@ -15,6 +15,7 @@ type props = {
   selectedSigner: Signers
   setSelectedSignerId: (signer_id: string) => void
   handleOpen: () => void
+  isDisableAddSigner: boolean
 }
 
 export const SignerDropDown = (props: props) => {
@@ -53,11 +54,13 @@ export const SignerDropDown = (props: props) => {
             {props.signersNumber} Signers
           </Typography>
         </Box>
-        <MTooltip title={'Manage Signers'}>
-          <IconButton onClick={props.handleOpen} sx={{ padding: '2px' }}>
-            <AddRoundedIcon sx={{ fontSize: '3rem', color: 'var(--blue3)' }} />
-          </IconButton>
-        </MTooltip>
+        {!props.isDisableAddSigner && (
+          <MTooltip title={'Manage Signers'}>
+            <IconButton onClick={props.handleOpen} sx={{ padding: '2px' }}>
+              <AddRoundedIcon sx={{ fontSize: '3rem', color: 'var(--blue3)' }} />
+            </IconButton>
+          </MTooltip>
+        )}
       </Box>
 
       {/* -------------------------- Render Selected Signer ----------------------------------------- */}
@@ -151,6 +154,9 @@ export const SignerDropDown = (props: props) => {
             <Box
               key={key}
               onClick={() => {
+                if (props.isDisableAddSigner) {
+                  return
+                }
                 props.setSelectedSignerId(signer.id)
                 handleClose()
               }}

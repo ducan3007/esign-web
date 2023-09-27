@@ -12,11 +12,13 @@ interface DashboardLayoutProps {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const isBackdropOpen = useSelector(selectors.getBackgroundState)
+  const authState = useSelector(selectors.getAuthState)
+  const isUnregistered = authState.data?.is_registerd === false
 
   return (
     <Box id="dashboard-layout" sx={{ position: 'relative', display: 'flex', flexDirenction: 'row', width: '100vw', height: '100vh' }}>
       <Box id="sidebar" sx={{ maxWidth: '23.25rem' }}>
-        <Sidebar />
+        {!isUnregistered && <Sidebar />}
       </Box>
       <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
         <DashboardHeader />

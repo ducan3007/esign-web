@@ -4,19 +4,52 @@ import { MutableRefObject, useEffect, useRef, useState } from 'react'
 import { AutoSave } from 'src/app/pages/Document/SigningPage/__RenderSignerAdd'
 import { MUIMenu } from '../Menu'
 import './style.scss'
-
+import { useSelector } from 'react-redux'
+import { selectors as authSelector } from '@esign-web/redux/auth'
 export const FontSize = [
   // { pt: `${Math.floor(6 * PDF_SCALING_RATIO)}`, pixel: `${6 * PDF_SCALING_RATIO}px` },
   // { pt: `${Math.floor(12 * PDF_SCALING_RATIO)}`, pixel: `${12 * PDF_SCALING_RATIO}px`, lineHeight: `${Math.floor(12 * PDF_SCALING_RATIO) * 1.2}px` },
   // { pt: `${Math.floor(13 * PDF_SCALING_RATIO)}`, pixel: `${13 * PDF_SCALING_RATIO}px`, lineHeight: `${Math.floor(13 * PDF_SCALING_RATIO) * 1.2}px` },
-  { pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`, pixel: `${14 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`, pixel: `${16 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`, pixel: `${18 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`, pixel: `${20 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(24 * PDF_SCALING_RATIO.value)}`, pixel: `${24 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(24 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(28 * PDF_SCALING_RATIO.value)}`, pixel: `${28 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(28 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(34 * PDF_SCALING_RATIO.value)}`, pixel: `${34 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(34 * PDF_SCALING_RATIO.value) * 1.2}px` },
-  { pt: `${Math.floor(37 * PDF_SCALING_RATIO.value)}`, pixel: `${37 * PDF_SCALING_RATIO.value}px`, lineHeight: `${Math.floor(37 * PDF_SCALING_RATIO.value) * 1.2}px` },
+  {
+    pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${14 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${16 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${18 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${20 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(24 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${24 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(24 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(28 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${28 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(28 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(34 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${34 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(34 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
+  {
+    pt: `${Math.floor(37 * PDF_SCALING_RATIO.value)}`,
+    pixel: `${37 * PDF_SCALING_RATIO.value}px`,
+    lineHeight: `${Math.floor(37 * PDF_SCALING_RATIO.value) * 1.2}px`,
+  },
 ]
 // prettier-ignore
 export const FontStyle = [
@@ -54,6 +87,7 @@ export const SignatureType = (props: props) => {
   const { signatureDataRef, setDisableSaveSignature, disableSaveSignature } = props
 
   const inputRef = useRef<any>(null)
+  const authState = useSelector(authSelector.getAuthState)
 
   const [fontStyle, setFontStyle] = useState(FontStyle[0])
   const [fontSize, setFontSize] = useState(FontSize[3])
@@ -426,7 +460,7 @@ export const SignatureType = (props: props) => {
           {/* ---------------------- Bold -------------------------- */}
         </Box>
 
-        <AutoSave />
+        {authState.data?.is_registerd && <AutoSave />}
       </Box>
 
       {/* --------------------------- Mock Element ------------------ */}

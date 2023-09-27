@@ -1,7 +1,8 @@
 import { Box, IconButton, Typography } from '@mui/material'
 import { MutableRefObject, useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useOnDraw } from '../Canvas/Hook'
+import { selectors as authSelector } from '@esign-web/redux/auth'
 import MButton from '../Button'
 import './style.scss'
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
@@ -20,6 +21,7 @@ export const SignatureCanvas = (props: props) => {
   const { signatureDataRef, disableSaveSignature, setDisableSaveSignature } = props
   const dispatch = useDispatch()
 
+  const authState = useSelector(authSelector.getAuthState)
   const [color, setColor] = useState('black')
   const [widthCanvas, setWidth] = useState(0)
   const [heightCanvas, setheight] = useState(0)
@@ -228,7 +230,7 @@ export const SignatureCanvas = (props: props) => {
             Get DataUrl
           </button>
         </Box>
-        <AutoSave />
+        {authState.data?.is_registerd && <AutoSave />}
       </Box>
 
       {/* ------------------- Canvas Board -------------------- */}

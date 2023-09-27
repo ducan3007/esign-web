@@ -6,10 +6,11 @@ export const loginApi = (payload: { email: string; password: string }) => {
 }
 
 export const registerApi = (payload: { email: string; password: string; name: string; confirmPassword: string }) => {
-  return baseApi.post('/auth/register', payload)
+  return baseApi.post('/auth/signup', payload)
 }
 
 export const authorizeUserByToken = (payload: { token: string }) => {
   baseApi.defaults.headers.common['Authorization'] = `Bearer ${payload.token}`
-  return baseApi.get('/auth/permission')
+  const url = `/auth/permission?cb=${new Date().getTime()}`
+  return baseApi.get(url)
 }

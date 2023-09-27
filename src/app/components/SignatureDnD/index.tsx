@@ -1,21 +1,13 @@
-import { Box, Button, PopoverPaper, TextareaAutosize, Typography } from '@mui/material'
-import React, { useState, useRef, useEffect, useLayoutEffect, memo } from 'react'
-import { ResizableBox } from 'react-resizable'
-import { ResizableItem } from '../Resizable'
-import { UserType, getHTMLID, rgba } from '@esign-web/libs/utils'
-import { Signers, signersProps } from 'src/app/pages/Document/SigningPage/__RenderSigner'
-import TextFieldIcon from 'src/assets/textfield.svg'
-import Signature from 'src/assets/signature.svg'
-import DateField from 'src/assets/date.svg'
-import CheckBox from 'src/assets/checkbox.svg'
-import IconSVG from 'src/app/components/Icon'
+import { selectors } from '@esign-web/redux/document'
+import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions, selectors } from '@esign-web/redux/document'
-import { SignatureNoneType } from './__None'
-import { SignatureTextAreaType } from './__Text'
-import { SignatureImageType } from './__Signature'
+import { Signers } from 'src/app/pages/Document/SigningPage/__RenderSigner'
+import { ResizableItem } from '../Resizable'
 import { SignatureCheckboxType } from './__Checkbox'
 import { DateTextAreaType } from './__DateField'
+import { SignatureNoneType } from './__None'
+import { SignatureImageType } from './__Signature'
+import { SignatureTextAreaType } from './__Text'
 import { BaseToolbar } from './__Toolbar'
 
 interface props {
@@ -37,6 +29,13 @@ interface props {
   type: string
   data: any
 
+  can_move: boolean
+  is_hidden: boolean
+  can_select: boolean
+  can_delete: boolean
+  can_copy: boolean
+  is_signed: boolean
+
   moveToPage: (id: string, currentPage: number, nextPage: number, callback: Function) => void
   copySignature: (id: string, pageNumber: number, sigenr_id: string) => void
   setSelectedSignature: (signature: any) => void
@@ -57,28 +56,13 @@ export interface DragItem {
 }
 
 const DraggableItem = (props: props) => {
-  console.log('______RraggleItem______', props.data)
+  console.log('______RraggleItem______', props)
 
   const dispatch = useDispatch()
   const signer2 = useSelector(selectors.getSigners2)
 
-  console.log('signer2', signer2)
-  // console.log('selectedSigner22222222', props.signer)
-  console.log('props.signer22222222', props.signer)
-
   const pdfPage = document.querySelector(`.pdf-page[data-page-number="${props.pageNumber}"]`)
   const coord = document.getElementById(`${props.id}_coord`)
-
-  // useEffect(() => {
-  //   if (props.signer) {
-  //     setSelectedSigner(props.signer)
-  //   }
-  // }, [props.signer])
-
-  // useEffect(() => {
-
-  //   }
-  // }, [selectedSigner])
 
   const top = useRef(props.top || 0)
   const left = useRef(props.left || 0)
@@ -132,6 +116,10 @@ const DraggableItem = (props: props) => {
     e.stopPropagation()
     // e.preventDefault()
 
+    if (props.can_move === false) {
+      return
+    }
+
     if (!props.isSelected) {
       props.setSelectedSignature({
         id: props.id,
@@ -160,6 +148,8 @@ const DraggableItem = (props: props) => {
 
   const mouseMove = (e: any) => {
     e.preventDefault()
+
+    if (props.can_move === false) return
 
     if (!isMouseDown) return
 
@@ -298,6 +288,7 @@ const DraggableItem = (props: props) => {
       onClick={(e) => {
         e.stopPropagation()
         e.preventDefault()
+        if (props.can_select === false) return
         props.setSelectedSignature({
           id: props.id,
           pageNumber: props.pageNumber,
@@ -316,6 +307,8 @@ const DraggableItem = (props: props) => {
           signer2={signer2}
           copySignature={props.copySignature}
           selectedSigner={props.signer}
+          can_delete={props.can_delete}
+          can_copy={props.can_copy}
         />
       )}
       <ResizableItem
@@ -334,28 +327,15 @@ const DraggableItem = (props: props) => {
       >
         {/* <img src="https://www.w3schools.com/howto/img_avatar.png" alt="" style={{ width: '100%', height: '100%' }} /> */}
 
-        {props.type === 'textField' && props.isMySignature && (
-          <SignatureTextAreaType
-            isSelected={props.isSelected}
-            signatureDataRefs={props.signatureDataRefs}
-            signature_id={props.id}
-            pageNumber={props.pageNumber}
-          />
-        )}
+        {props.type === 'textField' && (props.isMySignature || props.is_signed) && ( <SignatureTextAreaType isSelected={props.isSelected} signatureDataRefs={props.signatureDataRefs} signature_id={props.id} pageNumber={props.pageNumber} /> )}
 
-        {props.type === 'signature' && props.isMySignature && (
-          <SignatureImageType data={props.data} signatureDataRefs={props.signatureDataRefs} signature_id={props.id} pageNumber={props.pageNumber} />
-        )}
+        {props.type === 'signature' && (props.isMySignature || props.is_signed) && ( <SignatureImageType data={props.data} signatureDataRefs={props.signatureDataRefs} signature_id={props.id} pageNumber={props.pageNumber} /> )}
 
-        {props.type === 'checkbox' && props.isMySignature && (
-          <SignatureCheckboxType signatureDataRefs={props.signatureDataRefs} signature_id={props.id} pageNumber={props.pageNumber} />
-        )}
+        {props.type === 'checkbox' && (props.isMySignature || props.is_signed) && ( <SignatureCheckboxType signatureDataRefs={props.signatureDataRefs} signature_id={props.id} pageNumber={props.pageNumber} /> )}
 
-        {props.type === 'dateField' && props.isMySignature && (
-          <DateTextAreaType signatureDataRefs={props.signatureDataRefs} signature_id={props.id} pageNumber={props.pageNumber} />
-        )}
+        {props.type === 'dateField' && (props.isMySignature || props.is_signed) && ( <DateTextAreaType signatureDataRefs={props.signatureDataRefs} signature_id={props.id} pageNumber={props.pageNumber} /> )}
 
-        {!props.isMySignature && <SignatureNoneType id={props.id} type={props.type} signer={props.signer} />}
+        {!props.isMySignature && !props.is_signed && <SignatureNoneType id={props.id} type={props.type} signer={props.signer} />}
       </ResizableItem>
     </div>
   )
@@ -377,7 +357,11 @@ export default memo(DraggableItem, (prevProps, nextProps) => {
   if (prevProps.signer !== nextProps.signer) return false
   if (prevProps.color !== nextProps.color) return false
   if (prevProps.data !== nextProps.data) return false
-
+  // if (prevProps.can_move !== nextProps.can_move) return false
+  // if (prevProps.is_hidden !== nextProps.is_hidden) return false
+  // if (prevProps.can_select !== nextProps.can_select) return false
+  // if (prevProps.can_delete !== nextProps.can_delete) return false
+  // if (prevProps.is_signed !== nextProps.is_signed) return false
   return true
 })
 

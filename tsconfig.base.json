@@ -22,6 +22,7 @@
       "@esign-web/redux/document": ["libs/redux/document/src/index.ts"],
       "@esign-web/redux/signatures": ["libs/redux/signatures/src/index.ts"],
       "@esign-web/redux/user": ["libs/redux/user/src/index.ts"],
+      "@esign-web/redux/wallet": ["libs/redux/wallet/src/index.ts"],
       "@esign-web/template": ["libs/template/src/index.ts"]
     }
   },

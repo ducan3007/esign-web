@@ -30,11 +30,22 @@ export const SignatureTextAreaType = (props: TextareaSignatureType) => {
 
   const width = signatureDataRefs.current[`page_${pageNumber}`][signature_id].width
   const height = signatureDataRefs.current[`page_${pageNumber}`][signature_id].height
-  const fontFamily = signatureDataRefs.current[`page_${pageNumber}`][signature_id].fontFamily
-  const fontSize = signatureDataRefs.current[`page_${pageNumber}`][signature_id].fontSize
+  const fontFamily = signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.fontFamily
+  const fontSize = signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.fontSize
   const textRef = useRef<any>(null)
 
   const textareaRef = useRef<any>()
+
+  useEffect(() => {
+    if(signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.data !== ''){
+      setValue(signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.data)
+    }
+  }, [])
+
+
+  console.log('>>> font 1111',fontFamily)
+  console.log('>>> font 1111',signatureDataRefs.current)
+  console.log('>>> font 2222',fontSize)
 
   return (
     <>
@@ -74,7 +85,6 @@ export const SignatureTextAreaType = (props: TextareaSignatureType) => {
           }
         }}
         className={fontFamily.value}
-        autoFocus
         spellCheck="false"
         wrap="off"
         tabIndex={-1}

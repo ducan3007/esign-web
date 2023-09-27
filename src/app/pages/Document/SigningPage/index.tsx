@@ -1,9 +1,9 @@
 import { DndContext } from '@dnd-kit/core'
-import { baseApi, rgba } from '@esign-web/libs/utils'
+import { PDF_SCALING_RATIO, Toast, baseApi, html2Canvas, rgba } from '@esign-web/libs/utils'
 import { selectors as authSelectors } from '@esign-web/redux/auth'
 import { actions, selectors as documentSelectors, selectors } from '@esign-web/redux/document'
 import { Avatar, Box, Divider, Drawer, Skeleton, Typography } from '@mui/material'
-import { DOCUMENT_SET_DETAIL } from 'libs/redux/document/src/lib/constants'
+import { DOCUMENT_SET_DETAIL, SET_SIGNER_STATUS } from 'libs/redux/document/src/lib/constants'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
@@ -13,13 +13,14 @@ import RenderPDF from './__RenderPDF'
 import RenderPDFSkeleton from './__RenderPDFSkeleton'
 import { RenderSignature } from './__RenderSignature'
 import RenderSigners from './__RenderSigner'
-import _ from 'lodash'
 import './styles.scss'
+import { RenderLeftSideComplete } from './__RenderLeftSide'
+import { keyBy } from 'lodash'
 
 export const DocumentSignningPage = () => {
   const dispatch = useDispatch()
   const [searchParams] = useSearchParams()
-
+  const authState = useSelector(authSelectors.getAuthState)
   const documentId = searchParams.get('id')
 
   const documentFromStore = useSelector(selectors.getDoucmentFromStore(documentId))
@@ -31,20 +32,118 @@ export const DocumentSignningPage = () => {
   /* For selected Signer */
   const [selectedSignerId, setSelectedSignerId] = useState<any>('')
 
-  /* Copy of previous signers before update  */
-  // const [signerPrev, setSignerPrev] = useState<signersProps>({})
-
   if (!documentId) return <NotFoundPage />
-
-  console.log('documentFromStore', documentFromStore)
 
   useEffect(() => {
     ;(async () => {
       try {
-        const res = await baseApi.get(`/document/info/${documentId}`)
+        const [res1, res2] = await Promise.all([
+          baseApi.get(`/document/info/${documentId}`),
+          baseApi.get(`/document/signer?document_id=${documentId}`),
+        ])
+        if (res1.data.status === 'ON_DRAFT') {
+          const draftRes = await baseApi.get(`/document/draft/${documentId}`)
+          const { signers, signatures } = draftRes.data
+          if (signers) {
+            dispatch(actions.updateAllSigners(signers))
+            dispatch(actions.updateAllSigners2(signers))
+          }
+          if (signatures) {
+            dispatch(actions.updateAllSignatures(signatures))
+          }
+        }
+
+        if (res1.data.status === 'SIGNED' || res1.data.status === 'COMPLETED') {
+          console.log('>> res.data SIGNED', res1.data)
+          let signers = {}
+          let signatures = {}
+
+          for (let document_signer of res1.data.document_signer) {
+            let dataSigner = JSON.parse(document_signer.meta_data)
+            if (document_signer.is_signed) {
+              dataSigner['is_signed'] = true
+            }
+            delete dataSigner.message
+            signers[document_signer.user_id] = dataSigner
+
+            for (let signature of document_signer.signature) {
+              let dataSignature = JSON.parse(signature.meta_data)
+
+              dataSignature.can_move = false
+              dataSignature.can_select = false
+
+              let pageNumber = dataSignature.pageNumber
+              if (!signatures[`page_${pageNumber}`]) {
+                signatures[`page_${pageNumber}`] = {}
+              }
+              signatures[`page_${pageNumber}`][dataSignature.id] = dataSignature
+            }
+          }
+
+          console.log('SIGNED, signers', signers)
+          console.log('SIGNED, signatures', signatures)
+
+          dispatch(actions.updateAllSigners(signers))
+          dispatch(actions.updateAllSigners2(signers))
+          dispatch(actions.updateAllSignatures(signatures))
+        }
+
+        if (res1.data.status === 'READY_TO_SIGN') {
+          let signers = {}
+          let signatures = {}
+
+          for (let document_signer of res1.data.document_signer) {
+            let dataSigner = JSON.parse(document_signer.meta_data)
+            delete dataSigner.message
+            
+            if (document_signer.is_signed) {
+              dataSigner['is_signed'] = true
+            }
+            
+            signers[document_signer.user_id] = Object.assign(dataSigner, { document_signer_id: document_signer.id })
+            for (let signature of document_signer.signature) {
+              let data_signature = JSON.parse(signature.meta_data)
+
+              if (data_signature.user.id !== authState.data?.id) {
+                data_signature.can_delete = false
+                data_signature.can_copy = false
+                data_signature.can_move = false
+                data_signature.can_select = false
+              }
+
+              if (document_signer.is_signed) {
+                data_signature.is_signed = true
+                data_signature.can_delete = false
+                data_signature.can_copy = false
+                data_signature.can_move = false
+                data_signature.can_select = false
+              }
+
+              let pageNumber = data_signature.pageNumber
+              if (!signatures[`page_${pageNumber}`]) {
+                signatures[`page_${pageNumber}`] = {}
+              }
+              signatures[`page_${pageNumber}`][data_signature.id] = data_signature
+            }
+          }
+
+          console.log('SIGNED, signers', signers)
+          console.log('SIGNED, signatures', signatures)
+
+          dispatch(actions.updateAllSigners(signers))
+          dispatch(actions.updateAllSigners2(signers))
+          dispatch(actions.updateAllSignatures(signatures))
+        }
+
+        if (res2.data) {
+          dispatch({
+            type: SET_SIGNER_STATUS,
+            payload: res2.data,
+          })
+        }
         dispatch({
           type: DOCUMENT_SET_DETAIL,
-          payload: res.data,
+          payload: res1.data,
         })
       } catch (error) {}
     })()
@@ -60,7 +159,7 @@ export const DocumentSignningPage = () => {
 
   /* TODO: check if there is any unsaved work */
   // useUnSavedChangesWarning({ condition: true })
-
+  console.log('documentDetail', documentDetail)
   return (
     <DndContext>
       <Box id="signing-container" sx={{ flex: 1, width: '100%', overflow: 'hidden' }}>
@@ -84,12 +183,13 @@ export const DocumentSignningPage = () => {
 }
 
 const RenderLeftSide = (props: any) => {
-  const { selectedSignerId, setSelectedSignerId } = props
+  const { selectedSignerId, setSelectedSignerId, documentId } = props
   const dispatch = useDispatch()
   const signers = useSelector(selectors.getSigners)
   const signer2 = useSelector(selectors.getSigners2)
   const authState = useSelector(authSelectors.getAuthState)
   const signatures = useSelector(documentSelectors.getSignatures)
+  const signersStatus = useSelector(selectors.getSignStatus)
 
   const [messages, setMessages] = useState<any>(`Hi,\n\nPlease review and sign the document.\n\nThank you!`)
   const [openDrawer, setOpenDrawer] = useState(false)
@@ -97,9 +197,6 @@ const RenderLeftSide = (props: any) => {
   const isOnlyMeSigner = useMemo(() => {
     return Object.keys(signer2).length === 1 && Object.keys(signer2)[0] === authState.data?.id
   }, [signer2])
-
-  const reviewAndSign = (Object.keys(signer2).length === 1 && !isOnlyMeSigner) || Object.keys(signer2).length > 1
-  const finishAndSign = (Object.keys(signer2).length === 1 && isOnlyMeSigner) || Object.keys(signer2).length === 1
 
   const isOnlyMeSignerAndNoSignature = useMemo(() => {
     let noSignature = true
@@ -135,7 +232,29 @@ const RenderLeftSide = (props: any) => {
     return Object.keys(signer2).length === 1 && noSignatureData && isOnlyMeSigner
   }, [signer2, signatures])
 
-  console.log('>> isOnlyMeSignerAndNoSignature', isOnlyMeSignerAndNoSignature)
+  const isReadyToSignAndNoSignatureData = useMemo(() => {
+    let noSignatureData = true
+
+    Object.keys(signatures).forEach((key) => {
+      if (Object.keys(signatures[key]).length > 0) {
+        Object.keys(signatures[key]).forEach((key2) => {
+          if (
+            signatures[key][key2].user.id === authState.data?.id &&
+            signatures[key][key2].signature_data &&
+            signatures[key][key2].signature_data.url
+          ) {
+            noSignatureData = false
+          }
+        })
+      }
+    })
+
+    return noSignatureData
+  }, [signer2, signatures])
+
+  console.log('>isReadyToSignAndNoSignatureData', isReadyToSignAndNoSignatureData)
+
+  console.log('>> documentDetail', props.documentDetail)
 
   /* Effect: Initiate values for state */
   useEffect(() => {
@@ -153,8 +272,8 @@ const RenderLeftSide = (props: any) => {
       setSelectedSignerId(payload.id)
     }
     return () => {
-      console.log('11 cleanup')
       dispatch(actions.updateAllSigners({}))
+      dispatch({ type: SET_SIGNER_STATUS, payload: false })
     }
   }, [])
 
@@ -170,27 +289,88 @@ const RenderLeftSide = (props: any) => {
 
   const isDisabled = Object.keys(signer2).length === 0 || isOnlyMeSignerAndNoSignature || isOnlyMeSignerAndNoSignatureData
 
-  const handleSave = () => {
+  /* __________________________________ HANDLE SAVE __________________________________*/
+  const handleSave = async () => {
     if (isDisabled) return
     if (Object.keys(signer2).length === 0 || (Object.keys(signer2).length === 1 && isOnlyMeSigner)) {
-      console.log('>>> handleSave document and sign')
-
-      console.log('>>> signer2', signer2)
-      console.log('>>> signatures', signatures)
+      await saveDocumentByOwner()
+      await signDocument()
     } else if ((Object.keys(signer2).length === 1 && !isOnlyMeSigner) || Object.keys(signer2).length > 1) {
-      console.log('>>> handlSave document Reivew and send')
+      setOpenDrawer(true)
+    }
+  }
 
-      console.log('>>> signer2', signer2)
-      console.log('>>> signatures', signatures)
-      console.log('>>> messages', messages)
+  const handleSaveAndSendEmail = async () => {
+    try {
+      const payload = await preparePayload2()
+      console.log('>> payload', payload)
+      const res = await baseApi.post(`/document/owner/save/${documentId}`, payload)
+    } catch (error) {
+      console.log('>>sign error', error)
+    }
+  }
 
-      const payload: any = {
-        id: props.documentId,
-        signers: [],
-      }
+  const handleSignBySignee = async () => {
+    try {
+      await signDocument()
+    } catch (error) {}
+  }
 
-      Object.keys(signer2).forEach((key) => {
-        const signer = signer2[key]
+  /* __________________________________ Save Document By Owner __________________________________ */
+  const saveDocumentByOwner = async () => {
+    const payload = await preparePayload()
+    console.log('>> payload to save', payload)
+    const res = await baseApi.post(`/document/owner/save/${documentId}`, payload)
+  }
+
+  /* __________________________________ User Sign the Document __________________________________ */
+  const signDocument = async () => {
+    try {
+      const payload = await preparePayload(authState.data?.id)
+      console.log('>> payload to sign', payload)
+      await baseApi.post(`/document/single-sign/${documentId}`, payload)
+      Toast({
+        type: 'success',
+        message: 'Document signed successfully',
+      })
+      // window.location.reload()
+    } catch (error) {
+      console.log('>>sign error', error)
+    }
+  }
+
+  async function preparePayload(bySigner_id?: string) {
+    const payload: any = {
+      id: props.documentId,
+      signers: [],
+      PDF_SCALING_RATIO: PDF_SCALING_RATIO.value,
+    }
+
+    for (let key in signer2) {
+      const signer = signer2[key]
+      if (bySigner_id) {
+        if (signer.id === bySigner_id) {
+          payload.signers.push({
+            id: signer.id,
+            email: signer.email,
+            firstName: signer.firstName,
+            lastName: signer.lastName,
+            fields: signer.fields,
+            color: signer.color,
+            message: messages,
+            meta_data: JSON.stringify({
+              id: signer.id,
+              email: signer.email,
+              firstName: signer.firstName,
+              lastName: signer.lastName,
+              fields: signer.fields,
+              color: signer.color,
+              message: messages,
+            }),
+            signatures: await prepareSignatures(signer.id),
+          })
+        }
+      } else {
         payload.signers.push({
           id: signer.id,
           email: signer.email,
@@ -199,7 +379,7 @@ const RenderLeftSide = (props: any) => {
           fields: signer.fields,
           color: signer.color,
           message: messages,
-          metadata: JSON.stringify({
+          meta_data: JSON.stringify({
             id: signer.id,
             email: signer.email,
             firstName: signer.firstName,
@@ -208,36 +388,313 @@ const RenderLeftSide = (props: any) => {
             color: signer.color,
             message: messages,
           }),
-          singatures: getSignaturesBySignerId(signer.id),
+          signatures: await prepareSignatures(signer.id),
+        })
+      }
+    }
+
+    // Object.keys(signer2).forEach(async (key) => {
+    //   const signer = signer2[key]
+
+    //   if (bySigner_id) {
+    //     if (signer.id === bySigner_id) {
+    //       payload.signers.push({
+    //         id: signer.id,
+    //         email: signer.email,
+    //         firstName: signer.firstName,
+    //         lastName: signer.lastName,
+    //         fields: signer.fields,
+    //         color: signer.color,
+    //         message: messages,
+    //         meta_data: JSON.stringify({
+    //           id: signer.id,
+    //           email: signer.email,
+    //           firstName: signer.firstName,
+    //           lastName: signer.lastName,
+    //           fields: signer.fields,
+    //           color: signer.color,
+    //           message: messages,
+    //         }),
+    //         signatures: await prepareSignatures(signer.id),
+    //       })
+    //     }
+    //   } else {
+    //     payload.signers.push({
+    //       id: signer.id,
+    //       email: signer.email,
+    //       firstName: signer.firstName,
+    //       lastName: signer.lastName,
+    //       fields: signer.fields,
+    //       color: signer.color,
+    //       message: messages,
+    //       meta_data: JSON.stringify({
+    //         id: signer.id,
+    //         email: signer.email,
+    //         firstName: signer.firstName,
+    //         lastName: signer.lastName,
+    //         fields: signer.fields,
+    //         color: signer.color,
+    //         message: messages,
+    //       }),
+    //       signatures: await prepareSignatures(signer.id),
+    //     })
+    //   }
+    // })
+
+    return payload
+  }
+
+  async function prepareSignatures(signerId: string) {
+    let res: any = []
+    let isMe = signerId === authState.data?.id
+
+    for (let key in signatures) {
+      for (let key2 in signatures[key]) {
+        let sig = signatures[key][key2]
+
+        if (sig.user.id === signerId) {
+          let isSigned = Object.keys(sig.signature_data).length > 0
+
+          delete sig['can_move']
+          delete sig['can_move']
+          delete sig['is_hidden']
+          delete sig['can_select']
+          delete sig['can_delete']
+          delete sig['can_copy']
+
+          if (isMe) {
+            if (sig.type === 'textField') {
+              if (!sig.signature_data.data) {
+                continue
+              } else {
+                sig['is_signed'] = true
+              }
+            }
+
+            if (sig.type === 'signature') {
+              if (isSigned) {
+                sig['is_signed'] = true
+              } else {
+                continue
+              }
+            }
+
+            if (sig.type === 'checkbox') {
+              sig['is_signed'] = true
+              sig.signature_data['url'] = await html2Canvas(`${sig.id}_checkbox`, sig)
+              sig.signature_data['isBase64'] = true
+              sig.signature_data['format'] = 'png'
+            }
+
+            if (sig.type === 'dateField') {
+              sig['is_signed'] = true
+            }
+          }
+
+          res.push({
+            ...sig,
+            meta_data: JSON.stringify(sig),
+          })
+        }
+      }
+    }
+    //   if (Object.keys(signatures[key]).length > 0) {
+    //     Object.keys(signatures[key]).forEach(async function (key2) {
+    //       let sig = signatures[key][key2]
+
+    //       if (sig.user.id === signerId) {
+    //         let isSigned = Object.keys(sig.signature_data).length > 0
+
+    //         delete sig['can_move']
+    //         delete sig['can_move']
+    //         delete sig['is_hidden']
+    //         delete sig['can_select']
+    //         delete sig['can_delete']
+    //         delete sig['can_copy']
+
+    //         if (isMe) {
+    //           if (sig.type === 'textField') {
+    //             if (!sig.signature_data.data) {
+    //               return
+    //             } else {
+    //               sig['is_signed'] = true
+    //             }
+    //           }
+
+    //           if (sig.type === 'signature') {
+    //             if (isSigned) {
+    //               sig['is_signed'] = true
+    //             } else {
+    //               return
+    //             }
+    //           }
+
+    //           if (sig.type === 'checkbox') {
+    //             sig['is_signed'] = true
+    //             sig.signature_data['url'] = await html2Canvas(`${sig.id}_checkbox`, sig)
+    //             sig.signature_data['isBase64'] = true
+    //           }
+
+    //           if (sig.type === 'dateField') {
+    //             sig['is_signed'] = true
+    //           }
+    //         }
+
+    //         res.push({
+    //           ...sig,
+    //           meta_data: JSON.stringify(sig),
+    //         })
+
+    //       }
+    //     })
+    //   }
+    // })
+    return res
+  }
+
+  /* __________________________________ preparePayload2 __________________________________ */
+  async function preparePayload2() {
+    const payload: any = {
+      id: props.documentId,
+      signers: [],
+      PDF_SCALING_RATIO: PDF_SCALING_RATIO.value,
+    }
+    try {
+      const { data } = await baseApi.post(
+        `/user/soft-create`,
+        Object.keys(signer2).map((key) => ({ email: signer2[key].email }))
+      )
+
+      Object.keys(signer2).forEach((key) => {
+        const signer = signer2[key]
+        payload.signers.push({
+          id: data[`${signer.email}`]['id'],
+          email: signer.email,
+          firstName: signer.firstName,
+          lastName: signer.lastName,
+          fields: signer.fields,
+          color: signer.color,
+          message: messages,
+          meta_data: JSON.stringify({
+            id: data[`${signer.email}`]['id'],
+            email: signer.email,
+            firstName: signer.firstName,
+            lastName: signer.lastName,
+            fields: signer.fields,
+            color: signer.color,
+            message: messages,
+          }),
+          signatures: prepareSignatures2(signer.id, data),
         })
       })
 
-      Object.keys(signatures).forEach((key) => {})
-
-      console.log('>>> payload', payload)
-
-      setOpenDrawer(true)
+      return payload
+    } catch (error) {
+      console.log('>> sortCreate error', error)
     }
   }
 
-  function getSignaturesBySignerId(signerId: string) {
+  function prepareSignatures2(signerId: string, data: any) {
     let res: any = []
-    let isOtherSigner = signerId !== authState.data?.id
-    Object.keys(signatures).forEach((key) => {
-      if (Object.keys(signatures[key]).length > 0) {
-        Object.keys(signatures[key]).forEach((key2) => {
-          if (signatures[key][key2].user.id === signerId) {
-            res.push({
-              canDrag: signatures[key][key2].type === 'signature' && isOtherSigner ? false : true,
-              ...signatures[key][key2],
-            })
+    let isMe = signerId === authState.data?.id
+
+    for (let key in signatures) {
+      for (let key2 in signatures[key]) {
+        let sig = signatures[key][key2]
+        if (sig.user.id === signerId) {
+          let isSigned = Object.keys(sig.signature_data).length > 0
+
+          delete sig['can_move']
+          delete sig['can_move']
+          delete sig['is_hidden']
+          delete sig['can_select']
+          delete sig['can_delete']
+          delete sig['can_copy']
+
+          if (isMe) {
+            if (sig.type === 'textField') {
+              if (sig.signature_data.data === '') {
+                continue
+              } else {
+                sig['is_signed'] = true
+              }
+            }
+
+            if (isSigned && sig.type === 'signature') {
+              sig['is_signed'] = true
+            }
+            if (['dateField', 'checkbox'].includes(sig.type)) {
+              sig['is_signed'] = true
+            }
           }
-        })
+
+          sig = {
+            ...sig,
+            user: {
+              ...sig.user,
+              id: data[`${sig.user.email}`]['id'],
+            },
+          }
+          res.push({
+            ...sig,
+            meta_data: JSON.stringify(sig),
+          })
+        }
       }
-    })
+    }
+
+    // Object.keys(signatures).forEach((key) => {
+    //   if (Object.keys(signatures[key]).length > 0) {
+    //     Object.keys(signatures[key]).forEach((key2) => {
+    //       let sig = signatures[key][key2]
+    //       if (sig.user.id === signerId) {
+    //         let isSigned = Object.keys(sig.signature_data).length > 0
+
+    //         delete sig['can_move']
+    //         delete sig['can_move']
+    //         delete sig['is_hidden']
+    //         delete sig['can_select']
+    //         delete sig['can_delete']
+    //         delete sig['can_copy']
+
+    //         if (isMe) {
+    //           if (sig.type === 'textField') {
+    //             if (sig.signature_data.data === '') {
+    //               return
+    //             } else {
+    //               sig['is_signed'] = true
+    //             }
+    //           }
+
+    //           if (isSigned && sig.type === 'signature') {
+    //             sig['is_signed'] = true
+    //           }
+    //           if (['dateField', 'checkbox'].includes(sig.type)) {
+    //             sig['is_signed'] = true
+    //           }
+    //         }
+
+    //         sig = {
+    //           ...sig,
+    //           user: {
+    //             ...sig.user,
+    //             id: data[`${sig.user.email}`]['id'],
+    //           },
+    //         }
+    //         res.push({
+    //           ...sig,
+    //           meta_data: JSON.stringify(sig),
+    //         })
+    //       }
+    //     })
+    //   }
+    // })
     return res
   }
-  /*------------------- Skeleton */
+
+  /* ______________________________________________________________________________________________________ */
+
+  /* __________________________________________________ Skeleton ____________________________________________ */
   if (!props.documentDetail) {
     return (
       <Box
@@ -262,6 +719,12 @@ const RenderLeftSide = (props: any) => {
     )
   }
 
+  if (signersStatus?.is_signed) {
+    return <RenderLeftSideComplete />
+  }
+
+  console.log('props?.documentDetail?.status', props?.documentDetail?.status)
+
   return (
     <Box
       sx={{
@@ -272,20 +735,28 @@ const RenderLeftSide = (props: any) => {
         flexDirection: 'column',
       }}
     >
-      <RenderSigners selectedSigner={signer2[selectedSignerId] || {}} setSelectedSignerId={setSelectedSignerId} />
-      <Box>
-        <Typography
-          sx={{
-            fontSize: '1.7rem',
-            fontWeight: 'bold',
-            color: 'var(--dark)',
-          }}
-        >
-          Signatures
-        </Typography>
-      </Box>
-      {/* <Divider sx={{ marginBottom: '20px', borderColor: 'var(--orange1)', borderWidth: '1px' }} /> */}
-      <RenderSignature selectedSigner={signer2[selectedSignerId] || {}} />
+      <RenderSigners
+        selectedSigner={signer2[selectedSignerId] || {}}
+        setSelectedSignerId={setSelectedSignerId}
+        document_status={props?.documentDetail?.status}
+      />
+
+      <>
+        <Box>
+          <Typography
+            sx={{
+              fontSize: '1.7rem',
+              fontWeight: 'bold',
+              color: 'var(--dark)',
+            }}
+          >
+            Signatures
+          </Typography>
+        </Box>
+        {/* <Divider sx={{ marginBottom: '20px', borderColor: 'var(--orange1)', borderWidth: '1px' }} /> */}
+
+        <RenderSignature selectedSigner={signer2[selectedSignerId] || {}} />
+      </>
 
       <Typography
         sx={{
@@ -298,58 +769,85 @@ const RenderLeftSide = (props: any) => {
       </Typography>
 
       {/* --------------------------- Detail Content --------------------------- */}
-      <Box
-        sx={{
-          flex: 1,
-        }}
-      ></Box>
-
-      <Box
-        sx={{
-          cursor: isDisabled ? 'not-allowed' : 'pointer',
-        }}
-      >
-        <Divider sx={{ marginBottom: '13px' }} />
-        <MButton
-          onClick={handleSave}
-          sx={{
-            width: '100%',
-            backgroundColor: isDisabled ? '#DDDDDD' : 'var(--blue3)',
-            borderRadius: '5px',
-
-            // '&:hover': { backgroundColor: 'var(--orange)', '& p': { color: 'var(--white)' } },
-            transition: 'all 0.4s ease-in-out',
-            padding: '9px',
-          }}
-          disabled={isDisabled}
-        >
-          <Typography
-            sx={{
-              color: 'var(--white)',
-              fontWeight: 'bold',
-              letterSpacing: '0.1rem',
-              fontSize: '1.5rem',
-            }}
-          >
-            {Object.keys(signer2).length === 1 && isOnlyMeSigner && 'Finish & Sign'}
-            {Object.keys(signer2).length === 0 && 'Finish & Sign'}
-            {Object.keys(signer2).length === 1 && !isOnlyMeSigner && 'Review & Send'}
-            {Object.keys(signer2).length > 1 && 'Review & Send'}
-          </Typography>
-        </MButton>
+      <Box sx={{ flex: 1 }}>
+        <Box>
+          <Typography>Author: </Typography>
+          <Typography>Size: </Typography>
+          <Typography>Create at: </Typography>
+          <Typography>Updated at: </Typography>
+        </Box>
       </Box>
+
+      {/* --------------------------------------------- ONLY ME SIGNER ---------------------------------------------- */}
+
+      {props?.documentDetail?.status !== 'READY_TO_SIGN' && (
+        <Box sx={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}>
+          <Divider sx={{ marginBottom: '13px' }} />
+          <MButton
+            onClick={handleSave}
+            sx={{
+              width: '100%',
+              backgroundColor: isDisabled ? '#DDDDDD' : 'var(--blue3)',
+              borderRadius: '5px',
+
+              // '&:hover': { backgroundColor: 'var(--orange)', '& p': { color: 'var(--white)' } },
+              transition: 'all 0.4s ease-in-out',
+              padding: '9px',
+            }}
+            disabled={isDisabled}
+          >
+            <Typography
+              sx={{
+                color: 'var(--white)',
+                fontWeight: 'bold',
+                letterSpacing: '0.1rem',
+                fontSize: '1.5rem',
+              }}
+            >
+              {Object.keys(signer2).length === 1 && isOnlyMeSigner && 'Finish & Sign'}
+              {Object.keys(signer2).length === 0 && 'Finish & Sign'}
+              {Object.keys(signer2).length === 1 && !isOnlyMeSigner && 'Review & Send'}
+              {Object.keys(signer2).length > 1 && 'Review & Send'}
+            </Typography>
+          </MButton>
+        </Box>
+      )}
+
+      {/* -------------------------------------------- SIGNEE FINISH AND SIGN [Orange Color] ---------------------------------------- */}
+
+      {props?.documentDetail?.status === 'READY_TO_SIGN' && (
+        <Box sx={{ cursor: isReadyToSignAndNoSignatureData ? 'not-allowed' : 'pointer' }}>
+          <Divider sx={{ marginBottom: '13px' }} />
+          <MButton
+            onClick={handleSignBySignee}
+            sx={{
+              width: '100%',
+              borderRadius: '5px',
+              backgroundColor: isReadyToSignAndNoSignatureData ? '#DDDDDD' : 'var(--orange)',
+              transition: 'all 0.4s ease-in-out',
+              padding: '9px',
+            }}
+            disabled={isReadyToSignAndNoSignatureData}
+          >
+            <Typography
+              sx={{
+                color: 'var(--white)',
+                fontWeight: 'bold',
+                letterSpacing: '0.1rem',
+                fontSize: '1.5rem',
+              }}
+            >
+              {'Finish & Sign'}
+            </Typography>
+          </MButton>
+        </Box>
+      )}
 
       {/* <Divider sx={{ marginBottom: '20px', borderColor: 'var(--orange1)', borderWidth: '1px' }} /> */}
 
-      <Drawer
-        anchor="left"
-        open={openDrawer}
-        sx={{
-          '& .MuiBackdrop-root': {
-            backgroundColor: 'rgba(0,0,0,0.2)',
-          },
-        }}
-      >
+      {/* ----------------------------------------------------- CONTAINER DRAWER ------------------------------------------------- */}
+
+      <Drawer anchor="left" open={openDrawer} sx={{ '& .MuiBackdrop-root': { backgroundColor: 'rgba(0,0,0,0.2)' } }}>
         <Box
           sx={{
             width: '600px',
@@ -559,8 +1057,9 @@ const RenderLeftSide = (props: any) => {
               paddingLeft: '20px',
             }}
           >
+            {/* --------------------------------------------- SEND EMAIL INVITE ---------------------------------------------- */}
             <MButton
-              onClick={handleSave}
+              onClick={handleSaveAndSendEmail}
               sx={{
                 width: '200px',
                 backgroundColor: 'var(--blue3)',
