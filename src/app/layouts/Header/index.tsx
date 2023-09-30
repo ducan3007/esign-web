@@ -64,22 +64,20 @@ export const DashboardHeader = () => {
 
   useEffect(() => {
     ;(async () => {
-      if (authState.data?.is_registerd) {
-        const address = authState.data?.wallet_address
-        if (address?.length > 0 && window.ethereum) {
+      try {
+        if (window.ethereum) {
           let request = await window.ethereum.request({ method: 'eth_requestAccounts' })
           dispatch({
-            type: WALLET_SET_CONNECTED,
+            type: SET_WALLET_ADDRESS,
             payload: {
               provider: 'metamask',
-              connected: true,
               address: request,
             },
           })
         }
-      }
+      } catch (error) {}
     })()
-  }, [authState])
+  }, [])
 
   useEffect(() => {
     ;(async () => {
@@ -92,7 +90,7 @@ export const DashboardHeader = () => {
         })
       } catch (error) {}
     })()
-  }, [isSaved])
+  }, [])
 
   const handleSaveDraft = async () => {
     if (documentDetail.status === 'NEW' || documentDetail.status === 'ON_DRAFT') {
@@ -191,103 +189,214 @@ export const DashboardHeader = () => {
 
   const DocumentStatus = {
     ON_DRAFT: (
-      <MButton
-        onClick={handleSaveDraft}
+      <Box
         sx={{
-          padding: '9px 12px',
-          borderRadius: '12px',
-          backgroundColor: isSaveDraftEnabled ? 'var(--green11)' : 'var(--white)',
-          border: isSaveDraftEnabled ? '1px solid var(--green11)' : '1px solid var(--gray3)',
           display: 'flex',
-          gap: '12px',
-          '&:hover': {
-            opacity: '1 !important',
-          },
         }}
       >
-        <ClassIcon
+        <MButton
+          onClick={handleSaveDraft}
           sx={{
-            fontSize: '24px',
-            color: isSaveDraftEnabled ? 'var(--green12)' : 'var(--dark)',
-          }}
-        />
-        <Typography
-          sx={{
-            fontSize: '1.8rem',
-            color: isSaveDraftEnabled ? 'var(--green12)' : 'var(--dark)',
-            letterSpacing: '1px',
-            fontWeight: 'bold',
+            padding: '9px 12px',
+            borderRadius: '12px 0px 0px 12px',
+            backgroundColor: isSaveDraftEnabled ? 'var(--green11)' : 'var(--white)',
+            border: isSaveDraftEnabled ? '1px solid var(--green11)' : '1px solid var(--gray3)',
+            display: 'flex',
+            gap: '12px',
+            '&:hover': {
+              opacity: '1 !important',
+            },
           }}
         >
-          Save draft
-        </Typography>
-      </MButton>
+          <ClassIcon
+            sx={{
+              fontSize: '24px',
+              color: isSaveDraftEnabled ? 'var(--green12)' : 'var(--dark)',
+            }}
+          />
+          <Typography
+            sx={{
+              fontSize: '1.8rem',
+              color: isSaveDraftEnabled ? 'var(--green12)' : 'var(--dark)',
+              letterSpacing: '1px',
+              fontWeight: 'bold',
+            }}
+          >
+            Save Draft
+          </Typography>
+        </MButton>
+        <MButton
+          onClick={downloadDocument}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            textAlign: 'center',
+            borderRadius: '0px 12px 12px 0px',
+            backgroundColor: 'var(--white)',
+            border: '1px solid var(--gray3)',
+            borderLeftWidth: '0px',
+            padding: '5px 12px',
+            cursor: isDownloading ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {!isDownloading && (
+            <FileDownloadOutlinedIcon
+              sx={{
+                fontSize: '31px',
+                color: 'var(--dark)',
+              }}
+            />
+          )}
+          {isDownloading && (
+            <CircularProgress
+              size={31}
+              sx={{
+                color: 'var(--blue3)',
+              }}
+            />
+          )}
+        </MButton>
+      </Box>
     ),
     NEW: (
-      <MButton
-        onClick={handleSaveDraft}
+      <Box
         sx={{
-          padding: '9px 12px',
-          borderRadius: '12px',
-          backgroundColor: isSaveDraftEnabled ? 'var(--green11)' : 'var(--white)',
-          border: isSaveDraftEnabled ? '1px solid var(--green11)' : '1px solid var(--gray3)',
           display: 'flex',
-          gap: '12px',
-          '&:hover': {
-            opacity: '1 !important',
-          },
         }}
       >
-        <ClassIcon
+        <MButton
+          onClick={handleSaveDraft}
           sx={{
-            fontSize: '24px',
-            color: isSaveDraftEnabled ? 'var(--green12)' : 'var(--dark)',
-          }}
-        />
-        <Typography
-          sx={{
-            fontSize: '1.8rem',
-            color: isSaveDraftEnabled ? 'var(--green12)' : 'var(--dark)',
-            letterSpacing: '1px',
-            fontWeight: 'bold',
+            padding: '9px 12px',
+            borderRadius: '12px 0px 0px 12px',
+            backgroundColor: isSaveDraftEnabled ? 'var(--green11)' : 'var(--white)',
+            border: isSaveDraftEnabled ? '1px solid var(--green11)' : '1px solid var(--gray3)',
+            display: 'flex',
+            gap: '12px',
+            '&:hover': {
+              opacity: '1 !important',
+            },
           }}
         >
-          Save draft
-        </Typography>
-      </MButton>
+          <ClassIcon
+            sx={{
+              fontSize: '24px',
+              color: isSaveDraftEnabled ? 'var(--green12)' : 'var(--dark)',
+            }}
+          />
+          <Typography
+            sx={{
+              fontSize: '1.8rem',
+              color: isSaveDraftEnabled ? 'var(--green12)' : 'var(--dark)',
+              letterSpacing: '1px',
+              fontWeight: 'bold',
+            }}
+          >
+            Save Draft
+          </Typography>
+        </MButton>
+        <MButton
+          onClick={downloadDocument}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            textAlign: 'center',
+            borderRadius: '0px 12px 12px 0px',
+            backgroundColor: 'var(--white)',
+            border: '1px solid var(--gray3)',
+            borderLeftWidth: '0px',
+            padding: '5px 12px',
+            cursor: isDownloading ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {!isDownloading && (
+            <FileDownloadOutlinedIcon
+              sx={{
+                fontSize: '31px',
+                color: 'var(--dark)',
+              }}
+            />
+          )}
+          {isDownloading && (
+            <CircularProgress
+              size={31}
+              sx={{
+                color: 'var(--blue3)',
+              }}
+            />
+          )}
+        </MButton>
+      </Box>
     ),
     READY_TO_SIGN: (
-      <MButton
-        onClick={handleSaveDraft}
+      <Box
         sx={{
-          padding: '10px 12px',
-          borderRadius: '12px',
-          backgroundColor: 'var(--green14)',
-          border: '1px solid var(--green12)',
           display: 'flex',
-          gap: '12px',
-          '&:hover': {
-            opacity: '1 !important',
-          },
         }}
       >
-        <CheckCircleTwoToneIcon
+        <MButton
+          onClick={handleSaveDraft}
           sx={{
-            fontSize: '28px',
-            color: 'var( --green12)',
-          }}
-        />
-        <Typography
-          sx={{
-            fontSize: '1.9rem',
-            color: 'var(--green12)',
-            letterSpacing: '1px',
-            fontWeight: 'bold',
+            padding: '10px 12px',
+           borderRadius: '12px 0px 0px 12px',
+            backgroundColor: 'var(--green14)',
+            border: '1px solid var(--green12)',
+            display: 'flex',
+            gap: '12px',
+            '&:hover': {
+              opacity: '1 !important',
+            },
           }}
         >
-          Ready to Sign
-        </Typography>
-      </MButton>
+          <CheckCircleTwoToneIcon
+            sx={{
+              fontSize: '28px',
+              color: 'var( --green12)',
+            }}
+          />
+          <Typography
+            sx={{
+              fontSize: '1.9rem',
+              color: 'var(--green12)',
+              letterSpacing: '1px',
+              fontWeight: 'bold',
+            }}
+          >
+            Ready to Sign
+          </Typography>
+        </MButton>
+        <MButton
+          onClick={downloadDocument}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            textAlign: 'center',
+            borderRadius: '0px 12px 12px 0px',
+            backgroundColor: 'var(--white)',
+            border: '1px solid var(--gray3)',
+            borderLeftWidth: '0px',
+            padding: '5px 12px',
+            cursor: isDownloading ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {!isDownloading && (
+            <FileDownloadOutlinedIcon
+              sx={{
+                fontSize: '31px',
+                color: 'var(--dark)',
+              }}
+            />
+          )}
+          {isDownloading && (
+            <CircularProgress
+              size={31}
+              sx={{
+                color: 'var(--blue3)',
+              }}
+            />
+          )}
+        </MButton>
+      </Box>
     ),
     SIGNED: (
       <Box
@@ -725,6 +834,8 @@ export const DashboardHeader = () => {
           '& .MuiDialog-paper': {
             width: 550,
             height: 556,
+            position: 'absolute',
+            top: '100px',
             maxWidth: 'none',
             maxHeight: 'none',
             borderRadius: '15px',
@@ -745,18 +856,8 @@ export const DashboardHeader = () => {
           >
             Connect your wallet
           </Typography>
-          <Box
-            sx={{
-              textAlign: 'center',
-            }}
-          >
-            <span
-              style={{
-                fontSize: '1.6rem',
-                color: 'var(--dark2)',
-                marginTop: '10px',
-              }}
-            >
+          <Box sx={{ textAlign: 'center' }}>
+            <span style={{ fontSize: '1.6rem', color: 'var(--dark2)', marginTop: '10px' }}>
               If you don't have a wallet, you can follow the instructions to install one.
             </span>{' '}
             <a
@@ -774,13 +875,12 @@ export const DashboardHeader = () => {
             </a>
           </Box>
           <Divider sx={{ marginTop: '20px', marginBottom: '10px' }} />
-          <Box>
+          <Box sx={{ marginTop: '10px' }}>
             <Box
               onClick={async () => {
                 try {
                   if (window.ethereum) {
                     let request = await window.ethereum.request({ method: 'eth_requestAccounts' })
-                    setOpenWalletModal(false)
                     dispatch({
                       type: SET_WALLET_ADDRESS,
                       payload: {
@@ -788,6 +888,11 @@ export const DashboardHeader = () => {
                         connected: true,
                         address: request,
                       },
+                    })
+
+                    await new Promise((resolve) => {
+                      setOpenWalletModal(false)
+                      resolve(true)
                     })
                   }
                 } catch (error: any) {

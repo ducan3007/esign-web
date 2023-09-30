@@ -92,7 +92,7 @@ const DashboardPage = () => {
     >
       <Typography
         sx={{
-          color: 'var(--dark)',
+          color: 'var(--blue3)',
           fontWeight: 'bold',
           fontSize: '2.1rem',
           marginBottom: '10px',
@@ -208,7 +208,7 @@ const DashboardPage = () => {
 
       <Typography
         sx={{
-          color: 'var(--dark2)',
+          color: 'var(--blue3)',
           fontWeight: 'bold',
           fontSize: '2.1rem',
           marginBottom: '10px',

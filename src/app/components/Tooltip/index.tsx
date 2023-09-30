@@ -14,13 +14,14 @@ interface props extends TooltipProps {
 export const MTooltip = (props: props) => {
   return (
     <Tooltip
+
       componentsProps={{
         popper: {
           sx: {
             '& .MuiTooltip-tooltip': {
               backgroundColor: props.background || 'var(--white)',
               margin: props.margin || '0px 0px 0px 1.5rem',
-              color: props.color || 'var(--ligh-blue3)',
+              color: props.color || 'var(--blue3)',
               fontSize: props.fontSize || '1.4rem',
               fontWeight: props.fontWeight || 'bold',
               borderRadius: '5px',
@@ -28,6 +29,7 @@ export const MTooltip = (props: props) => {
               border: '1px solid var(--color-gray2)',
               whiteSpace: props.nowrap || 'nowrap',
               overflow: 'hidden',
+              maxWidth: '700px',
             },
           },
         },

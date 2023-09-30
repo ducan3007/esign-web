@@ -58,7 +58,7 @@ export const dashboardPaths = [
 ];
 
 export const headerTitles = [
-  { to: '/dashboard',             name: 'dfdf',                        },
+  { to: '/dashboard',             name: '',                        },
   { to: '/document',              name: 'Documents',               },
   { to: '/signatures',            name: 'Signatures',              },
   { to: '/certificate',           name: 'Certificates',            },

@@ -1,14 +1,17 @@
+import { selectors as authSelectors } from '@esign-web/redux/auth'
 import { selectors } from '@esign-web/redux/document'
+import { selectors as walletSelectors } from '@esign-web/redux/wallet'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import { Box, Typography } from '@mui/material'
-import { useSelector } from 'react-redux'
-import MButton from 'src/app/components/Button'
-import { ethers } from 'ethers'
-import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined'
 import moment from 'moment'
-import { useEffect } from 'react'
+import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import MButton from 'src/app/components/Button'
 import { SignIcon } from 'src/app/components/Icon'
+import { MTooltip } from 'src/app/components/Tooltip'
+
 interface DefaultHeaderProps {
   title?: string
   to?: string
@@ -17,62 +20,26 @@ interface DefaultHeaderProps {
 const DocumentSignHeader = () => {
   const documentDetail = useSelector(selectors.getDocumentDetail)
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        paddingLeft: '6px',
-      }}
-    >
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '6px' }}>
       <Box
         sx={{
           flex: 1,
         }}
       >
-        <Typography
-          sx={{
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            color: 'var(--dark2)',
-          }}
-        >
-          {documentDetail?.name}
-        </Typography>
-        <Typography
-          sx={{
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-            color: 'var(--gray6)',
-          }}
-        >
+        <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--dark2)' }}>{documentDetail?.name}</Typography>
+        <Typography sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--gray6)' }}>
           Last modified: {moment(documentDetail?.updatedAt).format('DD MMM YYYY')} - {moment(documentDetail?.updatedAt).format('hh:mm A')}
         </Typography>
       </Box>
       <Box sx={{ display: 'flex' }}>
-        <Typography
-          sx={{
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-            color: 'var(--gray6)',
-          }}
-        >
-          {documentDetail?.hash256}
-        </Typography>
+        <Typography sx={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--gray6)' }}>{documentDetail?.hash256}</Typography>
       </Box>
     </Box>
   )
 }
 const DocumentHeader = () => {
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: 'flex',
-        paddingLeft: '20px',
-        alignItems: 'center',
-      }}
-    >
+    <Box sx={{ flex: 1, display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
       <MButton
         onClick={() => {
           const ele = document.getElementById('upload_document')
@@ -101,14 +68,7 @@ const DocumentHeader = () => {
 
 const CerticateHeader = () => {
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: 'flex',
-        paddingLeft: '20px',
-        alignItems: 'center',
-      }}
-    >
+    <Box sx={{ flex: 1, display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
       <MButton
         onClick={() => {
           const ele = document.getElementById('upload_document')
@@ -136,57 +96,18 @@ const CerticateHeader = () => {
 }
 
 const WalletHeader = () => {
-  useEffect(() => {
-    ;(async () => {
-      try {
-        if (window.ethereum) {
-          const provider = new ethers.JsonRpcProvider()
-          const network = await provider.getNetwork()
-          const contract = 
-          console.log('network', network)
-        }
-      } catch (error) {}
-    })()
-  }, [])
+  const contractState = useSelector(walletSelectors.getWalletState)
+  const authState = useSelector(authSelectors.getAuthState)
+  const [provider, setProvider] = useState()
 
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: 'flex',
-        paddingLeft: '20px',
-        alignItems: 'center',
-      }}
-    >
-      <MButton
-        disableRipple
-        sx={{
-          width: '240px',
-          borderRadius: '12px',
-          backgroundColor: 'var(--white)',
-          border: '1px solid var(--gray3)',
-          padding: '2px 6px',
-          display: 'flex',
-          gap: '12px',
-        }}
-      >
-        <KeyOutlinedIcon
-          sx={{
-            fontSize: '33px',
-            color: 'var(--dark)',
-          }}
-        />
-        <Typography
-          sx={{
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            letterSpacing: '1px',
-            color: 'var(--dark)',
-          }}
-        >
-          Update Address
-        </Typography>
-      </MButton>
+    <Box sx={{ flex: 1, display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
+      <Typography sx={{ fontSize: '2.4rem', fontWeight: 'bold', letterSpacing: '1px', color: 'var(--blue3)' }}>Signing Address</Typography>
+      <MTooltip color="var(--blue3)" title={'Signing Address is the address that the Smart Contract allows to sign the document'}>
+        <HelpOutlineIcon
+          sx={{ color: 'var(--blue3)', fontSize: '2.4rem', marginLeft: '10px', textAlign: 'center', alignContent: 'center', fontWeight: 'bold' }}
+        ></HelpOutlineIcon>
+      </MTooltip>
     </Box>
   )
 }
@@ -196,14 +117,7 @@ const DocumentInfoHeader = () => {
   const [searchParams] = useSearchParams()
   const documentId = searchParams.get('id')
   return (
-    <Box
-      sx={{
-        flex: 1,
-        display: 'flex',
-        paddingLeft: '20px',
-        alignItems: 'center',
-      }}
-    >
+    <Box sx={{ flex: 1, display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
       <MButton
         onClick={() => {
           navigate(`/document/sign?id=${documentId}`)
@@ -220,16 +134,7 @@ const DocumentInfoHeader = () => {
         }}
       >
         <SignIcon width="40px" height="40px" />
-        <Typography
-          sx={{
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            letterSpacing: '1px',
-            color: 'var(--dark)',
-          }}
-        >
-          Sign now
-        </Typography>
+        <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', letterSpacing: '1px', color: 'var(--dark)' }}>Sign now</Typography>
       </MButton>
     </Box>
   )
