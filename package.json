@@ -17,6 +17,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/lab": "^5.0.0-alpha.135",
     "@mui/material": "^5.13.5",
+    "@mui/x-date-pickers": "^6.16.2",
     "@swc/helpers": "~0.5.0",
     "@types/react-resizable": "^3.0.4",
     "axios": "^1.4.0",

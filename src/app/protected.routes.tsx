@@ -28,7 +28,7 @@ export const ProtectedRoute = (props: any) => {
     }
   }, [tokenFromUrl])
 
-  // if (authState.isAuthorized && authState.data?.is_registerd === false) {
+  // if (authState.isAuthorized && authState.data?.is_registered === false) {
   //   window.location.replace('/register')
   //   return <FallbackLoading />
   // }

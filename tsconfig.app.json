@@ -19,5 +19,5 @@
     "src/**/*.spec.jsx",
     "src/**/*.test.jsx"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "src/app/components/SignatureDnD/__Toolbar.Signer.Dropdown.tsx"]
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "src/app/pages/Document/DragDrop/__Toolbar.Signer.Dropdown.tsx", "src/app/pages/Certificate/DragDrop"]
 }

@@ -6,6 +6,7 @@ import KeyOutlinedIcon from '@mui/icons-material/KeyOutlined';
 import RestoreOutlinedIcon from '@mui/icons-material/RestoreOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import WalletOutlinedIcon from '@mui/icons-material/WalletOutlined';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 
 
 // const DashboardLayout = React.lazy(() => import('./layouts/DashboardLayout'));
@@ -31,10 +32,15 @@ import SignupPage from './pages/Signup';
 // const UMSPage = React.lazy(() => import('./pages/UMS'));
 import UMSPage from './pages/UMS';
 // const WalletPage = React.lazy(() => import('./pages/Wallet'));
-import { NotFoundPage } from './pages/404NotFound';
-import { DocumentDetail } from './pages/Document/DocumentDetail';
 import WalletPage from './pages/Wallet';
+
+import { NotFoundPage } from './pages/404NotFound';
+import { DocumentDetail } from './pages/Document/Detail';
 import { DocumentSignningPage } from './pages/Document/SigningPage';
+import { Certificants } from './pages/Certificant';
+import { CertificateSignPage } from './pages/Certificate/SigningPage';
+import { CertificateDetailPage } from './pages/Certificate/Detail';
+import { CertificantDetailPage } from './pages/Certificant/Detail';
 
 
 
@@ -52,7 +58,7 @@ export const dashboardPaths = [
   { to: '/signatures',            name: 'Signatures',         icon: KeyOutlinedIcon },
   { to: '/certificate',           name: 'Certificates',       icon: CardMembershipOutlinedIcon },
   { to: '/wallet',                name: 'Wallets',            icon: WalletOutlinedIcon },
-  { to: '/ums',                   name: 'Organization',       icon: BusinessOutlinedIcon },
+  { to: '/verify',                name: 'Verify',             icon: VerifiedUserIcon },
   { to: '/logs',                  name: 'Logs',               icon: RestoreOutlinedIcon },
   { to: '/account-setting',       name: 'Account Settings',   icon: SettingsOutlinedIcon },
 ];
@@ -68,6 +74,8 @@ export const headerTitles = [
   { to: '/account-setting',       name: 'Account Settings',        },
   { to: '/document/info',         name: 'Document Detail',         },
   { to: '/document/sign',         name: 'Document Signning Page',  },
+  { to: '/certificate/detail',    name: 'Certificate Detail',      },
+  { to: '/certificate/sign',      name: ''                         },
 ];
 
 export const paths = {
@@ -78,30 +86,38 @@ export const paths = {
   document:                       '/document',
   document_detail:                '/document/info',
   document_sign:                  '/document/sign',
-  ums:                            '/ums',
+  ums:                            '/verify',
   logs:                           '/logs',
   accountSetting:                 '/account-setting',
   wallet:                         '/wallet',
   signatures:                     '/signatures',
   certificate:                    '/certificate',
+  cert_detail:                    '/certificate/detail',
+  cert_sign:                      '/certificate/sign',
+  certificant:                    '/certificant',
+  certificant_detail:             '/certificant/detail',
   notFound:                       '/*',
 };
 
 const appRoutes: RouteObject[] = [
-  { path: paths.login,            layout: null,               component: LoginPage                                      },
-  { path: paths.signup,           layout: null,               component: SignupPage                                     },
-  { path: paths.home,             layout: null,               component: HomePage                                       },
-  { path: paths.notFound,         layout: null,               component: NotFoundPage,                                  },
-  { path: paths.dashboard,        layout: DashboardLayout,    component: DashboardPage,              protected: true    },
-  { path: paths.document,         layout: DashboardLayout,    component: DocumentPage,               protected: true    },
-  { path: paths.wallet,           layout: DashboardLayout,    component: WalletPage,                 protected: true    },
-  { path: paths.ums,              layout: DashboardLayout,    component: UMSPage,                    protected: true    },
-  { path: paths.logs,             layout: DashboardLayout,    component: LogPage,                    protected: true    },
-  { path: paths.accountSetting,   layout: DashboardLayout,    component: AccountSettingsPage,        protected: true    },
-  { path: paths.signatures,       layout: DashboardLayout,    component: SignaturePage,              protected: true    },
-  { path: paths.certificate,      layout: DashboardLayout,    component: CeritificatePage,           protected: true    },
-  { path: paths.document_detail,  layout: DashboardLayout,    component: DocumentDetail,             protected: true    },
-  { path: paths.document_sign,    layout: DashboardLayout,    component: DocumentSignningPage,       protected: true    },
+  { path: paths.login,                  layout: null,                     component: LoginPage                                      },
+  { path: paths.signup,                 layout: null,                     component: SignupPage                                     },
+  { path: paths.home,                   layout: null,                     component: HomePage                                       },
+  { path: paths.notFound,               layout: null,                     component: NotFoundPage,                                  },
+  { path: paths.dashboard,              layout: DashboardLayout,          component: DashboardPage,              protected: true    },
+  { path: paths.document,               layout: DashboardLayout,          component: DocumentPage,               protected: true    },
+  { path: paths.wallet,                 layout: DashboardLayout,          component: WalletPage,                 protected: true    },
+  { path: paths.ums,                    layout: DashboardLayout,          component: UMSPage,                    protected: true    },
+  { path: paths.logs,                   layout: DashboardLayout,          component: LogPage,                    protected: true    },
+  { path: paths.accountSetting,         layout: DashboardLayout,          component: AccountSettingsPage,        protected: true    },
+  { path: paths.signatures,             layout: DashboardLayout,          component: SignaturePage,              protected: true    },
+  { path: paths.certificate,            layout: DashboardLayout,          component: CeritificatePage,           protected: true    },
+  { path: paths.document_detail,        layout: DashboardLayout,          component: DocumentDetail,             protected: true    },
+  { path: paths.document_sign,          layout: DashboardLayout,          component: DocumentSignningPage,       protected: true    },
+  { path: paths.cert_detail,            layout: DashboardLayout,          component: CertificateDetailPage,      protected: true    },
+  { path: paths.cert_sign,              layout: DashboardLayout,          component: CertificateSignPage,        protected: true    },
+  { path: paths.certificant,            layout: DashboardLayout,          component: Certificants,               protected: true    },
+  { path: paths.certificant_detail,     layout: DashboardLayout,          component: CertificantDetailPage,      protected: true    }
 ];
 
 export { appRoutes };

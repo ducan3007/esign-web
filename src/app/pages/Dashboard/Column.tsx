@@ -59,6 +59,7 @@ export const Fields = {
     },
     renderCell: (props: any) => {
       const user = props.row.user
+      const meta_data = JSON.parse(user.meta_data || '')
       return (
         <TableBodyCell
           key={nanoid()}
@@ -86,7 +87,7 @@ export const Fields = {
                   fontWeight: 'bold',
                   alignSelf: 'center',
                   marginLeft: '5px',
-                  backgroundColor: `${props.row.color}`,
+                  backgroundColor: meta_data?.color || props.row.color.toString(),
                 }}
               >
                 {user.user_name.toUpperCase().charAt(0)}
@@ -274,7 +275,40 @@ export const Fields = {
       )
     },
     renderCell: (props: any) => {
+      const user = props.row.user
       const meta_data = props.row.meta_data
+
+      if (props.row.feature === 'DOCUMENT') {
+        return (
+          <TableBodyCell
+            _sx={{
+              height: '65px',
+              fontSize: '1.6rem',
+              color: 'var(--dark)',
+            }}
+            key={nanoid()}
+          >
+            <Typography
+              sx={{
+                color: 'var(--dark3)',
+                fontSize: '1.6rem',
+              }}
+            >
+              <b>{user.user_name}</b> {props.row.description}{' '}
+              <a
+                href={'/document/sign?id=' + meta_data.document_id}
+                style={{
+                  color: 'var(--blue3)',
+                  fontSize: '1.6rem',
+                  fontWeight: 'bold',
+                }}
+              >
+                {meta_data.document_name}
+              </a>
+            </Typography>
+          </TableBodyCell>
+        )
+      }
       return (
         <TableBodyCell
           _sx={{
@@ -284,24 +318,7 @@ export const Fields = {
           }}
           key={nanoid()}
         >
-          <Typography
-            sx={{
-              color: 'var(--dark3)',
-              fontSize: '1.6rem',
-            }}
-          >
-            {props.row.description}{' '}
-            <a
-              href={'/document/sign?id=' + meta_data.document_id}
-              style={{
-                color: 'var(--blue3)',
-                fontSize: '1.6rem',
-                fontWeight: 'bold',
-              }}
-            >
-              {meta_data.document_name}
-            </a>
-          </Typography>
+          <></>
         </TableBodyCell>
       )
     },

@@ -1,24 +1,24 @@
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
-import KeyboardCapslockIcon from '@mui/icons-material/KeyboardCapslock';
-import { Box, Divider } from '@mui/material';
-import cn from 'classnames';
-import { Fragment, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import MButton from 'src/app/components/Button';
-import { SignifyLogo } from 'src/app/components/Logo';
-import { MTooltip } from 'src/app/components/Tooltip';
-import { dashboardPaths } from 'src/app/routes';
-import './styles.scss';
-import { useDispatch, useSelector } from 'react-redux';
-import { actions, selectors } from '@esign-web/redux/auth';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined'
+import KeyboardCapslockIcon from '@mui/icons-material/KeyboardCapslock'
+import { Box, Divider } from '@mui/material'
+import cn from 'classnames'
+import { Fragment, useState } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import MButton from 'src/app/components/Button'
+import { SignifyLogo } from 'src/app/components/Logo'
+import { MTooltip } from 'src/app/components/Tooltip'
+import { dashboardPaths } from 'src/app/routes'
+import './styles.scss'
+import { useDispatch, useSelector } from 'react-redux'
+import { actions, selectors } from '@esign-web/redux/auth'
 
 export const Sidebar = () => {
-  const dispatch = useDispatch();
-  const isSidebarOpen = useSelector(selectors.getSidebarState);
+  const dispatch = useDispatch()
+  const isSidebarOpen = useSelector(selectors.getSidebarState)
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  console.log('isSidebarOpen', isSidebarOpen);
+  console.log('isSidebarOpen', isSidebarOpen)
 
   return (
     <Box
@@ -68,7 +68,7 @@ export const Sidebar = () => {
 
       <Box sx={{ flex: 1, flexDirection: 'column', display: 'flex', gap: '0.7rem' }}>
         {dashboardPaths.map((path, index) => {
-          const Icon = path.icon;
+          const Icon = path.icon
           return (
             <Fragment key={path.to}>
               {path.to === '/logs' && (
@@ -80,19 +80,20 @@ export const Sidebar = () => {
                 <div>
                   <NavLink
                     className={({ isActive }) => {
-                      const activeStyle = isActive ? 'nav_active' : 'nav_normal';
-                      return cn(activeStyle, 'nav_item');
+                      const activeStyle = isActive ? 'nav_active' : 'nav_normal'
+                      return cn(activeStyle, 'nav_item')
                     }}
                     onClick={(event) => {
-                      event.preventDefault();
+                      event.preventDefault()
                       /* TODO: check if there is any unsaved work */
-                      // if (haveUnsavedWork) {
-                      //   const a = confirm('Are you sure you want to leave?');
-                      //   if (a) {
-                      //     navigate(path.to);
-                      //   }
-                      // }
-                      navigate(path.to);
+                      if (false) {
+                        const a = confirm('Are you sure you want to leave?')
+                        if (a) {
+                          navigate(path.to)
+                        }
+                      } else {
+                        navigate(path.to)
+                      }
                     }}
                     to={path.to}
                   >
@@ -117,7 +118,7 @@ export const Sidebar = () => {
                 </div>
               </MTooltip>
             </Fragment>
-          );
+          )
         })}
       </Box>
 
@@ -181,5 +182,5 @@ export const Sidebar = () => {
         </MButton>
       </Box>
     </Box>
-  );
-};
+  )
+}

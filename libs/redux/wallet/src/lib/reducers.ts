@@ -27,7 +27,7 @@ export default (state = initialState, action: any) => {
       return {
         ...state,
         provider: action.payload.provider,
-        connected: action.payload.connected,
+        connected: true,
         address: action.payload.address,
       }
     case _.SET_CONTRACT_ABI:

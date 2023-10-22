@@ -13,7 +13,7 @@ interface DashboardLayoutProps {
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const isBackdropOpen = useSelector(selectors.getBackgroundState)
   const authState = useSelector(selectors.getAuthState)
-  const isUnregistered = authState.data?.is_registerd === false
+  const isUnregistered = authState.data?.is_registered === false
 
   return (
     <Box id="dashboard-layout" sx={{ position: 'relative', display: 'flex', flexDirenction: 'row', width: '100vw', height: '100vh' }}>

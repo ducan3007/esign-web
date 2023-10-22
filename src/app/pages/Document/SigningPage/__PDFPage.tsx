@@ -1,15 +1,15 @@
 import { getHTMLID } from '@esign-web/libs/utils'
 import { actions, selectors as documentSelectors, selectors } from '@esign-web/redux/document'
 import { Box } from '@mui/material'
+import moment from 'moment'
 import { useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import { Page } from 'react-pdf'
 import { useDispatch, useSelector } from 'react-redux'
-import DraggableItem from 'src/app/components/SignatureDnD'
-import { DragItem } from './__RenderSignature'
-import { FontSizeToolbar, FontFamily } from 'src/app/components/SignatureDnD/__Toolbar'
-import moment from 'moment'
-import { FontSize } from 'src/app/components/SignatureDnD/__SignatureType'
+import DraggableItem from 'src/app/pages/Document/DragDrop'
+import { DragItem } from './__Signature'
+import { FontFamily, FontSizeToolbar } from '../DragDrop/__Toolbar'
+import { FontSize } from '../DragDrop/__TextOption'
 
 type Props = {
   index: number
@@ -44,16 +44,10 @@ export const PDFPage = (props: Props) => {
     () => ({
       accept: 'box',
       drop(item: DragItem, monitor) {
-        console.log('>>>>>>>>>> item', item)
         const page = document.querySelector(`.pdf-page[data-page-number="${index + 1}"]`)
-
         const x = monitor.getClientOffset()?.x
         const y = monitor.getClientOffset()?.y
-
-        console.log('>>>>>>>>>>>> Page:drop', { x, y })
-
         const rect = page?.getBoundingClientRect()
-
         if (rect && x && y) {
           let itemWidth = 200
           let itemHeight = 100
@@ -74,10 +68,7 @@ export const PDFPage = (props: Props) => {
           if (relativeY + itemHeight > pageHeight) {
             relativeY = pageHeight - itemHeight
           }
-
-          console.log('>>>>>>>>>>>> Page:relative', { relativeX, relativeY })
           const id = getHTMLID()
-
           const sizeMapping = {
             signature: {
               width: 250,
@@ -125,21 +116,16 @@ export const PDFPage = (props: Props) => {
             fields: fields + 1,
           })
 
-          console.log('>>>>>>>>>>>> Page:newSigner', newSigner)
-
           /* Update number of field added for signer */
           dispatch(actions.setSigners(newSigner))
           dispatch(actions.setSigner2(newSigner))
-
           /* 
             !!!!!!!!!!!!!!!!    ATTENTION    !!!!!!!!!!!!!
             We're update ref.current and redux store with the SAME object
             So if any update on ref, it also update redux silently
           */
-
           /* Update signature */
           dispatch(actions.setSignature(newSingature))
-
           const copy = Object.assign({}, newSingature)
           signatureDataRefs.current = {
             ...signatureDataRefs.current,
@@ -155,10 +141,6 @@ export const PDFPage = (props: Props) => {
     }),
     [signer2]
   )
-  console.log(`Page: ${index + 1} signatures:`, signatures)
-  console.log(`Page: ${index + 1} signatureDataRefs:`, signatureDataRefs.current)
-  console.log('SIGNED 5signatures_by_page', signatures_by_page)
-  console.log('SIGNED signer2', signer2)
 
   /* ----------- MOVE ------------------ */
   const moveItemToPage = (id: string, currentPage: number, nextPage: number, callback: Function) => {
@@ -254,7 +236,6 @@ export const PDFPage = (props: Props) => {
     }
   }
 
-  console.log('_PDFPAGE')
 
   return (
     <div style={style}>

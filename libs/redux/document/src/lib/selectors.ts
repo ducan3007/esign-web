@@ -12,13 +12,13 @@ export default {
   getDoucmentFromStore:   (id: any) => (state: any): Document => state[namespace]?.documents?.documents?.[id],
 
   getTotal:               (state: any): number => state[namespace]?.total,
-  getSigners:             (state: any): any => state[namespace]?.signers,
   selecteSignerById:      (id: any) => (state: any): any => state[namespace]?.signers?.[id],
-
+  
   getSignatures:          (state: any): typeof initialState.signatures => state[namespace]?.signatures,
   getSignatureByPage:     (page_number: any) => (state: any): any => state[namespace]?.signatures?.[page_number] || {},
   getSignatureById:       (page_number: any, id: any) => (state: any): any => state[namespace]?.signatures?.[page_number]?.[id],
-
+  
+  getSigners:             (state: any): any => state[namespace]?.signers,
   getSigners2:            (state: any): any => state[namespace]?.signers2,
   getDraftEnabled:        (state: any): boolean => state[namespace]?.isSaveDraftEnabled,
 

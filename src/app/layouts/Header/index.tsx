@@ -132,13 +132,6 @@ export const DashboardHeader = () => {
         const _event = event.currentTarget
         setAnchorEl2(_event)
       }
-
-      // if (window.ethereum) {
-      //   let request = await window.ethereum.request({ method: 'eth_requestAccounts' })
-      //   console.log('>>>>> accounts', request)
-      //   setAccounts(request as any)
-      //   setConnected(true)
-      // }
     } catch (error) {
       console.log('>>>>> error', error)
     }
@@ -338,7 +331,7 @@ export const DashboardHeader = () => {
           onClick={handleSaveDraft}
           sx={{
             padding: '10px 12px',
-           borderRadius: '12px 0px 0px 12px',
+            borderRadius: '12px 0px 0px 12px',
             backgroundColor: 'var(--green14)',
             border: '1px solid var(--green12)',
             display: 'flex',
@@ -672,7 +665,7 @@ export const DashboardHeader = () => {
 
         {/* _____________________________________________________ Connect Wallet _____________________________________________________ */}
 
-        {authState.data?.is_registerd && (
+        {authState.data?.is_registered && (
           <Box sx={{ display: 'flex', marginRight: '35px' }}>
             <MButton
               // disabled
@@ -682,9 +675,9 @@ export const DashboardHeader = () => {
                 borderRadius: '12px 0px 0px 12px',
                 backgroundColor: 'var(--white)',
                 border: '1px solid var(--gray3)',
-                padding: connected ? '9px 44px' : '8px 16px',
+                padding: connected ? '10px 35px' : '8px 16px',
                 display: 'flex',
-                gap: connected ? '16px' : '14px',
+                gap: connected ? '10px' : '14px',
               }}
             >
               {connected && (
@@ -694,10 +687,11 @@ export const DashboardHeader = () => {
                     sx={{
                       fontSize: '1.8rem',
                       fontWeight: 'bold',
+                      letterSpacing: '2px',
                       color: 'black',
                     }}
                   >
-                    MetaMask
+                    METAMASK
                   </Typography>
                 </>
               )}
@@ -785,7 +779,7 @@ export const DashboardHeader = () => {
           </Box>
         )}
         {/* __________________________________________________________________________________________________________ */}
-        {!authState.data?.is_registerd && (
+        {!authState.data?.is_registered && (
           <MButton
             onClick={() => {
               window.location.href = '/login'
@@ -823,13 +817,10 @@ export const DashboardHeader = () => {
       </Box>
 
       <Dialog
-        disableEscapeKeyDown
-        open={openWalletModal}
-        onClose={(event: any, reason: any) => {
-          if (reason !== 'backdropClick') {
-            setOpenWalletModal(false)
-          }
+        onClose={() => {
+          setOpenWalletModal(false)
         }}
+        open={openWalletModal}
         sx={{
           '& .MuiDialog-paper': {
             width: 550,

@@ -1,15 +1,10 @@
 import { Toast, hash_file } from '@esign-web/libs/utils'
 import { actions, selectors } from '@esign-web/redux/document'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
 import { Box, Fade } from '@mui/material'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import MButton from 'src/app/components/Button'
-import { CircularProcess } from 'src/app/components/UploadDialogStatus/_circularProcess'
-import './styles.scss'
 import { DocumentTable } from './__Table'
-import { DocumentSearch } from './__Search'
-import { Loading } from 'src/app/components/Loading'
+import './styles.scss'
 
 const DocumentPage = () => {
   const dispatch = useDispatch()
@@ -87,8 +82,6 @@ const DocumentPage = () => {
           </MButton> */}
           <input id="upload_document" type="file" ref={uploadRef} onChange={EventHandlers.onChangeFile} accept="application/pdf" style={{ display: 'none' }} />
         </Box>
-
-        <DocumentSearch />
 
         <DocumentTable />
         {/* <Loading /> */}

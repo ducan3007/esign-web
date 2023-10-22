@@ -9,6 +9,7 @@ interface props extends TooltipProps {
   fontWeight?: string;
   margin?: string;
   nowrap?: any;
+  letterSpacing?: string;
 }
 
 export const MTooltip = (props: props) => {
@@ -19,11 +20,12 @@ export const MTooltip = (props: props) => {
         popper: {
           sx: {
             '& .MuiTooltip-tooltip': {
-              backgroundColor: props.background || 'var(--white)',
+              backgroundColor: props.background || 'var(--dark3)',
               margin: props.margin || '0px 0px 0px 1.5rem',
-              color: props.color || 'var(--blue3)',
+              color: props.color || 'var(--white)',
               fontSize: props.fontSize || '1.4rem',
               fontWeight: props.fontWeight || 'bold',
+              letterSpacing: props.letterSpacing || '1px',
               borderRadius: '5px',
               boxShadow: 'var(--shadow2)',
               border: '1px solid var(--color-gray2)',

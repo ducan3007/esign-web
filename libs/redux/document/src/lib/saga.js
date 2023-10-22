@@ -1,6 +1,7 @@
 import { call, put, takeEvery, takeLatest } from 'redux-saga/effects'
 import { Toast } from '@esign-web/libs/utils'
 import actions from './actions'
+import { GET_CERTIFICATE_ALL } from 'libs/redux/certificate/src/lib/constants'
 import api from './api'
 import * as __ from './constants'
 import { keyBy } from 'lodash'
@@ -8,13 +9,23 @@ import get from 'lodash/get'
 
 function* uploadDocumentSaga({ payload }) {
   try {
-    const { id, file } = payload
+    const { id, file, upload_type, width, height } = payload
     console.log('file to update', file)
-    const response = yield call(api.uploadDocument, { file, id })
+    const response = yield call(api.uploadDocument, { file, id, upload_type, width, height })
     const data = get(response, 'data')
     console.log('data', data)
     yield put(actions.uploadDocumentSuccess({ id: payload.id, status: 'success' }))
-    yield put(actions.documentGetAll())
+    if ('certificate' === upload_type) {
+      yield put({
+        type: GET_CERTIFICATE_ALL,
+        payload: {
+          limit: 100,
+          offset: 0,
+        },
+      })
+    } else {
+      yield put(actions.documentGetAll())
+    }
   } catch (error) {
     const message = get(error, 'response.data.message')
     Toast({ message: message, type: 'error' })
@@ -26,16 +37,10 @@ function* getDocumentAllSaga({ payload }) {
   try {
     const response = yield call(api.getDocuments, payload)
     const data = get(response, 'data')
-
     let documents = get(data, 'documents')
-
-    console.log('documents', documents)
-
     documents = keyBy(documents, 'id')
-
     data.documents = documents
     data.total = get(data, 'total', 0)
-
     yield put({ type: __.DOCUMENT_GET_ALL_SUCCESS, payload: data })
   } catch (error) {}
 }

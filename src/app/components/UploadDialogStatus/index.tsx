@@ -1,15 +1,12 @@
-import { Box, Typography } from '@mui/material'
-import { Overlay } from '../Overlay'
-import MButton, { IconButton } from '../Button'
-import CloseIcon from '@mui/icons-material/Close'
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
-
-import ClearIcon from '@mui/icons-material/Clear'
-
-import { useState } from 'react'
-import { UploadDialogItem } from './_item.upload'
-import { useDispatch, useSelector } from 'react-redux'
 import { actions, selectors } from '@esign-web/redux/document'
+import ClearIcon from '@mui/icons-material/Clear'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import { Box, Typography } from '@mui/material'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { IconButton } from '../Button'
+import { Overlay } from '../Overlay'
+import { UploadDialogItem } from './_item.upload'
 
 export const UploadStatusDialog = () => {
   const dispatch = useDispatch()

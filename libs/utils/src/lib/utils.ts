@@ -46,6 +46,12 @@ export const getFormatFromBase64 = (base64: string) => {
   return format
 }
 
+export const getFormatFromURL = (url: string) => {
+  //https://res.cloudinary.com/di7vflk61/image/upload/v1697970477/gfkh0iv254ill9yhli6k.png
+  const format = url.split('/')[7].split('.')[1]
+  return format
+}
+
 export const html2Canvas = async (id: string, options: any) => {
   try {
     let element = document.getElementById(id)

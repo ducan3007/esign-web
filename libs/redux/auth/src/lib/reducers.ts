@@ -8,7 +8,7 @@ export type AuthType = {
   loading: boolean
   authenticating: boolean
   error: any
-  data: UserType | null
+  data: UserType | any
 
   isAuthorized: boolean
   isLoginFail: boolean

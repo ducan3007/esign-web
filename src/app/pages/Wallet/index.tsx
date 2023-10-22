@@ -2,7 +2,7 @@ import WalletOutlinedIcon from '@mui/icons-material/WalletOutlined'
 
 import { selectors as authSelectors } from '@esign-web/redux/auth'
 import { selectors as walletSelectors } from '@esign-web/redux/wallet'
-import { Box, Checkbox, Dialog, FormControlLabel, FormGroup, Typography } from '@mui/material'
+import { Box, Checkbox, CircularProgress, Dialog, FormControlLabel, FormGroup, Skeleton, Typography } from '@mui/material'
 import { ethers } from 'ethers'
 import { useSelector } from 'react-redux'
 import Coinbase from 'src/assets/coinbase.svg'
@@ -28,13 +28,8 @@ const WalletPage = () => {
         if (window.ethereum && contractState.contract.address && authState.data?.email) {
           const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545')
           const web3Provider = new ethers.providers.Web3Provider(window.ethereum as any)
-
-          const network = await web3Provider.getNetwork()
-          console.log('network', network)
           const signer = web3Provider.getSigner()
-
           const contract = new ethers.Contract(contractState.contract.address, contractState.contract.abi, signer)
-
           const signerAddresses = await contract.getSignerAddresses(authState.data?.email)
 
           console.log('signerAddresses', signerAddresses)
@@ -111,7 +106,7 @@ const WalletPage = () => {
         </Box>
         {address.map((item: any, index: number) => {
           return (
-            <Box sx={{ display: 'flex', flexDirection: 'row', gap: '1rem', justifyContent: 'space-between', marginTop: '20px' }}>
+            <Box key={index} sx={{ display: 'flex', flexDirection: 'row', gap: '1rem', justifyContent: 'space-between', marginTop: '20px' }}>
               <Typography sx={{ fontSize: '2rem' }}>{item.address}</Typography>
               <Typography sx={{ fontSize: '2.2rem', fontWeight: 'bold', color: 'var(--dark2)' }}>
                 {Math.round(parseFloat(item.balance) * 100000) / 100000} &nbsp; ETH
@@ -119,6 +114,38 @@ const WalletPage = () => {
             </Box>
           )
         })}
+        {address.length === 0 && (
+          <>
+            <CircularProgress
+              size={55}
+              thickness={4.5}
+              sx={{
+                color: 'var(--blue3)',
+                margin: '0 auto',
+                marginTop: '100px',
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: '1.9rem',
+                color: 'var(--dark2)',
+                textAlign: 'center',
+                marginTop: '30px',
+              }}
+            >
+              Loading your Signing Addresses. Please wait a moment.
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: '1.9rem',
+                color: 'var(--dark2)',
+                textAlign: 'center',
+              }}
+            >
+              If you have not connected your wallet, please connect your wallet to see the Addresses.
+            </Typography>
+          </>
+        )}
       </Box>
 
       <Dialog
@@ -215,7 +242,9 @@ const WalletPage = () => {
             try {
               const addresse = (addressList as any).filter((item: any) => item.checked).map((item: any) => item.address)
               await baseApi.post('/contract/signing-address', { signer_email: authState.data?.email, address: addresse })
-              console.log('addresse', addresse)
+
+              await new Promise((resolve) => setTimeout(resolve, 2000))
+
               window.location.reload()
             } catch (error) {}
           }}

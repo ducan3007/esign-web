@@ -42,6 +42,10 @@ export const SignupForm = (props: Props) => {
     props.setIsSignupSuccess(true)
   }
 
+
+
+
+
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', gap: '1.6rem' }}>
       <Box

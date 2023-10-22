@@ -1,0 +1,62 @@
+#signing-container {
+    .pdf-page:first-child {
+      margin-top: 0;
+    }
+    .pdf-page {
+      position: relative;
+  
+      z-index: 100;
+      margin-top: 25px;
+      margin-left: 15px;
+      // margin-right: 15px;
+      // background-color: red !important;
+      width: fit-content;
+  
+      border-width: 7px;
+      border-radius: 6px;
+      border-color: var(--light-gray);
+  
+      &.isOver {
+        border-color: var(--blue7);
+      }
+  
+      &.centered {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+    .pdf-document {
+      display: flex;
+  
+      .pdf-thumbnail-container {
+        background-color: var(--white);
+  
+        .pdf-thumbnail {
+          div {
+            width: fit-content;
+            margin: auto;
+            border: 6px solid var(--white);
+            border-radius: 4px;
+            box-shadow: var(--shadow1);
+          }
+  
+          .selected {
+            border-color: var(--blue7);
+          }
+        }
+        .selected {
+          div {
+            border-color: var(--blue7);
+          }
+        }
+        :first-child {
+          div {
+            // margin-top: 10px;
+          }
+        }
+      }
+    }
+  }
+  
+  
+  

@@ -46,7 +46,9 @@ const DashboardPage = () => {
                 user_email: log.user.email,
                 user_avatar: log.user.avatar_url,
                 user_id: log.user.id,
+                meta_data: log.user.meta_data,
               },
+              feautre: log.feature,
               meta_data: JSON.parse(log.meta_data || ''),
               date: moment(log.createdAt).format('ll'),
               time: moment(log.createdAt).format('LT'),
@@ -132,7 +134,7 @@ const DashboardPage = () => {
                   display: show ? 'block' : 'none',
                   flex: '1 1 250px',
                   minWidth: '250px',
-                  borderRadius: '13px',
+                  borderRadius: '5px',
                   backgroundColor: 'var(--ac)',
                   boxShadow: 'var(--shadow3)',
                   maxWidth: '300px',
@@ -142,8 +144,7 @@ const DashboardPage = () => {
                     backgroundColor: 'var(--lightaa)',
                   },
                   transition: 'all 0.2s ease-in-out',
-                  animation: '0.8s ease 0s 1 normal forwards running krSvVP',
-                  // border: '1px solid var(--dark2)',
+                  animation: '0.4s ease 0s 1 normal forwards running krSvVP',
                 }}
               >
                 {failed && <Skeleton sx={{ transform: 'scale(1.0)', borderRadius: '11px' }} animation="wave" width={'100%'} height={220} />}
@@ -228,7 +229,6 @@ const DashboardPage = () => {
         <TableContainer
           sx={{
             width: isSidebarOpen ? 'calc(100vw - 82px)' : 'calc(100vw - 240px)',
-            // border: '1px solid var(--gray3)',
             height: 'calc(100vh - 269px - 203px)',
             position: 'relative',
             transition: 'width 0.6s',

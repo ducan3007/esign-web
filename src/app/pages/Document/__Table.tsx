@@ -1,8 +1,11 @@
 import { selectors as AuthSelector } from '@esign-web/redux/auth'
 import { actions, selectors } from '@esign-web/redux/document'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import SearchIcon from '@mui/icons-material/Search'
+import SearchSharpIcon from '@mui/icons-material/SearchSharp'
 import {
   Box,
-  Divider,
   InputBase,
   Pagination,
   PaginationItem,
@@ -12,20 +15,14 @@ import {
   TableBody,
   TableContainer,
   TableHead,
-  TablePagination,
-  TableRow,
+  TableRow
 } from '@mui/material'
+import { nanoid } from 'nanoid'
 import { useEffect, useState, useTransition } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { TableBodyCell } from 'src/app/components/Table'
 import { Columns, TableRowExpandable } from './__TableColumns'
-import SearchIcon from '@mui/icons-material/Search'
 import './styles.scss'
-import { nanoid } from 'nanoid'
-import SearchSharpIcon from '@mui/icons-material/SearchSharp'
-
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 
 export const DocumentTable = (props: any) => {
   const dispatch = useDispatch()

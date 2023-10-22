@@ -11,7 +11,7 @@ export type UserType = {
   }
   permission?: UserPermission[]
   is_active?: boolean
-  is_registerd?: boolean
+  is_registered?: boolean
   is_verified?: boolean
   is_master_group?: boolean
   wallet_address: any[]

@@ -9,13 +9,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 import MButton from 'src/app/components/Button'
 import { NotFoundPage } from '../../404NotFound'
-import RenderPDF from './__RenderPDF'
-import RenderPDFSkeleton from './__RenderPDFSkeleton'
-import { RenderSignature } from './__RenderSignature'
-import RenderSigners from './__RenderSigner'
+import { RenderLeftSideComplete } from './__LeftSide'
+import RenderPDF from './__PDF'
+import RenderPDFSkeleton from './__PDFSkeleton'
+import { RenderSignature } from './__Signature'
+import RenderSigners from './__Signer'
 import './styles.scss'
-import { RenderLeftSideComplete } from './__RenderLeftSide'
-import { keyBy } from 'lodash'
 
 export const DocumentSignningPage = () => {
   const dispatch = useDispatch()
@@ -55,7 +54,9 @@ export const DocumentSignningPage = () => {
 
         if (res1.data.status === 'SIGNED' || res1.data.status === 'COMPLETED') {
           console.log('>> res.data SIGNED', res1.data)
-          let signers = {}
+          let signers = {
+            [`${authState.data?.id}`]: {},
+          }
           let signatures = {}
 
           for (let document_signer of res1.data.document_signer) {
@@ -63,8 +64,15 @@ export const DocumentSignningPage = () => {
             if (document_signer.is_signed) {
               dataSigner['is_signed'] = true
             }
+
             delete dataSigner.message
+
             signers[document_signer.user_id] = dataSigner
+
+            if (authState.data?.is_registered) {
+              signers[authState.data?.id]['firstName'] = authState.data?.first_name
+              signers[authState.data?.id]['lastName'] = authState.data?.last_name
+            }
 
             for (let signature of document_signer.signature) {
               let dataSignature = JSON.parse(signature.meta_data)
@@ -89,18 +97,26 @@ export const DocumentSignningPage = () => {
         }
 
         if (res1.data.status === 'READY_TO_SIGN') {
-          let signers = {}
+          let signers = {
+            [`${authState.data?.id}`]: {},
+          }
           let signatures = {}
 
           for (let document_signer of res1.data.document_signer) {
             let dataSigner = JSON.parse(document_signer.meta_data)
             delete dataSigner.message
-            
+
             if (document_signer.is_signed) {
               dataSigner['is_signed'] = true
             }
-            
+
             signers[document_signer.user_id] = Object.assign(dataSigner, { document_signer_id: document_signer.id })
+
+            if (authState.data?.is_registered) {
+              signers[authState.data?.id]['firstName'] = authState.data?.first_name
+              signers[authState.data?.id]['lastName'] = authState.data?.last_name
+            }
+
             for (let signature of document_signer.signature) {
               let data_signature = JSON.parse(signature.meta_data)
 
@@ -127,8 +143,8 @@ export const DocumentSignningPage = () => {
             }
           }
 
-          console.log('SIGNED, signers', signers)
-          console.log('SIGNED, signatures', signatures)
+          console.log('READY_TO_SIGN, signers', signers)
+          console.log('READY_TO_SIGN, signatures', signatures)
 
           dispatch(actions.updateAllSigners(signers))
           dispatch(actions.updateAllSigners2(signers))
@@ -145,7 +161,9 @@ export const DocumentSignningPage = () => {
           type: DOCUMENT_SET_DETAIL,
           payload: res1.data,
         })
-      } catch (error) {}
+      } catch (error) {
+        console.log('>> error', error)
+      }
     })()
 
     return () => {
@@ -159,7 +177,7 @@ export const DocumentSignningPage = () => {
 
   /* TODO: check if there is any unsaved work */
   // useUnSavedChangesWarning({ condition: true })
-  console.log('documentDetail', documentDetail)
+
   return (
     <DndContext>
       <Box id="signing-container" sx={{ flex: 1, width: '100%', overflow: 'hidden' }}>
@@ -254,7 +272,8 @@ const RenderLeftSide = (props: any) => {
 
   console.log('>isReadyToSignAndNoSignatureData', isReadyToSignAndNoSignatureData)
 
-  console.log('>> documentDetail', props.documentDetail)
+  console.log('XXXXXXXXXXXXXXX', props.documentDetail)
+  console.log('XXXXXXXXXXXXXXX 2', signer2)
 
   /* Effect: Initiate values for state */
   useEffect(() => {
@@ -393,53 +412,7 @@ const RenderLeftSide = (props: any) => {
       }
     }
 
-    // Object.keys(signer2).forEach(async (key) => {
-    //   const signer = signer2[key]
-
-    //   if (bySigner_id) {
-    //     if (signer.id === bySigner_id) {
-    //       payload.signers.push({
-    //         id: signer.id,
-    //         email: signer.email,
-    //         firstName: signer.firstName,
-    //         lastName: signer.lastName,
-    //         fields: signer.fields,
-    //         color: signer.color,
-    //         message: messages,
-    //         meta_data: JSON.stringify({
-    //           id: signer.id,
-    //           email: signer.email,
-    //           firstName: signer.firstName,
-    //           lastName: signer.lastName,
-    //           fields: signer.fields,
-    //           color: signer.color,
-    //           message: messages,
-    //         }),
-    //         signatures: await prepareSignatures(signer.id),
-    //       })
-    //     }
-    //   } else {
-    //     payload.signers.push({
-    //       id: signer.id,
-    //       email: signer.email,
-    //       firstName: signer.firstName,
-    //       lastName: signer.lastName,
-    //       fields: signer.fields,
-    //       color: signer.color,
-    //       message: messages,
-    //       meta_data: JSON.stringify({
-    //         id: signer.id,
-    //         email: signer.email,
-    //         firstName: signer.firstName,
-    //         lastName: signer.lastName,
-    //         fields: signer.fields,
-    //         color: signer.color,
-    //         message: messages,
-    //       }),
-    //       signatures: await prepareSignatures(signer.id),
-    //     })
-    //   }
-    // })
+  
 
     return payload
   }
@@ -723,8 +696,6 @@ const RenderLeftSide = (props: any) => {
     return <RenderLeftSideComplete />
   }
 
-  console.log('props?.documentDetail?.status', props?.documentDetail?.status)
-
   return (
     <Box
       sx={{
@@ -771,11 +742,12 @@ const RenderLeftSide = (props: any) => {
       {/* --------------------------- Detail Content --------------------------- */}
       <Box sx={{ flex: 1 }}>
         <Box>
-          <Typography>Author: </Typography>
-          <Typography>Size: </Typography>
-          <Typography>Create at: </Typography>
-          <Typography>Updated at: </Typography>
+          <Typography>Author </Typography>
+          <Typography></Typography>
         </Box>
+        <Typography>Size: </Typography>
+        <Typography>Created on: </Typography>
+        <Typography>Updated on: </Typography>
       </Box>
 
       {/* --------------------------------------------- ONLY ME SIGNER ---------------------------------------------- */}
@@ -858,11 +830,7 @@ const RenderLeftSide = (props: any) => {
           }}
         >
           <Box sx={{ flex: 1, width: '100%' }}>
-            <Box
-              sx={{
-                padding: '16px 24px 8px',
-              }}
-            >
+            <Box sx={{ padding: '16px 24px 8px', }} >
               <Typography
                 sx={{
                   color: 'var(--dark)',
@@ -942,11 +910,8 @@ const RenderLeftSide = (props: any) => {
               </Box>
             </Box>
             <Divider />
-            <Box
-              sx={{
-                padding: '16px 24px 8px',
-              }}
-            >
+
+            <Box sx={{ padding: '16px 24px 8px', }} >
               <Typography
                 sx={{
                   color: 'var(--dark)',
