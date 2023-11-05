@@ -24,6 +24,7 @@ type Props = {
 
   setSelectedSignature: (signature: any) => void
   signatureDataRefs: any
+  isDisableAddSigner: boolean
 }
 
 export const PDFPage = (props: Props) => {
@@ -301,6 +302,7 @@ export const PDFPage = (props: Props) => {
                   color={user.color}
                   signer={user}
                   type={type}
+                  isDisableAddSigner={props.isDisableAddSigner}
                   isMySignature={isMySignature}
                   totalPage={props.totalPage}
                   moveToPage={moveItemToPage}

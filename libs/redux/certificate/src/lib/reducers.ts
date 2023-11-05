@@ -62,6 +62,7 @@ export type CertState = {
   total_certificants: number
   loading_certificants: boolean
   document_detail: Document | null
+  document_detail_2: Document | null
 }
 
 export const initialState: CertState = {
@@ -79,6 +80,7 @@ export const initialState: CertState = {
   total_certificants: 0,
   loading_certificants: false,
   document_detail: null,
+  document_detail_2: null,
 }
 
 export default (state = initialState, action: any): CertState => {
@@ -225,6 +227,13 @@ export default (state = initialState, action: any): CertState => {
       return {
         ...state,
         document_detail: action.payload,
+      }
+    }
+
+    case _.SET_CERT_DETAIL_2: {
+      return {
+        ...state,
+        document_detail_2: action.payload,
       }
     }
 

@@ -10,6 +10,7 @@ import MButton from 'src/app/components/Button'
 import { useNavigate } from 'react-router-dom'
 import SupervisedUserCircleIcon from '@mui/icons-material/SupervisedUserCircle'
 import Cert from 'src/assets/cert.svg'
+import { FallbackLoading } from 'src/app/components/Loading'
 
 const CeritificatePage = () => {
   const dispatch = useDispatch()
@@ -101,13 +102,12 @@ const CeritificatePage = () => {
                 width: 'fit-content',
                 marginRight: '40px',
                 padding: '8px 20px',
-                
               }}
               onClick={() => {
                 navigate('/certificant')
               }}
             >
-               <img src={Cert} alt="metamask" width="31px" height="31px" />
+              <img src={Cert} alt="metamask" width="31px" height="31px" />
               <Typography
                 sx={{
                   color: '#095C9E',

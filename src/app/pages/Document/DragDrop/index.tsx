@@ -37,6 +37,7 @@ interface props {
   can_delete: boolean
   can_copy: boolean
   is_signed: boolean
+  isDisableAddSigner: boolean
 
   moveToPage: (id: string, currentPage: number, nextPage: number, callback: Function) => void
   copySignature: (id: string, pageNumber: number, sigenr_id: string) => void
@@ -278,6 +279,7 @@ const DraggableItem = (props: props) => {
       {props.isSelected && (
         <BaseToolbar
           id={props.id}
+          isDisableAddSigner={props.isDisableAddSigner}
           isMySignature={props.isMySignature}
           signatureDataRefs={props.signatureDataRefs}
           type={props.type}
@@ -346,6 +348,7 @@ export default memo(DraggableItem, (prevProps, nextProps) => {
   if (prevProps.signer !== nextProps.signer) return false
   if (prevProps.color !== nextProps.color) return false
   if (prevProps.data !== nextProps.data) return false
+  if (prevProps.isDisableAddSigner !== nextProps.isDisableAddSigner) return false
   // if (prevProps.can_move !== nextProps.can_move) return false
   // if (prevProps.is_hidden !== nextProps.is_hidden) return false
   // if (prevProps.can_select !== nextProps.can_select) return false

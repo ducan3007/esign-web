@@ -28,6 +28,8 @@ body {
   --green16: #007a5c;
   --green11: #03c988;
 
+  --green44: #ff634736;
+
   --green14: rgba(3, 201, 136, 0.4);
 
   --green12: #285430;
@@ -46,13 +48,17 @@ body {
 
   --orange3: #e55807;
   --orange: #e65202;
+  
+  --orange07: #e65202ea;
 
   // --orange1: #f86f03;
   --orange1: #e65202;
 
   --orange2: #ff6347;
   --pink1: #ff6969;
-  --red: #d93025;
+  --red: #f93628;
+  --red111: #ea99959d;
+  --red1111: #ed847f33;
   --error4: #ff4500;
 
   --gray9999: #686868;
@@ -98,7 +104,10 @@ body {
 
   --gray2: #f7f9fc;
 
-  --gray3: #b4bbbf;
+  // --gray3: #b4bbbf;
+  --gray3: #b4bbbfbc;
+  --gray33: #b4bbbfbc;
+
   --gray999: #bababa;
 
   --canvas: #f4f4f4;
@@ -170,6 +179,11 @@ textarea::-webkit-scrollbar-thumb {
   :hover {
     cursor: pointer;
   }
+}
+
+.matched {
+  color: var(--orange) !important;
+  font-weight: bold;
 }
 
 html {

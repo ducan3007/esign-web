@@ -15,6 +15,7 @@ import RenderPDFSkeleton from './__PDFSkeleton'
 import { RenderSignature } from './__Signature'
 import RenderSigners from './__Signer'
 import './styles.scss'
+import { TOOGLE_BACKDROP } from 'libs/redux/auth/src/lib/constants'
 
 export const DocumentSignningPage = () => {
   const dispatch = useDispatch()
@@ -177,7 +178,7 @@ export const DocumentSignningPage = () => {
 
   /* TODO: check if there is any unsaved work */
   // useUnSavedChangesWarning({ condition: true })
-
+  const isDisableAddSigner = documentDetail?.status === 'READY_TO_SIGN'
   return (
     <DndContext>
       <Box id="signing-container" sx={{ flex: 1, width: '100%', overflow: 'hidden' }}>
@@ -191,7 +192,7 @@ export const DocumentSignningPage = () => {
           />
 
           <Box sx={{ flex: 1, position: 'relative' }}>
-            <RenderPDF documentId={documentId} setIsPDFLoaded={setIsPDFLoaded} />
+            <RenderPDF documentId={documentId} setIsPDFLoaded={setIsPDFLoaded} isDisableAddSigner={isDisableAddSigner} />
             {(!isPDFLoaded || !documentDetail) && <RenderPDFSkeleton />}
           </Box>
         </Box>
@@ -312,8 +313,12 @@ const RenderLeftSide = (props: any) => {
   const handleSave = async () => {
     if (isDisabled) return
     if (Object.keys(signer2).length === 0 || (Object.keys(signer2).length === 1 && isOnlyMeSigner)) {
+      dispatch({ type: TOOGLE_BACKDROP })
       await saveDocumentByOwner()
       await signDocument()
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      dispatch({ type: TOOGLE_BACKDROP })
+      window.location.reload()
     } else if ((Object.keys(signer2).length === 1 && !isOnlyMeSigner) || Object.keys(signer2).length > 1) {
       setOpenDrawer(true)
     }
@@ -321,9 +326,11 @@ const RenderLeftSide = (props: any) => {
 
   const handleSaveAndSendEmail = async () => {
     try {
+      dispatch({ type: TOOGLE_BACKDROP })
       const payload = await preparePayload2()
-      console.log('>> payload', payload)
-      const res = await baseApi.post(`/document/owner/save/${documentId}`, payload)
+      await baseApi.post(`/document/owner/save/${documentId}`, payload)
+      dispatch({ type: TOOGLE_BACKDROP })
+      window.location.reload()
     } catch (error) {
       console.log('>>sign error', error)
     }
@@ -332,6 +339,7 @@ const RenderLeftSide = (props: any) => {
   const handleSignBySignee = async () => {
     try {
       await signDocument()
+      window.location.reload()
     } catch (error) {}
   }
 
@@ -411,8 +419,6 @@ const RenderLeftSide = (props: any) => {
         })
       }
     }
-
-  
 
     return payload
   }
@@ -534,7 +540,7 @@ const RenderLeftSide = (props: any) => {
     }
     try {
       const { data } = await baseApi.post(
-        `/user/soft-create`,
+        `/v1/user/soft-create`,
         Object.keys(signer2).map((key) => ({ email: signer2[key].email }))
       )
 
@@ -830,7 +836,7 @@ const RenderLeftSide = (props: any) => {
           }}
         >
           <Box sx={{ flex: 1, width: '100%' }}>
-            <Box sx={{ padding: '16px 24px 8px', }} >
+            <Box sx={{ padding: '16px 24px 8px' }}>
               <Typography
                 sx={{
                   color: 'var(--dark)',
@@ -911,7 +917,7 @@ const RenderLeftSide = (props: any) => {
             </Box>
             <Divider />
 
-            <Box sx={{ padding: '16px 24px 8px', }} >
+            <Box sx={{ padding: '16px 24px 8px' }}>
               <Typography
                 sx={{
                   color: 'var(--dark)',

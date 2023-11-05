@@ -26,7 +26,7 @@ const DashboardPage = () => {
         let offset = 0
         const [docs, logs] = await Promise.all([
           baseApi.get('/document/recently-viewed'),
-          baseApi.get('/user/log' + `?limit=${limit}&offset=${offset}`),
+          baseApi.get('/v1/user/log' + `?limit=${limit}&offset=${offset}`),
         ])
 
         if (docs.status === 200) {
@@ -48,7 +48,7 @@ const DashboardPage = () => {
                 user_id: log.user.id,
                 meta_data: log.user.meta_data,
               },
-              feautre: log.feature,
+              feature: log.feature,
               meta_data: JSON.parse(log.meta_data || ''),
               date: moment(log.createdAt).format('ll'),
               time: moment(log.createdAt).format('LT'),

@@ -4,28 +4,20 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import SearchIcon from '@mui/icons-material/Search'
 import SearchSharpIcon from '@mui/icons-material/SearchSharp'
-import {
-  Box,
-  InputBase,
-  Pagination,
-  PaginationItem,
-  Paper,
-  Skeleton,
-  Table,
-  TableBody,
-  TableContainer,
-  TableHead,
-  TableRow
-} from '@mui/material'
+import { Box, InputBase, Pagination, PaginationItem, Paper, Skeleton, Table, TableBody, TableContainer, TableHead, TableRow } from '@mui/material'
 import { nanoid } from 'nanoid'
 import { useEffect, useState, useTransition } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { TableBodyCell } from 'src/app/components/Table'
 import { Columns, TableRowExpandable } from './__TableColumns'
 import './styles.scss'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 export const DocumentTable = (props: any) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const textSearch = searchParams.get('q')
   const [isPending, startTransition] = useTransition()
   const uploadingDocuments = useSelector(selectors.getUploadingDocuments)
   const isSidebarOpen = useSelector(AuthSelector.getSidebarState)
@@ -42,26 +34,16 @@ export const DocumentTable = (props: any) => {
         offset: 0,
       })
     )
-  }, [])
+  }, [textSearch])
 
   console.log('documents', documents)
   console.log('documents', useSelector(selectors.getDocuments))
+  console.log('textSearch', textSearch)
 
   return (
     <Box sx={{ width: '100%', position: 'relative', overflowX: 'auto', overflowY: 'auto' }}>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          marginBottom: '10px ',
-        }}
-      >
-        <Box
-          sx={{
-            flex: '1',
-            height: '47px',
-          }}
-        >
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px ' }}>
+        <Box sx={{ flex: '1', height: '47px' }}>
           <Box
             sx={{
               border: '1px solid var(--gray3)',
@@ -74,13 +56,13 @@ export const DocumentTable = (props: any) => {
               gap: '15px',
             }}
           >
-            <SearchSharpIcon
-              sx={{
-                fontSize: '34px',
-                color: 'var(--dark3)',
-              }}
-            />
+            <SearchSharpIcon sx={{ fontSize: '34px', color: 'var(--dark3)' }} />
             <InputBase
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  navigate(`/document?q=${e.currentTarget.value}`)
+                }
+              }}
               sx={{
                 width: '100%',
                 height: '100%',

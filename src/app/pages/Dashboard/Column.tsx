@@ -1,12 +1,7 @@
-import { actions } from '@esign-web/redux/document'
 import { Avatar, Box, TableRow, Typography } from '@mui/material'
 import { nanoid } from 'nanoid'
-import { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import MButton, { IconButton } from 'src/app/components/Button'
-import { TableBodyCell, TableHeadCell } from 'src/app/components/Table'
-import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { useNavigate } from 'react-router-dom'
+import { TableBodyCell, TableHeadCell } from 'src/app/components/Table'
 
 export const Fields = {
   id: {
@@ -240,6 +235,51 @@ export const Fields = {
             Sign Document
           </Typography>
         ),
+        CREATE_CERTIFICATE: (
+          <Typography
+            sx={{
+              fontSize: '1.5rem',
+              color: 'var(--dark3)',
+              padding: '2px 7px 2px 7px',
+              fontWeight: 'bold',
+              borderRadius: '6px',
+              backgroundColor: 'var(--green44)',
+              width: 'fit-content',
+            }}
+          >
+            Create Certificate
+          </Typography>
+        ),
+        SIGN_CERTIFICATE: (
+          <Typography
+            sx={{
+              fontSize: '1.5rem',
+              color: 'var(--dark3)',
+              padding: '2px 7px 2px 7px',
+              fontWeight: 'bold',
+              borderRadius: '6px',
+              backgroundColor: 'var(--yellow8)',
+              width: 'fit-content',
+            }}
+          >
+            Issue Certificate
+          </Typography>
+        ),
+        INVITE_SIGNER: (
+          <Typography
+            sx={{
+              fontSize: '1.5rem',
+              color: 'var(--dark3)',
+              padding: '2px 7px 2px 7px',
+              fontWeight: 'bold',
+              borderRadius: '6px',
+              backgroundColor: 'var(--green8)',
+              width: 'fit-content',
+            }}
+          >
+            Request to sign
+          </Typography>
+        ),
       }[props.row.action]
       const row = props.row
       return (
@@ -277,7 +317,7 @@ export const Fields = {
     renderCell: (props: any) => {
       const user = props.row.user
       const meta_data = props.row.meta_data
-
+      console.log('DESCRIBE: ', props.row)
       if (props.row.feature === 'DOCUMENT') {
         return (
           <TableBodyCell
@@ -304,6 +344,43 @@ export const Fields = {
                 }}
               >
                 {meta_data.document_name}
+              </a>
+            </Typography>
+          </TableBodyCell>
+        )
+      }
+      if (props.row.feature === 'CERTIFICATE') {
+        let isCreateCert = props.row.action === 'CREATE_CERTIFICATE'
+        let link = '/certificate/detail/?id=' + meta_data.document_id
+        if (!isCreateCert) {
+          link = '/certificate/sign?id=' + meta_data.document_id
+        }
+        return (
+          <TableBodyCell
+            _sx={{
+              height: '65px',
+              fontSize: '1.6rem',
+              color: 'var(--dark)',
+            }}
+            key={nanoid()}
+          >
+            <Typography
+              sx={{
+                color: 'var(--dark3)',
+                fontSize: '1.6rem',
+              }}
+            >
+              <b>{user.user_name}</b> {props.row.description}{' '}
+              <a
+                href={link}
+                style={{
+                  color: 'var(--blue3)',
+                  fontSize: '1.6rem',
+                  fontWeight: 'bold',
+                }}
+              >
+                {isCreateCert && meta_data.document_name}
+                {!isCreateCert && meta_data.certifier}
               </a>
             </Typography>
           </TableBodyCell>

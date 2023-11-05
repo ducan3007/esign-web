@@ -19,9 +19,8 @@ export type signersProps = {
 function RenderSigners(props: any) {
   const [searchParams] = useSearchParams()
   const documentId = searchParams.get('id')
-  const { setSelectedSignerId, selectedSigner } = props
+  const { setSelectedSignerId, selectedSigner, cert } = props
   const [open, setOpen] = useState(false)
-
 
   const handleOpen = (signer: any) => {
     setOpen(true)
@@ -33,12 +32,12 @@ function RenderSigners(props: any) {
     <Box
       sx={{
         width: '100%',
-        marginBottom: '25px',
+        marginBottom: cert?.status === 'REVOKED' ? '0px' : '25px',
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      {Object.keys(selectedSigner).length === 0 && (
+      {!cert?.status && Object.keys(selectedSigner).length === 0 && (
         <MButton
           disableRipple
           onClick={() => {
@@ -49,7 +48,7 @@ function RenderSigners(props: any) {
             backgroundColor: 'var(--blue3)',
             borderRadius: '5px',
             border: '1px solid var(--blue3)',
-            padding: '7px 12px',
+            padding: '5px 12px',
             color: 'var(--orange)',
             transition: 'all 0.4s ease-in-out',
           }}
@@ -57,7 +56,7 @@ function RenderSigners(props: any) {
           <Typography
             sx={{
               color: 'var(--white)',
-              fontSize: '1.6rem',
+              fontSize: '1.85rem',
               fontWeight: 'bold',
               letterSpacing: '2px',
               display: 'flex',
@@ -65,12 +64,12 @@ function RenderSigners(props: any) {
               justifyContent: 'center',
             }}
           >
-            Issue Cert
+            Issue
           </Typography>
         </MButton>
       )}
 
-      {Object.keys(selectedSigner).length > 0 && (
+      {!cert?.status && Object.keys(selectedSigner).length > 0 && (
         <Box
           onClick={() => {
             setOpen(true)
@@ -138,6 +137,47 @@ function RenderSigners(props: any) {
           <img src={Cert} style={{ marginRight: '10px' }} alt="metamask" width="38px" height="38px" />
         </Box>
       )}
+
+      {cert?.status === 'ISSUED' && (
+        <AlertDialog
+          title="Are you sure you want to REVOKED this certificate ?"
+          content=""
+          callBack={async () => {
+            try {
+              await baseApi.post('cert/revoke/' + documentId)
+              window.location.reload()
+            } catch (error) {}
+          }}
+        >
+          <MButton
+            disableRipple
+            sx={{
+              width: '100%',
+              backgroundColor: 'var(--red1)',
+              borderRadius: '5px',
+              border: '1px solid var(--red1)',
+              padding: '5px 12px',
+              color: 'var(--orange)',
+              transition: 'all 0.4s ease-in-out',
+            }}
+          >
+            <Typography
+              sx={{
+                color: 'var(--white)',
+                fontSize: '1.85rem',
+                fontWeight: 'bold',
+                letterSpacing: '2px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              Revoke
+            </Typography>
+          </MButton>
+        </AlertDialog>
+      )}
+
       {/* _______________________________Dialog __________________________________ */}
       <Dialog
         disableEscapeKeyDown
@@ -229,13 +269,14 @@ export default RenderSigners
 
 /* _________________________________ RenderSignerAdd ____________________________ */
 
-import { rgba } from '@esign-web/libs/utils'
+import { baseApi, rgba } from '@esign-web/libs/utils'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { SET_SIGNER, SET_SIGNER_2 } from 'libs/redux/certificate/src/lib/constants'
 import { nanoid } from 'nanoid'
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import TextFieldStandard from 'src/app/components/TextInput/Textstandard'
 import * as yup from 'yup'
+import AlertDialog from 'src/app/components/Dialog'
 
 const RenderSignerAdd = (props: any) => {
   const { signers } = props
@@ -244,8 +285,8 @@ const RenderSignerAdd = (props: any) => {
     email: yup.string().email('Invalid email').required('Email is required'),
     firstName: yup.string().required('First name is required'),
     lastName: yup.string().required('Last name is required'),
-    issuedOn: yup.string().required('Issued On is required').default(new Date().toISOString().slice(0, 16)),
-    expiredOn: yup.string().required('Expired On is required').default(new Date().toISOString().slice(0, 16)),
+    issuedOn: yup.string().required('Issued On is required'),
+    expiredOn: yup.string().required('Expired On is required'),
   })
 
   const {
@@ -254,7 +295,16 @@ const RenderSignerAdd = (props: any) => {
     setError,
     formState: { errors },
     reset,
-  } = useForm({ resolver: yupResolver(schema) })
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      email: '' || signers?.email,
+      firstName: '' || signers?.firstName,
+      lastName: '' || signers?.lastName,
+      issuedOn: new Date().toISOString().slice(0, 16),
+      expiredOn: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().slice(0, 16),
+    },
+  })
 
   const onSubmit: SubmitHandler<yup.InferType<typeof schema>> = (values) => {
     console.log('values', values)
@@ -324,7 +374,6 @@ const RenderSignerAdd = (props: any) => {
         <Controller
           name="firstName"
           control={control}
-          defaultValue={'' || signers?.firstName}
           rules={{ required: true }}
           render={({ field }) => <TextFieldStandard {...field} errors={errors} fullWidth name="firstName" label="First Name" fontSize="2.2rem" />}
         />
@@ -334,7 +383,6 @@ const RenderSignerAdd = (props: any) => {
         <Controller
           name="lastName"
           control={control}
-          defaultValue={'' || signers?.lastName}
           rules={{ required: true }}
           render={({ field }) => <TextFieldStandard {...field} errors={errors} fullWidth name="lastName" label="Last Name" fontSize="2.2rem" />}
         />
@@ -344,7 +392,6 @@ const RenderSignerAdd = (props: any) => {
         <Controller
           name="email"
           control={control}
-          defaultValue={'' || signers?.email}
           rules={{ required: true }}
           render={({ field }) => <TextFieldStandard {...field} errors={errors} fullWidth name="email" label="Email" fontSize="2.2rem" />}
         />
@@ -382,7 +429,7 @@ const RenderSignerAdd = (props: any) => {
             <Controller
               name="issuedOn"
               control={control}
-              defaultValue={signers?.issuedOn ? new Date(signers?.issuedOn).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16)}
+              // defaultValue={signers?.issuedOn ? new Date(signers?.issuedOn).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16)}
               rules={{ required: true }}
               render={({ field }) => (
                 <TextField
@@ -420,7 +467,7 @@ const RenderSignerAdd = (props: any) => {
             <Controller
               name="expiredOn"
               control={control}
-              defaultValue={signers?.expiredOn ? new Date(signers?.expiredOn).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16)}
+              // defaultValue={signers?.expiredOn ? new Date(signers?.expiredOn).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16)}
               rules={{ required: true }}
               render={({ field }) => (
                 <TextField

@@ -18,15 +18,17 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams } from 'react-router-dom'
 import MButton from 'src/app/components/Button'
+import { MTooltip } from 'src/app/components/Tooltip'
 import MetamaskIcon from 'src/assets/metamask.svg'
 import './styles.scss'
-import { MTooltip } from 'src/app/components/Tooltip'
+import { Toast, baseApi } from '@esign-web/libs/utils'
+import { nanoid } from 'nanoid'
 
 export const RenderLeftSideComplete = () => {
   const dispatch = useDispatch()
   const [searchParams] = useSearchParams()
   const documentId = searchParams.get('id')
-  const wallet = useSelector(walletSelectors.getWalletState)
+  const docABI = useSelector(walletSelectors.getDocumentABI)
   const documentDetail = useSelector(selectors.getDocumentDetail)
   const signStatus = useSelector(selectors.getSignStatus)
   const signers2 = useSelector(selectors.getSigners2)
@@ -40,17 +42,27 @@ export const RenderLeftSideComplete = () => {
 
   const handleSignByWallet = async () => {
     try {
-      let res = await axios.get(process.env.NX_SERVER_URL + '/contract/sha256/' + documentId)
+      let res = await axios.get(process.env.NX_SERVER_URL + '/v1/contract/sha256/' + documentId)
       if (window.ethereum && authState.isConnected && res.data.data && authState.data?.email) {
         const provider = new ethers.providers.Web3Provider(window.ethereum as any)
         const signer = provider.getSigner()
-        const contractWithSigner = new ethers.Contract(wallet.contract.address, wallet.contract.abi, signer)
+        const contractWithSigner = new ethers.Contract(docABI.address, docABI.abi, signer)
         const tx = await contractWithSigner.signDocument(res.data.data, authState.data?.email)
         const recepeit = await tx.wait()
         await new Promise((resolve) => setTimeout(resolve, 2000))
         window.location.reload()
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.data && error.data.data && error.data.data.reason) {
+        if (error.data.data.reason === 'D404') {
+          await baseApi.get('document/sign2/' + documentId)
+          Toast({ message: 'Please wait and try again!', type: 'error' })
+        }
+        if (error.data.data.reason === 'D406') {
+          Toast({ message: 'Invalid signing address!', type: 'error' })
+        }
+      }
+
       console.log('error', error)
     }
   }
@@ -188,7 +200,7 @@ export const RenderLeftSideComplete = () => {
 
             return (
               <MTooltip
-                key={index}
+                key={nanoid()}
                 title={
                   <>
                     {signer.signed_by_wallet_status === 'success' && (
@@ -374,6 +386,7 @@ export const RenderLeftSideComplete = () => {
 
             return (
               <MTooltip
+                key={nanoid()}
                 title={
                   <>
                     {signer.signed_by_wallet_status === 'success' && (
@@ -676,7 +689,7 @@ export const RenderLeftSideComplete = () => {
                 }}
                 disabled={isDisabled}
               >
-                {/* <Typography sx={{ color: 'var(--white)', fontWeight: 'bold', fontSize: '1.6rem' }}>Sign by</Typography> */}
+                <Typography sx={{ color: 'var(--white)', fontWeight: 'bold', fontSize: '1.7rem', letterSpacing: '1px' }}>Sign by</Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <img src={MetamaskIcon} alt="metamask" width="29px" height="27px" />
                   <Typography sx={{ color: 'var(--white)', letterSpacing: '2px', fontWeight: 'bold', fontSize: '1.7rem' }}>METAMASK</Typography>

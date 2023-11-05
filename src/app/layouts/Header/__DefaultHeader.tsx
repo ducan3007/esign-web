@@ -6,12 +6,13 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import { Box, Typography } from '@mui/material'
 import moment from 'moment'
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import MButton from 'src/app/components/Button'
 import { SignIcon } from 'src/app/components/Icon'
 import { MTooltip } from 'src/app/components/Tooltip'
+import { SET_CERT_DETAIL } from 'libs/redux/certificate/src/lib/constants'
 
 interface DefaultHeaderProps {
   title?: string
@@ -22,29 +23,15 @@ const DocumentSignHeader = () => {
   const documentDetail = useSelector(selectors.getDocumentDetail)
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '6px' }}>
-      <Box
-        sx={{
-          flex: 1,
-        }}
-      >
+      <Box sx={{ flex: 1 }}>
         <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--dark2)' }}>{documentDetail?.name}</Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            gap: '66px',
-          }}
-        >
+        <Box sx={{ display: 'flex', gap: '66px' }}>
           <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>Modified</Typography>
           <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>
             {moment(documentDetail?.updatedAt).format('L')} - {moment(documentDetail?.updatedAt).format('hh:mm A')}
           </Typography>
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            gap: '20px',
-          }}
-        >
+        <Box sx={{ display: 'flex', gap: '20px' }}>
           <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>SHA2 Fingerprint</Typography>
           <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}> {documentDetail?.hash256}</Typography>
         </Box>
@@ -173,7 +160,7 @@ const CertificateInfoHeader = () => {
     <Box sx={{ flex: 1, display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
       <MButton
         onClick={() => {
-          navigate(`/certificate/sign?id=${documentId}`)
+          navigate(`/certificate/sign?type=template&id=${documentId}`)
         }}
         disableRipple
         sx={{
@@ -187,15 +174,17 @@ const CertificateInfoHeader = () => {
         }}
       >
         <SignIcon width="40px" height="40px" />
-        <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', letterSpacing: '1px', color: 'var(--dark)' }}>Issue</Typography>
+        <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', letterSpacing: '1px', color: 'var(--dark)' }}>Template</Typography>
       </MButton>
     </Box>
   )
 }
 
 const CertificateSignHeader = () => {
+  const dispatch = useDispatch()
   const certDetail = useSelector(certSelector.getCertDetail)
-  console.log("certDetail,certDetail",certDetail)
+  const [searchParams] = useSearchParams()
+  const type = searchParams.get('type')
 
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '6px' }}>
@@ -204,7 +193,10 @@ const CertificateSignHeader = () => {
           flex: 1,
         }}
       >
-        <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--dark2)' }}>{certDetail?.name}</Typography>
+        <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--blue3)' }}>
+          {type && 'Template - '}
+          {certDetail?.name}
+        </Typography>
         <Box
           sx={{
             display: 'flex',
@@ -235,6 +227,16 @@ const CertificantHeader = () => {
   return <Box></Box>
 }
 
+const VerifyHeader = () => {
+  return (
+    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '6px', paddingTop: '17px' }}>
+      <Typography sx={{ fontSize: '2.2rem', color: 'var(--ligh-blue1)', fontWeight: 'bold', letterSpacing: '1px' }}>
+        Authenticity of Email Addresses, Wallet Addresses, and Documents
+      </Typography>
+    </Box>
+  )
+}
+
 export const DefaultHeader = (props: DefaultHeaderProps) => {
   switch (props.to) {
     case '/document/sign':
@@ -259,6 +261,9 @@ export const DefaultHeader = (props: DefaultHeaderProps) => {
 
     case '/certificate':
       return <CerticateHeader />
+
+    case '/verify':
+      return <VerifyHeader />
 
     default:
       return (

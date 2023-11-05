@@ -44,7 +44,7 @@ export default function AlertDialog(props: any) {
             sx={{
               fontSize: '2rem',
               fontWeight: 'bold',
-              color: 'var(--red1)',
+              color: 'var(--dark2)',
             }}
           >
             {props.title}

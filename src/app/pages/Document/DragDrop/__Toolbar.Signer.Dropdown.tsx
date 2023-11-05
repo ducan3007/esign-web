@@ -27,6 +27,7 @@ type props = {
     minWidth: string
     minHeight: string
   }
+  isDisableAddSigner: boolean
   // setSelectedSigner: (signer: Signers) => void
 }
 
@@ -43,6 +44,7 @@ export const ToolbarSignerDropDown = (props: props) => {
   const hasFieldAdded = props.selectedSigner.fields > 0
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (props.isDisableAddSigner) return
     setAnchorEl(event.currentTarget)
   }
 
@@ -96,14 +98,16 @@ export const ToolbarSignerDropDown = (props: props) => {
             {!isMe && ` (${props.selectedSigner.email})`}
           </Box>
         </Box>
-        <ExpandMoreIcon
-          sx={{
-            position: 'absolute',
-            right: '3px',
-            fontSize: '2.5rem',
-            color: 'var(--dark2)',
-          }}
-        />
+        {!props.isDisableAddSigner && (
+          <ExpandMoreIcon
+            sx={{
+              position: 'absolute',
+              right: '3px',
+              fontSize: '2.5rem',
+              color: 'var(--dark2)',
+            }}
+          />
+        )}
       </Box>
 
       {/* ------------------------------------- Render Menu Dropdown ------------------------------------ */}
@@ -141,6 +145,7 @@ export const ToolbarSignerDropDown = (props: props) => {
               key={key}
               onClick={(e) => {
                 e.stopPropagation()
+                if (props.isDisableAddSigner) return
                 const signer_id = signatures[`page_${props.pageNumber}`][props.id].user.id
 
                 if (signer_id && signer_id !== signer.id) {

@@ -399,6 +399,7 @@ function RenderSigners(props: any) {
 
     console.log('getCanvasFromSignature', ids)
   }
+  
   const [temp, setTemp] = useState<any>(null)
   const ref1 = useRef<any>(null)
   const ref2 = useRef<any>(null)

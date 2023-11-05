@@ -30,7 +30,7 @@ import SignaturePage from './pages/Signature';
 // const SignupPage = React.lazy(() => import('./pages/Signup'));
 import SignupPage from './pages/Signup';
 // const UMSPage = React.lazy(() => import('./pages/UMS'));
-import UMSPage from './pages/UMS';
+import VerifyPage from './pages/verify';
 // const WalletPage = React.lazy(() => import('./pages/Wallet'));
 import WalletPage from './pages/Wallet';
 
@@ -76,6 +76,8 @@ export const headerTitles = [
   { to: '/document/sign',         name: 'Document Signning Page',  },
   { to: '/certificate/detail',    name: 'Certificate Detail',      },
   { to: '/certificate/sign',      name: ''                         },
+  { to: '/verify',                name: ''                         },
+
 ];
 
 export const paths = {
@@ -86,7 +88,7 @@ export const paths = {
   document:                       '/document',
   document_detail:                '/document/info',
   document_sign:                  '/document/sign',
-  ums:                            '/verify',
+  verify:                            '/verify',
   logs:                           '/logs',
   accountSetting:                 '/account-setting',
   wallet:                         '/wallet',
@@ -107,7 +109,7 @@ const appRoutes: RouteObject[] = [
   { path: paths.dashboard,              layout: DashboardLayout,          component: DashboardPage,              protected: true    },
   { path: paths.document,               layout: DashboardLayout,          component: DocumentPage,               protected: true    },
   { path: paths.wallet,                 layout: DashboardLayout,          component: WalletPage,                 protected: true    },
-  { path: paths.ums,                    layout: DashboardLayout,          component: UMSPage,                    protected: true    },
+  { path: paths.verify,                 layout: DashboardLayout,          component: VerifyPage,                 protected: true    },
   { path: paths.logs,                   layout: DashboardLayout,          component: LogPage,                    protected: true    },
   { path: paths.accountSetting,         layout: DashboardLayout,          component: AccountSettingsPage,        protected: true    },
   { path: paths.signatures,             layout: DashboardLayout,          component: SignaturePage,              protected: true    },

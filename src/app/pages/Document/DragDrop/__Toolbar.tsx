@@ -24,7 +24,7 @@ type props = {
   selectedSigner: Signers
   signatureDataRefs: any
   copySignature: (id: string, pageNumber: number, sigenr_id: string) => void
-
+  isDisableAddSigner: boolean
   can_copy: boolean
   can_delete: boolean
 }
@@ -463,6 +463,7 @@ export const BaseToolbar = (props: props) => {
           id={props.id}
           pageNumber={props.pageNumber}
           selectedSigner={props.selectedSigner}
+          isDisableAddSigner={props.isDisableAddSigner}
         />
       </Box>
 

@@ -15,16 +15,18 @@ import {
 } from '@mui/material'
 import * as _ from 'lodash'
 import { useEffect, useRef, useState } from 'react'
+
 import { headerTitles } from 'src/app/routes'
 import { DefaultHeader } from './__DefaultHeader'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectors } from '@esign-web/redux/auth'
 import { selectors as selectorsDocument } from '@esign-web/redux/document'
+import { selectors as selectorsCert } from '@esign-web/redux/certificate'
 import MButton from 'src/app/components/Button'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
 import WalletIcon from '@mui/icons-material/Wallet'
 import ClassIcon from '@mui/icons-material/Class'
-import { Toast, baseApi } from '@esign-web/libs/utils'
+import { Toast, baseApi, parseCandidate } from '@esign-web/libs/utils'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ENABLE_SAVE_DRAFT } from 'libs/redux/document/src/lib/constants'
 import MetamaskIcon from 'src/assets/metamask.svg'
@@ -39,23 +41,30 @@ import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
 import FileSaver from 'file-saver'
 import { SET_CONTRACT_ABI, WALLET_SET_CONNECTED } from 'libs/redux/wallet/src/lib/constants'
 import { SET_WALLET_ADDRESS } from 'libs/redux/auth/src/lib/constants'
+import { MTooltip } from 'src/app/components/Tooltip'
+import { ethers } from 'ethers'
+import { selectors as walletSelectors } from '@esign-web/redux/wallet'
 
 export const DashboardHeader = () => {
   const localtion = window.location.pathname
   const authState = useSelector(selectors.getAuthState)
   const isSaveDraftEnabled = useSelector(selectorsDocument.getDraftEnabled)
   const documentDetail = useSelector(selectorsDocument.getDocumentDetail) || ({} as any)
+  const certDetail = useSelector(selectorsCert.getCertDetail) || ({} as any)
   const signatures = useSelector(selectorsDocument.getSignatures)
   const signers2 = useSelector(selectorsDocument.getSigners2)
   const dashBoardObject = _.find(headerTitles, (o) => o.to === localtion)
+
+  const certABI = useSelector(walletSelectors.getCertABI)
+
   const [isDownloading, setDownloading] = useState(false)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const documentId = searchParams.get('id')
+  const type = searchParams.get('type')
 
-  const [isSaved, setSaveDraft] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
 
@@ -82,7 +91,7 @@ export const DashboardHeader = () => {
   useEffect(() => {
     ;(async () => {
       try {
-        const abi = await baseApi.get('/contract/abi/')
+        const abi = await baseApi.get('/v1/contract/abi/')
         console.log('>> abi', abi.data)
         dispatch({
           type: SET_CONTRACT_ABI,
@@ -113,13 +122,13 @@ export const DashboardHeader = () => {
     }
   }
 
-  console.log('anchorEl2', anchorEl2)
-
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
   }
 
   const [openWalletModal, setOpenWalletModal] = useState(false)
+  const [openWalletModal1, setOpenWalletModal1] = useState(false)
+
   const connected = authState.isConnected
 
   const handleClick2 = async (event: React.MouseEvent<HTMLElement>) => {
@@ -157,10 +166,10 @@ export const DashboardHeader = () => {
     window.location.href = '/login'
   }
 
-  const downloadDocument = async () => {
+  const downloadDocument = async (id, name) => {
     if (isDownloading) return
-    let url = process.env.NX_SERVER_URL + '/file/save/' + documentDetail.id
-    let fileName = `${documentDetail.name}.pdf`
+    let url = process.env.NX_SERVER_URL + '/file/save/' + id
+    let fileName = `${name}.pdf`
     setDownloading(true)
     await new Promise((resolve) => setTimeout(resolve, 500))
     await fetch(url, {
@@ -219,7 +228,9 @@ export const DashboardHeader = () => {
           </Typography>
         </MButton>
         <MButton
-          onClick={downloadDocument}
+          onClick={async () => {
+            await downloadDocument(documentDetail.id, documentDetail.name)
+          }}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -289,7 +300,9 @@ export const DashboardHeader = () => {
           </Typography>
         </MButton>
         <MButton
-          onClick={downloadDocument}
+          onClick={async () => {
+            await downloadDocument(documentDetail.id, documentDetail.name)
+          }}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -359,7 +372,9 @@ export const DashboardHeader = () => {
           </Typography>
         </MButton>
         <MButton
-          onClick={downloadDocument}
+          onClick={async () => {
+            await downloadDocument(documentDetail.id, documentDetail.name)
+          }}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -429,7 +444,9 @@ export const DashboardHeader = () => {
           </Typography>
         </MButton>
         <MButton
-          onClick={downloadDocument}
+          onClick={async () => {
+            await downloadDocument(documentDetail.id, documentDetail.name)
+          }}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -499,7 +516,9 @@ export const DashboardHeader = () => {
           </Typography>
         </MButton>
         <MButton
-          onClick={downloadDocument}
+          onClick={async () => {
+            await downloadDocument(documentDetail.id, documentDetail.name)
+          }}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -533,10 +552,161 @@ export const DashboardHeader = () => {
     ),
   }
 
+  const isRevoked = certDetail?.status === 'REVOKED'
+  const isIssued = certDetail?.status === 'ISSUED'
+  const Certificate = {
+    TEMPLATE: (
+      <Box sx={{ display: 'flex' }}>
+        <MButton
+          onClick={() => {
+            if (certDetail.tx_hash) return
+            setOpenWalletModal1(true)
+          }}
+          sx={{
+            padding: '10px 12px',
+            borderRadius: '12px 0px 0px 12px',
+            backgroundColor: Object.keys(certDetail).length === 0 ? 'var(--white)' : certDetail.tx_hash ? 'var(--green14)' : 'var(--orange07)',
+            display: 'flex',
+            gap: '12px',
+            '&:hover': {
+              opacity: '1 !important',
+            },
+            border: '1px solid var(--gray3)',
+            textAlign: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+          }}
+        >
+          <MTooltip
+            letterSpacing="1px"
+            background="var(--dark3)"
+            color="white"
+            title={
+              <>
+                {certDetail.tx_hash && <Typography sx={{ fontSize: '1.5rem', color: 'var(--white)' }}>TX Hash: {certDetail.tx_hash}</Typography>}
+                {!certDetail.tx_hash && (
+                  <Typography sx={{ fontSize: '1.5rem', color: 'var(--white)' }}>Upload the certificate to Blockchain Network</Typography>
+                )}
+              </>
+            }
+          >
+            <Box>
+              {Object.keys(certDetail).length === 0 && <CircularProgress />}
+              {certDetail.tx_hash && Object.keys(certDetail).length > 0 && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                  }}
+                >
+                  <CheckCircleTwoToneIcon sx={{ fontSize: '28px', color: 'var( --green12)' }} />
+                  <Typography
+                    sx={{
+                      fontSize: '1.9rem',
+                      color: 'var(--green12)',
+                      letterSpacing: '1px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Signed
+                  </Typography>
+                </Box>
+              )}
+              {!certDetail.tx_hash && Object.keys(certDetail).length > 0 && (
+                <Typography
+                  sx={{
+                    fontSize: '1.9rem',
+                    color: 'var(--white)',
+                    letterSpacing: '1px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  Sign Template
+                </Typography>
+              )}
+            </Box>
+          </MTooltip>
+        </MButton>
+        <MButton
+          onClick={async () => {
+            await downloadDocument(certDetail?.id, certDetail?.certificate?.name)
+          }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            textAlign: 'center',
+            borderRadius: '0px 12px 12px 0px',
+            backgroundColor: 'var(--white)',
+            border: '1px solid var(--gray3)',
+            borderLeftWidth: '0px',
+            padding: '5px 12px',
+            cursor: isDownloading ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {!isDownloading && <FileDownloadOutlinedIcon sx={{ fontSize: '31px', color: 'var(--dark)' }} />}
+          {isDownloading && <CircularProgress size={31} sx={{ color: 'var(--blue3)' }} />}
+        </MButton>
+      </Box>
+    ),
+    CERTIFICANT: (
+      <Box sx={{ display: 'flex' }}>
+        <MButton
+          sx={{
+            padding: '10px 12px',
+            borderRadius: '12px 0px 0px 12px',
+            backgroundColor: isRevoked ? 'var(--red1111)' : 'var(--green14)',
+            border: '1px solid var(--gray3)',
+            display: 'flex',
+            gap: '12px',
+            '&:hover': {
+              opacity: '1 !important',
+            },
+          }}
+        >
+          <CheckCircleTwoToneIcon sx={{ fontSize: '28px', color: isRevoked ? 'var(--red1)' : 'var( --green12)' }} />
+          <Typography
+            sx={{
+              fontSize: '1.9rem',
+              color: isRevoked ? 'var(--red1)' : 'var(--green12)',
+              letterSpacing: '1px',
+              fontWeight: 'bold',
+            }}
+          >
+            {isIssued && 'Issued'}
+            {isRevoked && 'Revoked'}
+          </Typography>
+        </MButton>
+        <MButton
+          onClick={async () => {
+            await downloadDocument(certDetail?.id, certDetail?.certificate?.name)
+          }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            textAlign: 'center',
+            borderRadius: '0px 12px 12px 0px',
+            backgroundColor: 'var(--white)',
+            border: '1px solid var(--gray3)',
+            borderLeftWidth: '0px',
+            padding: '5px 12px',
+            cursor: isDownloading ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {!isDownloading && <FileDownloadOutlinedIcon sx={{ fontSize: '31px', color: 'var(--dark)' }} />}
+          {isDownloading && <CircularProgress size={31} sx={{ color: 'var(--blue3)' }} />}
+        </MButton>
+      </Box>
+    ),
+  }
+
   const Profile = {
     profile: (
       <Box
         key={1}
+        onClick={() => {
+          navigate('/account-setting')
+        }}
         sx={{
           padding: '10px 16px',
           display: 'flex',
@@ -639,31 +809,58 @@ export const DashboardHeader = () => {
     ),
   }
 
+  const SignTemplateByWallet = async () => {
+    if (certDetail.tx_hash) {
+      return
+    }
+    try {
+      if (window.ethereum && authState.isConnected) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any)
+        const signer = provider.getSigner()
+        const contractWithSigner = new ethers.Contract(certABI.address, certABI.abi, signer)
+        let sha = certDetail.buffer.data
+        const tx = await contractWithSigner.createCert(sha)
+        const recepeit = await tx.wait()
+
+        console.log('>>>>> recepeit', recepeit)
+
+        if (recepeit.events[0] && recepeit.events[0].args && recepeit.events[0].args[1])
+          await baseApi.post('/v1/contract/cert/tx', {
+            type: 'CERT_TEMPLATE',
+            id: certDetail.id,
+            tx_hash: recepeit.transactionHash,
+            creator: recepeit.events[0].args[1],
+          })
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        window.location.reload()
+      }
+    } catch (error) {
+      console.log('>>>>> error', error)
+    }
+  }
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        height: '8.75rem',
-        justifyContent: 'flex-end',
-        borderBottom: '1px solid var(--border-gray)',
-      }}
-    >
+    <Box sx={{ display: 'flex', flexDirection: 'row', height: '8.75rem', justifyContent: 'flex-end', borderBottom: '1px solid var(--border-gray)' }}>
       {/* Avatar */}
       <DefaultHeader title={dashBoardObject?.name} to={dashBoardObject?.to} />
 
-      <Box
-        sx={{
-          width: 'fit-content',
-          paddingRight: '1rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-        }}
-      >
+      <Box sx={{ width: 'fit-content', paddingRight: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {/*
+
+             __________________________________________________Download Certificate_______________________________________________ 
+         
+         */}
         {localtion === '/document/sign' && DocumentStatus[`${documentDetail.status}`]}
 
-        {/* _____________________________________________________ Connect Wallet _____________________________________________________ */}
+        {localtion === '/certificate/sign' && type === 'template' && Certificate['TEMPLATE']}
+
+        {localtion === '/certificate/sign' && type !== 'template' && Certificate['CERTIFICANT']}
+
+        {/* 
+       
+            _______________________________________________ Connect Wallet _____________________________________________________ 
+        
+        */}
 
         {authState.data?.is_registered && (
           <Box sx={{ display: 'flex', marginRight: '35px' }}>
@@ -778,7 +975,6 @@ export const DashboardHeader = () => {
             </Menu>
           </Box>
         )}
-        {/* __________________________________________________________________________________________________________ */}
         {!authState.data?.is_registered && (
           <MButton
             onClick={() => {
@@ -816,52 +1012,78 @@ export const DashboardHeader = () => {
         )}
       </Box>
 
+      {/* 
+      
+        ______________________________________________________ Dialog 2 ______________________________________________________ 
+          
+      */}
+      <Dialog
+        onClose={() => {
+          setOpenWalletModal1(false)
+        }}
+        open={openWalletModal1}
+        /* prettier-ignore */
+        sx={{ '& .MuiDialog-paper': { width: 650, height: 436, position: 'absolute', top: '200px', maxWidth: 'none', maxHeight: 'none', borderRadius: '15px', boxShadow: 'none', }, '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.7)' }}}
+      >
+        <Typography sx={{ fontSize: '2.4rem', color: 'var(--dark2)', fontWeight: 'bold', textAlign: 'center', margin: '10px 20px' }}>
+          Sign Certificate Template
+        </Typography>
+        <Box sx={{ marginTop: '20px', marginLeft: '20px' }}>
+          <Typography sx={{ fontSize: '1.6rem', color: 'var(--dark2)', fontWeight: 'bold' }}>File name</Typography>
+          <Typography sx={{ fontSize: '1.4rem' }}>{certDetail.name}</Typography>
+        </Box>
+        <Box sx={{ marginTop: '20px', marginLeft: '20px' }}>
+          <Typography sx={{ fontSize: '1.6rem', color: 'var(--dark2)', fontWeight: 'bold' }}>File hash</Typography>
+          <Typography sx={{ fontSize: '1.4rem' }}>{certDetail.hash256}</Typography>
+        </Box>
+
+        <MButton
+          onClick={SignTemplateByWallet}
+          sx={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '50%',
+            transform: 'translate(-50%, 0)',
+            backgroundColor: 'var(--blue3)',
+            width: '90%',
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: '1.8rem',
+              fontWeight: 'bold',
+              color: 'var(--white)',
+              letterSpacing: '1px',
+            }}
+          >
+            Confirm & Sign
+          </Typography>
+        </MButton>
+      </Dialog>
+
+      {/*  
+          
+       ______________________________________________________ Dialog 1 ______________________________________________________ 
+      
+      */}
       <Dialog
         onClose={() => {
           setOpenWalletModal(false)
         }}
         open={openWalletModal}
-        sx={{
-          '& .MuiDialog-paper': {
-            width: 550,
-            height: 556,
-            position: 'absolute',
-            top: '100px',
-            maxWidth: 'none',
-            maxHeight: 'none',
-            borderRadius: '15px',
-            boxShadow: 'none',
-          },
-          '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.7)' },
-        }}
+        /* prettier-ignore */
+        sx={{ '& .MuiDialog-paper': { width: 550, height: 556, position: 'absolute', top: '100px', maxWidth: 'none', maxHeight: 'none', borderRadius: '15px', boxShadow: 'none', }, '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.7)' }, }}
       >
         <DialogContent sx={{ overflow: 'hidden' }}>
-          <Typography
-            sx={{
-              fontSize: '2.4rem',
-              color: 'var(--dark2)',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              marginBottom: '20px',
-            }}
-          >
+          <Typography sx={{ fontSize: '2.4rem', color: 'var(--dark2)', fontWeight: 'bold', textAlign: 'center', marginBottom: '20px' }}>
             Connect your wallet
           </Typography>
           <Box sx={{ textAlign: 'center' }}>
             <span style={{ fontSize: '1.6rem', color: 'var(--dark2)', marginTop: '10px' }}>
               If you don't have a wallet, you can follow the instructions to install one.
-            </span>{' '}
-            <a
-              href="https://metamask.io/download.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontSize: '1.6rem',
-                color: 'var(--blue3)',
-                fontWeight: 'bold',
-                textDecoration: 'none',
-              }}
-            >
+            </span>
+            {/* prettier-ignore */}
+            <a href="https://metamask.io/download.html" target="_blank" rel="noopener noreferrer" style={{ fontSize: '1.6rem', color: 'var(--blue3)', fontWeight: 'bold', textDecoration: 'none', }} >
               Learn more
             </a>
           </Box>
@@ -894,37 +1116,16 @@ export const DashboardHeader = () => {
                 }
               }}
               key={1}
-              sx={{
-                padding: '10px 24px',
-                display: 'flex',
-                borderRadius: '12px',
-                alignItems: 'center',
-                gap: '14px',
-                cursor: 'pointer',
-                marginBottom: '10px',
-                ':hover': {
-                  backgroundColor: 'var(--sx1)',
-                },
-              }}
+              // prettier-ignore
+              sx={{ padding: '10px 24px', display: 'flex', borderRadius: '12px', alignItems: 'center', gap: '14px', cursor: 'pointer', marginBottom: '10px', ':hover': { backgroundColor: 'var(--sx1)', }, }}
             >
               <img src={MetamaskIcon} alt="metamask" width="29px" height="29px" />
               <Typography sx={{ fontSize: '1.6rem', color: 'var(--dark)', fontWeight: 'bold' }}>MetaMask</Typography>
             </Box>
+
             {/* ____________________________________ Coin Base ________________________________ */}
-            <Box
-              key={2}
-              sx={{
-                padding: '10px 24px',
-                display: 'flex',
-                borderRadius: '12px',
-                alignItems: 'center',
-                gap: '14px',
-                cursor: 'pointer',
-                marginBottom: '10px',
-                ':hover': {
-                  backgroundColor: 'var(--sx1)',
-                },
-              }}
+            {/* prettier-ignore */}
+            <Box key={2} sx={{ padding: '10px 24px', display: 'flex', borderRadius: '12px', alignItems: 'center', gap: '14px', cursor: 'pointer', marginBottom: '10px', ':hover': { backgroundColor: 'var(--sx1)', }, }}
             >
               <img src={Coinbase} alt="metamask" width="29px" height="29px" />
               <Typography sx={{ fontSize: '1.6rem', color: 'var(--dark)', fontWeight: 'bold', letterSpacing: '1px' }}>Coinbase Wallet</Typography>
@@ -940,9 +1141,7 @@ export const DashboardHeader = () => {
                 gap: '5px',
                 cursor: 'pointer',
                 marginBottom: '10px',
-                ':hover': {
-                  backgroundColor: 'var(--sx1)',
-                },
+                ':hover': { backgroundColor: 'var(--sx1)' },
               }}
             >
               <img src={Walletconnect} alt="metamask" width="48px" height="48px" />

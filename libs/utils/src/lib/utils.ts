@@ -72,3 +72,23 @@ export const html2Canvas = async (id: string, options: any) => {
     console.log(error)
   }
 }
+
+export function parseCandidate(tx: any) {
+  let issued_at = tx[0].toNumber()
+  let cert_hash = tx[1].toString()
+  let issuer_address = tx[2].toString()
+  let name = tx[3].toString()
+  let email = tx[4].toString()
+  let status = tx[5].toString()
+  let expired_at = tx[6].toNumber()
+
+  return {
+    issued_at,
+    cert_hash,
+    issuer_address,
+    name,
+    email,
+    status,
+    expired_at,
+  }
+}

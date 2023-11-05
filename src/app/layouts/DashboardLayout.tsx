@@ -20,16 +20,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <Box id="sidebar" sx={{ maxWidth: '23.25rem' }}>
         {!isUnregistered && <Sidebar />}
       </Box>
+
       <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
         <DashboardHeader />
         {children}
       </Box>
+
       <UploadStatusDialog />
       <Backdrop
         sx={{
           color: '#d0d8e2',
           zIndex: 9999999,
-          backgroundColor: 'rgba(0, 0, 0, 0.07)',
+          backgroundColor: 'rgba(0, 0, 0, 0.4)',
         }}
         open={isBackdropOpen}
       >

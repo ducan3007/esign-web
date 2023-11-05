@@ -1,19 +1,17 @@
 import { baseApi, getFontSize, getFormatFromBase64, getFormatFromURL } from '@esign-web/libs/utils'
 import { selectors as certSelector } from '@esign-web/redux/certificate'
 import { actions, selectors } from '@esign-web/redux/signatures'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Skeleton, Typography } from '@mui/material'
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
 import { BACKDROP_OFF, TOOGLE_BACKDROP } from 'libs/redux/auth/src/lib/constants'
 import { CERT_SIGNATURE_SET } from 'libs/redux/certificate/src/lib/constants'
 import { SignatureContent } from 'libs/redux/signatures/src/lib/reducers'
-import { MutableRefObject, memo, useEffect, useRef, useState } from 'react'
+import { memo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import MButton from 'src/app/components/Button'
-import { MUIMenu } from 'src/app/components/Menu'
-import { MInputBase } from 'src/app/components/TextInput'
 import { Toast } from 'src/app/components/Toast'
 import { IconSignature } from '../../../components/Icons/pdf'
 import { CanvasSignatureOption } from '../../Document/DragDrop/__CanvasOption'
+import { MySignatures } from '../../Document/DragDrop/__SignatureModal'
 import { UploadSignatureOption } from '../../Document/DragDrop/__SignatureUpload'
 import { TextSignatureOption } from '../../Document/DragDrop/__TextOption'
 
@@ -33,11 +31,12 @@ export enum Options {
 const SignatureEditModal = (props: props) => {
   const { selectedSignature } = props
   const dispatch = useDispatch()
+  
   const signature = useSelector(certSelector.getSignatures)
   const isSignatureAutoSave = useSelector(selectors.getAutoSave)
   const isOpen = useSelector(selectors.getModalState)
-
   const signatureData = signature[`page_${selectedSignature.pageNumber}`]?.[selectedSignature.id] || {}
+
   const [options, setOptions] = useState<Options>(Options.draw)
   const [disableSaveSignature, setDisableSaveSignature] = useState<boolean>(true)
   const signatureBoardRef = useRef<HTMLDivElement>(null)
@@ -81,17 +80,10 @@ const SignatureEditModal = (props: props) => {
       /* --------------------------------- Canvas ---------------------------------------- */
       if (signatureDataRef.current && signatureDataRef.current.type === SignatureContent.canvas) {
         if (signatureDataRef.current.callback && signatureDataRef.current.callback2) {
-          console.log('>>>>>>>> SAVEEE', signatureDataRef.current)
           let base64 = await signatureDataRef.current.callback()
-
           const { width, height } = signatureDataRef.current.callback2()
-
-          console.log('>>>>>>> base64', base64)
-
           dispatch({ type: TOOGLE_BACKDROP })
-
           await new Promise((resolve) => setTimeout(resolve, 300))
-
           const reduxPayload = {
             ...signatureData,
             width: width + 0.001,
@@ -101,7 +93,6 @@ const SignatureEditModal = (props: props) => {
               format: getFormatFromBase64(base64),
             },
           }
-
           if (isSignatureAutoSave) {
             const res = await handleSaveSignature({
               format: getFormatFromBase64(base64),
@@ -115,8 +106,6 @@ const SignatureEditModal = (props: props) => {
           } else {
             reduxPayload.signature_data['isBase64'] = true
           }
-          console.log('>>>>>>>> reduxPayload', reduxPayload)
-
           dispatch({
             type: CERT_SIGNATURE_SET,
             payload: reduxPayload,
@@ -132,9 +121,6 @@ const SignatureEditModal = (props: props) => {
           signatureDataRef.current.data.width = width
           signatureDataRef.current.data.height = height
         }
-
-        console.log('>>>>>>>> SAVEEE', signatureDataRef.current)
-
         const payload = {
           type: signatureDataRef.current.type,
           text: signatureDataRef.current.data.data,
@@ -145,13 +131,8 @@ const SignatureEditModal = (props: props) => {
           width: signatureDataRef.current?.data.width,
           height: signatureDataRef.current?.data.height,
         }
-        console.log('>>>>>>>> PAYLOAD', payload)
         dispatch({ type: TOOGLE_BACKDROP })
-
         const response = await baseApi.post('/signature/create/text', payload)
-
-        console.log('>>>>>>>> base64', response.data)
-
         const reduxPayload = {
           ...signatureData,
           height: payload.height,
@@ -176,8 +157,6 @@ const SignatureEditModal = (props: props) => {
         } else {
           reduxPayload.signature_data['isBase64'] = true
         }
-        console.log('>>>>>>>> reduxPayload', reduxPayload)
-
         dispatch({
           type: CERT_SIGNATURE_SET,
           payload: reduxPayload,
@@ -189,12 +168,8 @@ const SignatureEditModal = (props: props) => {
       /* --------------------------------- Image ---------------------------------------- */
       if (signatureDataRef.current && signatureDataRef.current.type === SignatureContent.image) {
         let { src, width, height } = signatureDataRef.current.data
-
-        console.log('>>>>>>>> SAVEEE', signatureDataRef.current)
-
         dispatch({ type: TOOGLE_BACKDROP })
         await new Promise((resolve) => setTimeout(resolve, 300))
-
         const reduxPayload = {
           ...signatureData,
           width: width + 0.001,
@@ -204,7 +179,6 @@ const SignatureEditModal = (props: props) => {
             url: src,
           },
         }
-
         if (isSignatureAutoSave) {
           const res = await handleSaveSignature({
             format: getFormatFromBase64(src),
@@ -218,7 +192,6 @@ const SignatureEditModal = (props: props) => {
         } else {
           reduxPayload.signature_data['isBase64'] = true
         }
-
         dispatch({
           type: CERT_SIGNATURE_SET,
           payload: reduxPayload,
@@ -230,7 +203,6 @@ const SignatureEditModal = (props: props) => {
       /* --------------------------------- My Signature ---------------------------------------- */
       if (signatureDataRef.current && signatureDataRef.current.type === SignatureContent.mySignature) {
         let { id, url, width, height } = signatureDataRef.current.data
-        console.log('>>>>>>>> SAVEEE', signatureDataRef.current)
         dispatch({
           type: CERT_SIGNATURE_SET,
           payload: {
@@ -249,7 +221,6 @@ const SignatureEditModal = (props: props) => {
 
       handleClose()
     } catch (error) {
-      console.log('>>>>> error', error)
       dispatch({ type: BACKDROP_OFF })
       Toast({
         message: (
@@ -417,188 +388,3 @@ export default memo(SignatureEditModal, (prevProps, nextProps) => {
   if (prevProps.selectedSignature.pageNumber !== nextProps.selectedSignature.pageNumber) return false
   return true
 })
-
-type props1 = {
-  signatureDataRef: MutableRefObject<{ type: string; data: any; callback?: any; callback2?: any }>
-  containerRef: any
-  disableSaveSignature: boolean
-  setDisableSaveSignature: (disable: boolean) => void
-}
-
-export const MySignatures = (props: props1) => {
-  const { signatureDataRef, disableSaveSignature, setDisableSaveSignature } = props
-  const [searchBy, setSearchBy] = useState('Name')
-  const [selected, setSelected] = useState<any>(null)
-  const [signatures, setSignatures] = useState<any>([])
-
-  useEffect(() => {
-    ;(async () => {
-      const res = await baseApi.get('/signature/template')
-      console.log('>>>>> res', res)
-      setSignatures(res.data)
-    })()
-
-    signatureDataRef.current = {
-      type: SignatureContent.mySignature,
-      data: {},
-    }
-  }, [])
-
-  const ItemSkeleton = () => {
-    return <Skeleton sx={{ transform: 'scale(1.0)' }} animation="wave" width={'100%'} height={150} />
-  }
-
-  const Item = ({ item }) => {
-    return (
-      <Box
-        onClick={() => {
-          setSelected(item)
-          signatureDataRef.current.data = {
-            id: item.id,
-            url: item.url,
-            width: item.width,
-            height: item.height,
-          }
-          setDisableSaveSignature(false)
-        }}
-        sx={{
-          width: '100%',
-          height: '150px',
-          display: 'flex',
-          flexDirection: 'column',
-          position: 'relative',
-          border: selected?.id === item.id ? '2px solid var(--orange2)' : '2px solid var(--gray3)',
-          borderRadius: '5px',
-          cursor: 'pointer',
-          padding: '5px',
-          '&:hover': {
-            border: '3px solid var(--orange2)',
-          },
-        }}
-      >
-        <img
-          src={item.url}
-          alt=""
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-          }}
-        />
-      </Box>
-    )
-  }
-
-  return (
-    <Box
-      sx={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'relative',
-      }}
-    >
-      {/* ------------------------------------ Options ---------------------------------------- */}
-      <Box sx={{ height: '50px', padding: '1rem', position: 'relative' }}>
-        <MInputBase
-          sx={{
-            fontSize: '1.7rem',
-            width: '450px',
-            // paddingLeft: '20px',
-            '& .MuiInputBase-input': {
-              paddingLeft: '105px',
-            },
-          }}
-          placeholder="Search..."
-        />
-
-        {/* ----------------------------- Search by ------------------------------- */}
-        <MUIMenu
-          sx1={{
-            width: '100px',
-            height: '35px',
-            position: 'absolute',
-            backgroundColor: 'var(--light-blue3)',
-            left: '1rem',
-            top: '1rem',
-            borderRadius: '0px',
-            // border: '1px solid var(--blue1)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '5px',
-            paddingRight: '0px',
-          }}
-          content1={
-            <>
-              <span
-                style={{
-                  color: 'var(--dark2)',
-                  fontWeight: 'bold',
-                  fontSize: '1.7rem',
-                }}
-              >
-                {searchBy}
-              </span>
-              <ExpandMoreIcon
-                sx={{
-                  right: '3px',
-                  fontSize: '2.5rem',
-                  color: 'var(--dark2)',
-                }}
-              />
-            </>
-          }
-          content2={({ handleClose }) => {
-            return ['Name', 'Tag', 'Id'].map((item, index) => {
-              return (
-                <Box
-                  sx={{
-                    width: '100px',
-                    backgroundColor: 'white',
-                    color: 'var(--dark2)',
-                    height: '35px',
-                    padding: '4px',
-                    '&:hover': {
-                      backgroundColor: 'var(--blue1)',
-                      '& span': {
-                        color: 'white',
-                      },
-                    },
-                    marginBottom: '0px',
-                  }}
-                  key={index}
-                  onClick={() => {
-                    setSearchBy(item)
-                    handleClose()
-                  }}
-                >
-                  <span style={{ fontSize: '1.6rem' }}>{item}</span>
-                </Box>
-              )
-            })
-          }}
-        />
-      </Box>
-
-      {/* ---------------------------- Signature Grid ---------------------------------- */}
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-          gridGap: '1rem',
-          padding: '1rem',
-          overflowY: 'auto',
-        }}
-      >
-        {signatures.map((item, index) => {
-          return <Item key={index} item={item} />
-        })}
-        {signatures.length === 0 &&
-          Array.from(Array(12).keys()).map((item, index) => {
-            return <ItemSkeleton key={index} />
-          })}
-      </Box>
-    </Box>
-  )
-}

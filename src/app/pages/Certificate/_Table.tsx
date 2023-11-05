@@ -60,6 +60,7 @@ export const CertificateTable = (props: any) => {
           Object.keys(certificate).map((key: any) => {
             return (
               <Box
+                key={key}
                 onClick={() => {
                   navigate(`/certificate/detail?id=${certificate[key].id}`)
                 }}
@@ -68,7 +69,6 @@ export const CertificateTable = (props: any) => {
                   display: show ? 'flex' : 'none',
                   border: '1px solid var(--gray3)',
                   boxShadow: 'rgba(0, 0, 0, 0.06) 0px -9px 9px',
-
 
                   height: '270px',
                   // display: 'flex',
@@ -113,7 +113,7 @@ export const CertificateTable = (props: any) => {
                   sx={{
                     position: 'absolute',
                     right: 0,
-                    top:0,
+                    top: 0,
                     display: 'flex',
                     alignItems: 'center',
                     alignContent: 'center',
@@ -130,7 +130,7 @@ export const CertificateTable = (props: any) => {
                       fontSize: '1.8rem',
                     }}
                   >
-                    0
+                    {certificate[key]._count?.cert_template_certificant}
                   </Typography>
                   <img src={Cert} alt="metamask" width="29px" height="29px" />
                 </Box>
@@ -138,9 +138,10 @@ export const CertificateTable = (props: any) => {
             )
           })}
         {loadingDocuments &&
-          Array.from({ length: 28 }, (_, i) => {
+          Array.from({ length: 10 }, (_, i) => {
             return (
               <Box
+                key={i}
                 sx={{
                   width: '100%',
                   height: '270px',

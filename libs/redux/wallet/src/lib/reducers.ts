@@ -1,14 +1,14 @@
 import * as _ from './constants'
 
-type Wallet = {
+export type Wallet = {
   type?: string
   provider?: string
   connected?: boolean
   address?: Address[]
   contract: {
-    abi?: any
-    address?: string
-  }
+    abi: any
+    address: string
+  }[]
 }
 type Address = {
   address: string
@@ -18,7 +18,7 @@ export const initialState: Wallet = {
   provider: '',
   connected: false,
   address: [],
-  contract: {},
+  contract: [],
 }
 
 export default (state = initialState, action: any) => {

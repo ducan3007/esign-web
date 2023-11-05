@@ -16,6 +16,7 @@ import PDFThumbnail from './__PDFThumbnaiil'
 interface RenderPDFProps {
   documentId: string
   setIsPDFLoaded: (isLoaded: boolean) => void
+  isDisableAddSigner: boolean
 }
 
 const RenderPDF = (props: RenderPDFProps) => {
@@ -120,6 +121,7 @@ const RenderPDF = (props: RenderPDFProps) => {
   console.log('>> selectedSignature', selectedSignature)
 
   const PAGE_GAP = 40 * PDF_SCALING_RATIO.value
+  
 
   return (
     <Box
@@ -175,6 +177,7 @@ const RenderPDF = (props: RenderPDFProps) => {
                         totalPage={numPages}
                         selectedSignature={selectedSignature}
                         setSelectedSignature={setSelectedSignature}
+                        isDisableAddSigner={props.isDisableAddSigner}
                         key={key}
                         index={index}
                         style={style}
