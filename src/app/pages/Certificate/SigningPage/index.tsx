@@ -111,10 +111,10 @@ const RenderLeftSide = (props: any) => {
       dispatch({
         type: TOOGLE_BACKDROP,
       })
+      await baseApi.post('/v1/user/soft-create', [{ email: signer2[Object.keys(signer2)[0]].email }])
       const payload = await preparePayload()
       const res = await baseApi.post(`/cert/sign/${documentId}`, payload)
       dispatch({ type: TOOGLE_BACKDROP })
-      // navigate(`/certificate/sign?id=${res.data}`)
       window.location.href = `/certificate/sign?id=${res.data}`
     } catch (error) {
       console.log(error)
@@ -263,8 +263,8 @@ const RenderLeftSide = (props: any) => {
   }
 
   const isRevokedAndNoTx = cert?.status === 'REVOKED' && !cert?.tx_hash
-
   const disableMetamask = cert?.certificate?.tx_hash === null
+
   return (
     <Box
       sx={{
@@ -275,7 +275,12 @@ const RenderLeftSide = (props: any) => {
         flexDirection: 'column',
       }}
     >
-      <RenderSigners cert={cert} selectedSigner={signer2[selectedSignerId] || {}} setSelectedSignerId={setSelectedSignerId} />
+      <RenderSigners
+        isHidden={authState?.data?.is_registered === false}
+        cert={cert}
+        selectedSigner={signer2[selectedSignerId] || {}}
+        setSelectedSignerId={setSelectedSignerId}
+      />
 
       {!cert?.status && (
         <>
@@ -337,7 +342,7 @@ const RenderLeftSide = (props: any) => {
             <Typography sx={{ fontSize: '1.7rem', fontWeight: 'bold', color: 'var(--dark)' }}>Time</Typography>
             <Typography sx={{ fontSize: '1.7rem', color: 'var(--dark)' }}>
               {' '}
-              {moment(cert?.tx_timestamp).format('L')} {moment(cert?.tx_timestamp).format('hh:mm A')}
+              {cert?.tx_timestamp ? moment(cert?.tx_timestamp).format('L') + " " + moment(cert?.tx_timestamp).format('hh:mm A') : 'N/A'}
             </Typography>
           </Box>
         </Box>

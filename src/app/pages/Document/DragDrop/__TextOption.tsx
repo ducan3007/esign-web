@@ -79,6 +79,7 @@ type props = {
   setDisableSaveSignature: any
   disableSaveSignature: boolean
   containerRef: any
+  hideAutoSave?: any
 }
 
 export const TextSignatureOption = (props: props) => {
@@ -113,7 +114,6 @@ export const TextSignatureOption = (props: props) => {
       height: height,
     }
   }
-
 
   return (
     <Box
@@ -415,7 +415,7 @@ export const TextSignatureOption = (props: props) => {
           {/* ---------------------- Bold -------------------------- */}
         </Box>
 
-        {authState.data?.is_registered && <AutoSave />}
+        {authState.data?.is_registered && !props.hideAutoSave && <AutoSave />}
       </Box>
 
       {/* --------------------------- Mock Element ------------------ */}

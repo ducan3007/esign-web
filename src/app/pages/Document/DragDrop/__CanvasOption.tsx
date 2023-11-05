@@ -11,6 +11,7 @@ type props = {
   containerRef: any
   disableSaveSignature: boolean
   setDisableSaveSignature: (disable: boolean) => void
+  hideAutoSave?: boolean
 }
 
 export const CanvasSignatureOption = (props: props) => {
@@ -225,7 +226,7 @@ export const CanvasSignatureOption = (props: props) => {
             Get DataUrl
           </button>
         </Box>
-        {authState.data?.is_registered && <AutoSave />}
+        {authState.data?.is_registered && !props.hideAutoSave && <AutoSave />}
       </Box>
 
       {/* ------------------- Canvas Board -------------------- */}

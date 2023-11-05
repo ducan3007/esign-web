@@ -1,6 +1,7 @@
 import { selectors as authSelectors } from '@esign-web/redux/auth'
 import { selectors } from '@esign-web/redux/document'
 import { selectors as certSelector } from '@esign-web/redux/certificate'
+import { selectors as sigSelector, actions as sigActions } from '@esign-web/redux/signatures'
 import { selectors as walletSelectors } from '@esign-web/redux/wallet'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
@@ -13,10 +14,82 @@ import MButton from 'src/app/components/Button'
 import { SignIcon } from 'src/app/components/Icon'
 import { MTooltip } from 'src/app/components/Tooltip'
 import { SET_CERT_DETAIL } from 'libs/redux/certificate/src/lib/constants'
+import { baseApi } from '@esign-web/libs/utils'
+import AlertDialog from 'src/app/components/Dialog'
 
 interface DefaultHeaderProps {
   title?: string
   to?: string
+}
+
+export const DefaultHeader = (props: DefaultHeaderProps) => {
+  switch (props.to) {
+    case '/document/sign':
+      return <DocumentSignHeader />
+    case '/document':
+      return <DocumentHeader />
+
+    case '/document/info':
+      return <DocumentInfoHeader />
+
+    case '/certificate/detail':
+      return <CertificateInfoHeader />
+
+    case '/certificate/sign':
+      return <CertificateSignHeader />
+
+    case '/certificant/detail':
+      return <CertificantHeader />
+
+    case '/wallet':
+      return <WalletHeader />
+
+    case '/certificate':
+      return <CerticateHeader />
+
+    case '/verify':
+      return <VerifyHeader />
+
+    case '/signatures':
+      return <SignatureHeader />
+
+    default:
+      return (
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: '2rem' }}>
+          <Typography variant="h6" sx={{ color: 'var(--dark)', fontWeight: 'bold', fontSize: '2.4rem' }}>
+            {props.title}
+          </Typography>
+        </Box>
+      )
+  }
+}
+
+const SignatureHeader = () => {
+  const dispatch = useDispatch()
+
+  return (
+    <Box sx={{ flex: 1, display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
+      <MButton
+        onClick={() => {
+          dispatch(sigActions.toggleModal({}))
+        }}
+        disableRipple
+        sx={{
+          backgroundColor: 'var(--blue3)',
+          display: 'flex',
+          alignItems: 'center',
+          borderRadius: '9px',
+          justifyContent: 'center',
+          gap: '12px',
+          width: 'fit-content',
+          padding: '10px 18px',
+        }}
+      >
+        <UploadFileIcon sx={{ fontSize: '2.5rem' }} />
+        <span style={{ color: 'var(--white)', fontSize: '1.6rem', fontWeight: 'bold', letterSpacing: '1px' }}>Upload Signature</span>
+      </MButton>
+    </Box>
+  )
 }
 
 const DocumentSignHeader = () => {
@@ -24,16 +97,22 @@ const DocumentSignHeader = () => {
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '6px' }}>
       <Box sx={{ flex: 1 }}>
-        <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--dark2)' }}>{documentDetail?.name}</Typography>
+        <Typography sx={{ fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--dark2)' }}>{documentDetail?.name}</Typography>
         <Box sx={{ display: 'flex', gap: '66px' }}>
           <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>Modified</Typography>
           <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>
-            {moment(documentDetail?.updatedAt).format('L')} - {moment(documentDetail?.updatedAt).format('hh:mm A')}
+            {moment(documentDetail?.updatedAt).format('L')} {moment(documentDetail?.updatedAt).format('hh:mm A')}
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: '20px' }}>
+        <Box sx={{ display: 'flex', gap: '19px' }}>
           <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>SHA2 Fingerprint</Typography>
           <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}> {documentDetail?.hash256}</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: '60px' }}>
+          <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>Sequence</Typography>
+          <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>
+            {documentDetail?.sequence} / {documentDetail?.number_of_clone}
+          </Typography>
         </Box>
       </Box>
       <Box sx={{ display: 'flex' }}></Box>
@@ -82,14 +161,14 @@ const CerticateHeader = () => {
         }}
         disableRipple
         sx={{
-          backgroundColor: 'var(--orange1)',
+          backgroundColor: 'var(--green16)',
           display: 'flex',
           alignItems: 'center',
           borderRadius: '9px',
           justifyContent: 'center',
           gap: '0.6rem',
           width: 'fit-content',
-          padding: '10px 30px',
+          padding: '10px 18px',
         }}
       >
         <UploadFileIcon sx={{ fontSize: '2.5rem' }} />
@@ -128,7 +207,7 @@ const DocumentInfoHeader = () => {
   const [searchParams] = useSearchParams()
   const documentId = searchParams.get('id')
   return (
-    <Box sx={{ flex: 1, display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
+    <Box sx={{ flex: 1, gap: '15px', display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
       <MButton
         onClick={() => {
           navigate(`/document/sign?id=${documentId}`)
@@ -137,16 +216,41 @@ const DocumentInfoHeader = () => {
         sx={{
           width: '200px',
           borderRadius: '12px',
-          backgroundColor: 'var(--white)',
-          border: '1px solid var(--gray3)',
+          backgroundColor: 'var(--orange22)',
           padding: '3.5px 6px',
           display: 'flex',
           gap: '12px',
         }}
       >
-        <SignIcon width="40px" height="40px" />
-        <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', letterSpacing: '1px', color: 'var(--dark)' }}>Sign now</Typography>
+        <SignIcon color="var(--blue22)" width="35px" height="35px" />
+        <Typography sx={{ fontSize: '1.9rem', fontWeight: 'bold', letterSpacing: '1px', color: 'var(--blue22)' }}>Sign now</Typography>
       </MButton>
+
+      <AlertDialog
+        title="Are you sure you want to make a copy of this document?"
+        content=""
+        no={'Confirm'}
+        yes={'Cancel'}
+        yesAction="close"
+        noAction={async () => {
+          await baseApi.post('/document/clone', { documentId: documentId })
+        }}
+      >
+        <MButton
+          disableRipple
+          sx={{
+            width: '200px',
+            borderRadius: '12px',
+            backgroundColor: 'var(--white)',
+            border: '1px solid var(--gray3)',
+            padding: '8px 6px',
+            display: 'flex',
+            gap: '12px',
+          }}
+        >
+          <Typography sx={{ fontSize: '1.8rem', fontWeight: 'bold', letterSpacing: '1px', color: 'var(--dark3)' }}>Make a copy</Typography>
+        </MButton>
+      </AlertDialog>
     </Box>
   )
 }
@@ -235,43 +339,4 @@ const VerifyHeader = () => {
       </Typography>
     </Box>
   )
-}
-
-export const DefaultHeader = (props: DefaultHeaderProps) => {
-  switch (props.to) {
-    case '/document/sign':
-      return <DocumentSignHeader />
-    case '/document':
-      return <DocumentHeader />
-
-    case '/document/info':
-      return <DocumentInfoHeader />
-
-    case '/certificate/detail':
-      return <CertificateInfoHeader />
-
-    case '/certificate/sign':
-      return <CertificateSignHeader />
-
-    case '/certificant/detail':
-      return <CertificantHeader />
-
-    case '/wallet':
-      return <WalletHeader />
-
-    case '/certificate':
-      return <CerticateHeader />
-
-    case '/verify':
-      return <VerifyHeader />
-
-    default:
-      return (
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: '2rem' }}>
-          <Typography variant="h6" sx={{ color: 'var(--dark)', fontWeight: 'bold', fontSize: '2.4rem' }}>
-            {props.title}
-          </Typography>
-        </Box>
-      )
-  }
 }

@@ -32,7 +32,7 @@ function RenderSigners(props: any) {
     <Box
       sx={{
         width: '100%',
-        marginBottom: cert?.status === 'REVOKED' ? '0px' : '25px',
+        marginBottom: cert?.status === 'REVOKED' || !props.is_hidden ? '0px' : '25px',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -138,7 +138,7 @@ function RenderSigners(props: any) {
         </Box>
       )}
 
-      {cert?.status === 'ISSUED' && (
+      {cert?.status === 'ISSUED' && !props.isHidden && (
         <AlertDialog
           title="Are you sure you want to REVOKED this certificate ?"
           content=""

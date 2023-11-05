@@ -26,15 +26,16 @@ export const DocumentTable = (props: any) => {
 
   const loadingDocuments = useSelector(selectors.getLoadingDocuments)
   const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(10)
 
   useEffect(() => {
     dispatch(
       actions.documentGetAll({
-        limit: 20,
-        offset: 0,
+        limit: limit,
+        offset: page,
       })
     )
-  }, [textSearch])
+  }, [textSearch, page])
 
   console.log('documents', documents)
   console.log('documents', useSelector(selectors.getDocuments))
@@ -130,7 +131,7 @@ export const DocumentTable = (props: any) => {
             variant="text"
             shape="rounded"
             size="large"
-            count={total}
+            count={Math.ceil(total / limit) > 0 ? Math.ceil(total / limit) : Math.ceil(total / limit) === 0 && total > 0 ? 1 : 0}
             page={page}
           />
         )}
@@ -138,11 +139,22 @@ export const DocumentTable = (props: any) => {
 
       <TableContainer
         sx={{
-          width: isSidebarOpen ? 'calc(100vw - 63px)' : 'calc(100vw - 223px)',
+          width: isSidebarOpen ? 'calc(100vw - 72px)' : 'calc(100vw - 228px)',
           border: '1px solid var(--gray3)',
           height: 'calc(100vh - 153px)',
           position: 'relative',
           transition: 'width 0.6s',
+          '&::-webkit-scrollbar': {
+            width: '10px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'transparent',
+          },
+          '&::-webkit-scrollbar-thumb': {
+            background: 'var(--gray4)',
+            borderRadius: '50px',
+            border: '1px solid var(--white)',
+          },
         }}
         id="document-table"
         component={Paper}

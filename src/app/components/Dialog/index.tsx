@@ -51,35 +51,33 @@ export default function AlertDialog(props: any) {
           </Typography>
         </DialogTitle>
         <DialogContent>
-         
-            <Typography
-              sx={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                color: 'var(--dark2)',
-              }}
-            >
-              {props.content}
-            </Typography>
-       
+          <Typography
+            sx={{
+              fontSize: '1.5rem',
+              fontWeight: 'bold',
+              color: 'var(--dark2)',
+            }}
+          >
+            {props.content}
+          </Typography>
         </DialogContent>
         <DialogActions>
           <MButton
-            onClick={noAction}
+            onClick={props.noAction || noAction}
             sx={{
               backgroundColor: 'var(--orange)',
             }}
           >
-            <span style={{ color: 'var(--white)' }}>{'No' || props.no}</span>
+            <span style={{ color: 'var(--white)' }}>{props.no || 'No'}</span>
           </MButton>
           <MButton
-            onClick={yesAction}
+            onClick={props.yesAction === 'close' ? noAction : yesAction}
             autoFocus
             sx={{
               backgroundColor: 'var(--dark5)',
             }}
           >
-            <span style={{ color: 'var(--white)' }}>{'Yes' || props.yes}</span>
+            <span style={{ color: 'var(--white)' }}>{props.yes || 'Yes'}</span>
           </MButton>
         </DialogActions>
       </Dialog>

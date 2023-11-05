@@ -9,7 +9,7 @@ export const TableHeadCell = (props: { _sx?: SxProps; children: any }) => {
       _sx={{
         // width: '150px',
         // minWidth: '150px',
-        color: 'var(--dark4)',
+        color: 'var(--blue3)',
         fontWeight: 'bold',
         fontSize: '1.9rem',
         padding: '0.75rem 1rem 1.25rem 1rem',

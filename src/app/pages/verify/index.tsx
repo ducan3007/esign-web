@@ -283,7 +283,7 @@ const VerifyPage = () => {
               background: 'transparent',
             },
             '&::-webkit-scrollbar-thumb': {
-              background: 'var(--gray4)',
+              background: 'var(--gray3)',
               borderRadius: '50px',
               border: '1px solid var(--white)',
             },

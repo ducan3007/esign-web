@@ -159,7 +159,20 @@ export const CertificateDetailPage = (props: any) => {
 
                   <Box sx={{ display: 'flex', gap: '50px', alignContent: 'center', alignItems: 'center', marginTop: '10px' }}>
                     <Typography sx={{ color: 'var(--blue3)', fontSize: '1.4rem', fontWeight: 'bold' }}>Email</Typography>
-                    <Typography sx={{ fontSize: '1.4rem', color: 'var(--dark2)', flex: 1 }}>{item.certificant_email}</Typography>
+                    <Typography
+                      sx={{
+                        fontSize: '1.4rem',
+                        color: 'var(--dark2)',
+                        flex: 1,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        wordWrap: 'break-word',
+                        whiteSpace: 'nowrap',
+                        width: '100px',
+                      }}
+                    >
+                      {item.certificant_email}
+                    </Typography>
                   </Box>
                 </Box>
               </Box>

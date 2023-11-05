@@ -44,6 +44,7 @@ import { SET_WALLET_ADDRESS } from 'libs/redux/auth/src/lib/constants'
 import { MTooltip } from 'src/app/components/Tooltip'
 import { ethers } from 'ethers'
 import { selectors as walletSelectors } from '@esign-web/redux/wallet'
+import AlertDialog from 'src/app/components/Dialog'
 
 export const DashboardHeader = () => {
   const localtion = window.location.pathname
@@ -189,6 +190,86 @@ export const DashboardHeader = () => {
       })
   }
 
+  const DownloadDocumentButton = (
+    <>
+      {documentDetail?.scan_status === 'infected' && (
+        <AlertDialog
+          title="Are you sure you want to download this file, it may contain virus?"
+          content=""
+          callBack={async () => {
+            await downloadDocument(documentDetail.id, documentDetail.name)
+          }}
+        >
+          <MButton
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              textAlign: 'center',
+              borderRadius: '0px 12px 12px 0px',
+              backgroundColor: 'var(--white)',
+              border: '1px solid var(--gray3)',
+              borderLeftWidth: '0px',
+              padding: '7px 12px',
+              cursor: isDownloading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            {!isDownloading && (
+              <FileDownloadOutlinedIcon
+                sx={{
+                  fontSize: '31px',
+                  color: 'var(--dark)',
+                }}
+              />
+            )}
+            {isDownloading && (
+              <CircularProgress
+                size={31}
+                sx={{
+                  color: 'var(--blue3)',
+                }}
+              />
+            )}
+          </MButton>
+        </AlertDialog>
+      )}
+      {documentDetail?.scan_status !== 'infected' && (
+        <MButton
+          onClick={async () => {
+            await downloadDocument(documentDetail.id, documentDetail.name)
+          }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            textAlign: 'center',
+            borderRadius: '0px 12px 12px 0px',
+            backgroundColor: 'var(--white)',
+            border: '1px solid var(--gray3)',
+            borderLeftWidth: '0px',
+            padding: '5px 12px',
+            cursor: isDownloading ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {!isDownloading && (
+            <FileDownloadOutlinedIcon
+              sx={{
+                fontSize: '31px',
+                color: 'var(--dark)',
+              }}
+            />
+          )}
+          {isDownloading && (
+            <CircularProgress
+              size={31}
+              sx={{
+                color: 'var(--blue3)',
+              }}
+            />
+          )}
+        </MButton>
+      )}
+    </>
+  )
+
   const DocumentStatus = {
     ON_DRAFT: (
       <Box
@@ -227,39 +308,7 @@ export const DashboardHeader = () => {
             Save Draft
           </Typography>
         </MButton>
-        <MButton
-          onClick={async () => {
-            await downloadDocument(documentDetail.id, documentDetail.name)
-          }}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            textAlign: 'center',
-            borderRadius: '0px 12px 12px 0px',
-            backgroundColor: 'var(--white)',
-            border: '1px solid var(--gray3)',
-            borderLeftWidth: '0px',
-            padding: '5px 12px',
-            cursor: isDownloading ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {!isDownloading && (
-            <FileDownloadOutlinedIcon
-              sx={{
-                fontSize: '31px',
-                color: 'var(--dark)',
-              }}
-            />
-          )}
-          {isDownloading && (
-            <CircularProgress
-              size={31}
-              sx={{
-                color: 'var(--blue3)',
-              }}
-            />
-          )}
-        </MButton>
+        {DownloadDocumentButton}
       </Box>
     ),
     NEW: (
@@ -299,39 +348,7 @@ export const DashboardHeader = () => {
             Save Draft
           </Typography>
         </MButton>
-        <MButton
-          onClick={async () => {
-            await downloadDocument(documentDetail.id, documentDetail.name)
-          }}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            textAlign: 'center',
-            borderRadius: '0px 12px 12px 0px',
-            backgroundColor: 'var(--white)',
-            border: '1px solid var(--gray3)',
-            borderLeftWidth: '0px',
-            padding: '5px 12px',
-            cursor: isDownloading ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {!isDownloading && (
-            <FileDownloadOutlinedIcon
-              sx={{
-                fontSize: '31px',
-                color: 'var(--dark)',
-              }}
-            />
-          )}
-          {isDownloading && (
-            <CircularProgress
-              size={31}
-              sx={{
-                color: 'var(--blue3)',
-              }}
-            />
-          )}
-        </MButton>
+        {DownloadDocumentButton}
       </Box>
     ),
     READY_TO_SIGN: (
@@ -343,7 +360,7 @@ export const DashboardHeader = () => {
         <MButton
           onClick={handleSaveDraft}
           sx={{
-            padding: '10px 12px',
+            padding: '8px 12px',
             borderRadius: '12px 0px 0px 12px',
             backgroundColor: 'var(--green14)',
             border: '1px solid var(--green12)',
@@ -371,39 +388,7 @@ export const DashboardHeader = () => {
             Ready to Sign
           </Typography>
         </MButton>
-        <MButton
-          onClick={async () => {
-            await downloadDocument(documentDetail.id, documentDetail.name)
-          }}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            textAlign: 'center',
-            borderRadius: '0px 12px 12px 0px',
-            backgroundColor: 'var(--white)',
-            border: '1px solid var(--gray3)',
-            borderLeftWidth: '0px',
-            padding: '5px 12px',
-            cursor: isDownloading ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {!isDownloading && (
-            <FileDownloadOutlinedIcon
-              sx={{
-                fontSize: '31px',
-                color: 'var(--dark)',
-              }}
-            />
-          )}
-          {isDownloading && (
-            <CircularProgress
-              size={31}
-              sx={{
-                color: 'var(--blue3)',
-              }}
-            />
-          )}
-        </MButton>
+        {DownloadDocumentButton}
       </Box>
     ),
     SIGNED: (
@@ -443,39 +428,7 @@ export const DashboardHeader = () => {
             Completed
           </Typography>
         </MButton>
-        <MButton
-          onClick={async () => {
-            await downloadDocument(documentDetail.id, documentDetail.name)
-          }}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            textAlign: 'center',
-            borderRadius: '0px 12px 12px 0px',
-            backgroundColor: 'var(--white)',
-            border: '1px solid var(--gray3)',
-            borderLeftWidth: '0px',
-            padding: '5px 12px',
-            cursor: isDownloading ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {!isDownloading && (
-            <FileDownloadOutlinedIcon
-              sx={{
-                fontSize: '31px',
-                color: 'var(--dark)',
-              }}
-            />
-          )}
-          {isDownloading && (
-            <CircularProgress
-              size={31}
-              sx={{
-                color: 'var(--blue3)',
-              }}
-            />
-          )}
-        </MButton>
+        {DownloadDocumentButton}
       </Box>
     ),
     COMPLETED: (
@@ -487,7 +440,7 @@ export const DashboardHeader = () => {
         <MButton
           onClick={handleSaveDraft}
           sx={{
-            padding: '10px 12px',
+            padding: '8px 12px',
             borderRadius: '12px 0px 0px 12px',
             backgroundColor: 'var(--green14)',
             border: '1px solid var(--green12)',
@@ -515,39 +468,7 @@ export const DashboardHeader = () => {
             Completed
           </Typography>
         </MButton>
-        <MButton
-          onClick={async () => {
-            await downloadDocument(documentDetail.id, documentDetail.name)
-          }}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            textAlign: 'center',
-            borderRadius: '0px 12px 12px 0px',
-            backgroundColor: 'var(--white)',
-            border: '1px solid var(--gray3)',
-            borderLeftWidth: '0px',
-            padding: '5px 12px',
-            cursor: isDownloading ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {!isDownloading && (
-            <FileDownloadOutlinedIcon
-              sx={{
-                fontSize: '31px',
-                color: 'var(--dark)',
-              }}
-            />
-          )}
-          {isDownloading && (
-            <CircularProgress
-              size={31}
-              sx={{
-                color: 'var(--blue3)',
-              }}
-            />
-          )}
-        </MButton>
+        {DownloadDocumentButton}
       </Box>
     ),
   }

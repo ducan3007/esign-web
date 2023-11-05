@@ -13,6 +13,7 @@ type props = {
   setDisableSaveSignature: any
   disableSaveSignature: boolean
   containerRef: any
+  hideAutoSave?: boolean
 }
 
 export const UploadSignatureOption = (props: props) => {
@@ -126,7 +127,7 @@ export const UploadSignatureOption = (props: props) => {
             Upload a file
           </span>
         </MButton>
-        {authState.data?.is_registered && <AutoSave />}
+        {authState.data?.is_registered && props.hideAutoSave && <AutoSave />}
       </Box>
 
       {/* --------------------------------- Upload File ------------------------------ */}

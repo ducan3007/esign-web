@@ -1,26 +1,16 @@
-import { baseApi, getFontSize, getFormatFromBase64, getFormatFromURL } from '@esign-web/libs/utils'
-import { selectors as certSelector } from '@esign-web/redux/certificate'
-import { actions, selectors } from '@esign-web/redux/signatures'
-import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
-import { BACKDROP_OFF, TOOGLE_BACKDROP } from 'libs/redux/auth/src/lib/constants'
-import { CERT_SIGNATURE_SET } from 'libs/redux/certificate/src/lib/constants'
-import { SignatureContent } from 'libs/redux/signatures/src/lib/reducers'
 import { memo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { actions, selectors } from '@esign-web/redux/signatures'
+import { Toast, baseApi, getFontSize, getFormatFromBase64 } from '@esign-web/libs/utils'
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material'
+import { IconSignature } from 'src/app/components/Icons/pdf'
+import { SignatureContent } from 'libs/redux/signatures/src/lib/reducers'
+import { CanvasSignatureOption } from '../Document/DragDrop/__CanvasOption'
+import { TextSignatureOption } from '../Document/DragDrop/__TextOption'
+import { UploadSignatureOption } from '../Document/DragDrop/__SignatureUpload'
 import MButton from 'src/app/components/Button'
-import { Toast } from 'src/app/components/Toast'
-import { IconSignature } from '../../../components/Icons/pdf'
-import { CanvasSignatureOption } from '../../Document/DragDrop/__CanvasOption'
-import { MySignatures } from '../../Document/DragDrop/__SignatureModal'
-import { UploadSignatureOption } from '../../Document/DragDrop/__SignatureUpload'
-import { TextSignatureOption } from '../../Document/DragDrop/__TextOption'
+import { BACKDROP_OFF, TOOGLE_BACKDROP } from 'libs/redux/auth/src/lib/constants'
 
-type props = {
-  selectedSignature: {
-    id: string
-    pageNumber: number
-  }
-}
 export enum Options {
   draw = 'draw',
   type = 'type',
@@ -28,19 +18,15 @@ export enum Options {
   mySignatures = 'mySignatures',
 }
 
-const SignatureEditModal = (props: props) => {
-  const { selectedSignature } = props
+const SignatureEditModal = (props: any) => {
   const dispatch = useDispatch()
-  
-  const signature = useSelector(certSelector.getSignatures)
-  const isSignatureAutoSave = useSelector(selectors.getAutoSave)
   const isOpen = useSelector(selectors.getModalState)
-  const signatureData = signature[`page_${selectedSignature.pageNumber}`]?.[selectedSignature.id] || {}
 
   const [options, setOptions] = useState<Options>(Options.draw)
   const [disableSaveSignature, setDisableSaveSignature] = useState<boolean>(true)
-  const signatureBoardRef = useRef<HTMLDivElement>(null)
+
   const signatureDataRef = useRef<{ type: SignatureContent; data: any; callback?: any; callback2?: any }>({ type: SignatureContent.canvas, data: {} })
+  const signatureBoardRef = useRef<HTMLDivElement>(null)
 
   const handleClose = () => {
     setOptions(Options.draw)
@@ -63,8 +49,6 @@ const SignatureEditModal = (props: props) => {
   }
 
   const handleSaveSignature = async ({ format, base64, width, height }) => {
-    if (!signatureDataRef.current) return
-
     // Save to DB
     const res = await baseApi.post('/signature/template', {
       format: format,
@@ -75,45 +59,24 @@ const SignatureEditModal = (props: props) => {
     return res.data
   }
 
-  const handleSave = async (e) => {
+  const handleSave = async () => {
     try {
       /* --------------------------------- Canvas ---------------------------------------- */
       if (signatureDataRef.current && signatureDataRef.current.type === SignatureContent.canvas) {
         if (signatureDataRef.current.callback && signatureDataRef.current.callback2) {
           let base64 = await signatureDataRef.current.callback()
-          const { width, height } = signatureDataRef.current.callback2()
+          let { width, height } = signatureDataRef.current.callback2()
           dispatch({ type: TOOGLE_BACKDROP })
           await new Promise((resolve) => setTimeout(resolve, 300))
-          const reduxPayload = {
-            ...signatureData,
-            width: width + 0.001,
-            height: height + 0.001,
-            signature_data: {
-              url: base64,
-              format: getFormatFromBase64(base64),
-            },
-          }
-          if (isSignatureAutoSave) {
-            const res = await handleSaveSignature({
-              format: getFormatFromBase64(base64),
-              base64: base64,
-              width: width,
-              height: height,
-            })
-            reduxPayload.signature_data.url = res.url
-            reduxPayload.signature_data['isBase64'] = false
-            reduxPayload.signature_data['signature_id'] = res['id']
-          } else {
-            reduxPayload.signature_data['isBase64'] = true
-          }
-          dispatch({
-            type: CERT_SIGNATURE_SET,
-            payload: reduxPayload,
+          const res = await handleSaveSignature({
+            format: getFormatFromBase64(base64),
+            base64: base64,
+            width: width,
+            height: height,
           })
-
-          dispatch({ type: BACKDROP_OFF })
         }
       }
+
       /* --------------------------------- Text ---------------------------------------- */
       if (signatureDataRef.current && signatureDataRef.current.type === SignatureContent.text) {
         if (signatureDataRef.current.callback) {
@@ -133,36 +96,12 @@ const SignatureEditModal = (props: props) => {
         }
         dispatch({ type: TOOGLE_BACKDROP })
         const response = await baseApi.post('/signature/create/text', payload)
-        const reduxPayload = {
-          ...signatureData,
-          height: payload.height,
-          width: payload.width,
-          signature_data: {
-            ...payload,
-            url: response.data,
-            format: getFormatFromBase64(response.data),
-          },
-        }
-
-        if (isSignatureAutoSave) {
-          const res = await handleSaveSignature({
-            format: getFormatFromBase64(response.data),
-            base64: response.data,
-            width: signatureDataRef.current?.data.width,
-            height: signatureDataRef.current?.data.height,
-          })
-          reduxPayload.signature_data['signature_id'] = res['id']
-          reduxPayload.signature_data.url = res.url
-          reduxPayload.signature_data['isBase64'] = false
-        } else {
-          reduxPayload.signature_data['isBase64'] = true
-        }
-        dispatch({
-          type: CERT_SIGNATURE_SET,
-          payload: reduxPayload,
+        await handleSaveSignature({
+          format: getFormatFromBase64(response.data),
+          base64: response.data,
+          width: signatureDataRef.current?.data.width,
+          height: signatureDataRef.current?.data.height,
         })
-
-        dispatch({ type: BACKDROP_OFF })
       }
 
       /* --------------------------------- Image ---------------------------------------- */
@@ -170,56 +109,17 @@ const SignatureEditModal = (props: props) => {
         let { src, width, height } = signatureDataRef.current.data
         dispatch({ type: TOOGLE_BACKDROP })
         await new Promise((resolve) => setTimeout(resolve, 300))
-        const reduxPayload = {
-          ...signatureData,
+        await handleSaveSignature({
+          format: getFormatFromBase64(src),
+          base64: src,
           width: width + 0.001,
           height: height + 0.001,
-          signature_data: {
-            format: getFormatFromBase64(src),
-            url: src,
-          },
-        }
-        if (isSignatureAutoSave) {
-          const res = await handleSaveSignature({
-            format: getFormatFromBase64(src),
-            base64: src,
-            width: width + 0.001,
-            height: height + 0.001,
-          })
-          reduxPayload.signature_data['signature_id'] = res['id']
-          reduxPayload.signature_data.url = res.url
-          reduxPayload.signature_data['isBase64'] = false
-        } else {
-          reduxPayload.signature_data['isBase64'] = true
-        }
-        dispatch({
-          type: CERT_SIGNATURE_SET,
-          payload: reduxPayload,
         })
-
-        dispatch({ type: BACKDROP_OFF })
       }
 
-      /* --------------------------------- My Signature ---------------------------------------- */
-      if (signatureDataRef.current && signatureDataRef.current.type === SignatureContent.mySignature) {
-        let { id, url, width, height } = signatureDataRef.current.data
-        dispatch({
-          type: CERT_SIGNATURE_SET,
-          payload: {
-            ...signatureData,
-            width: width + 0.001,
-            height: height + 0.001,
-            signature_data: {
-              signature_id: id,
-              url: url,
-              format: getFormatFromURL(url),
-            },
-          },
-        })
-        dispatch({ type: BACKDROP_OFF })
-      }
-
+      dispatch({ type: BACKDROP_OFF })
       handleClose()
+      window.location.reload()
     } catch (error) {
       dispatch({ type: BACKDROP_OFF })
       Toast({
@@ -251,8 +151,7 @@ const SignatureEditModal = (props: props) => {
         '& .MuiBackdrop-root': { backgroundColor: 'rgba(0, 0, 0, 0.5)' },
       }}
     >
-      {/* __________________________________________________   Dialog Title  __________________________________________________ */}
-
+      {/* -----------------------------------------   Dialog Title  --------------------------------------------------- */}
       <DialogTitle sx={{ padding: '0px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
         <IconSignature width={64} height={62} style={{ marginBottom: '15px' }} />
         <Typography sx={{ fontSize: '2.7rem', padding: 0 }}>Signatures</Typography>
@@ -260,7 +159,7 @@ const SignatureEditModal = (props: props) => {
 
       {/* -----------------------------------------   Dialog Content  --------------------------------------------------- */}
       <DialogContent sx={{ display: 'flex', padding: '0px 0px 0px 0px', gap: '10px' }}>
-        {/* _________________________________________ Options, [Draw, Type, Upload, Your Signatures]__________________________________________________ */}
+        {/* __________________________________ Options, [Draw, Type, Upload, Your Signatures] ____________________________ */}
         <Box sx={{ width: '130px', display: 'flex', flexDirection: 'column' }}>
           <Box
             className="activesig"
@@ -296,29 +195,12 @@ const SignatureEditModal = (props: props) => {
           >
             <Typography sx={{ fontSize: '1.6rem', padding: '10px 10px 10px 10px' }}>Upload</Typography>
           </Box>
-
-          <Box
-            id="my_sig"
-            onClick={() => handleOptions('my_sig', Options.mySignatures)}
-            sx={{
-              cursor: 'pointer',
-              '&:hover': { backgroundColor: 'var(--light-gray)', borderRadius: '2px' },
-            }}
-          >
-            <Typography sx={{ fontSize: '1.6rem', padding: '10px 10px 10px 10px' }}>Signatures</Typography>
-          </Box>
         </Box>
 
-        <Box
-          ref={signatureBoardRef}
-          sx={{
-            flex: 1,
-            borderRadius: '5px',
-            overflow: 'hidden',
-          }}
-        >
+        <Box ref={signatureBoardRef} sx={{ flex: 1, borderRadius: '5px', overflow: 'hidden' }}>
           {options === Options.draw && (
             <CanvasSignatureOption
+              hideAutoSave
               signatureDataRef={signatureDataRef}
               containerRef={signatureBoardRef}
               disableSaveSignature={disableSaveSignature}
@@ -327,6 +209,7 @@ const SignatureEditModal = (props: props) => {
           )}
           {options === Options.type && (
             <TextSignatureOption
+              hideAutoSave
               signatureDataRef={signatureDataRef}
               containerRef={signatureBoardRef}
               disableSaveSignature={disableSaveSignature}
@@ -335,14 +218,7 @@ const SignatureEditModal = (props: props) => {
           )}
           {options === Options.upload && (
             <UploadSignatureOption
-              signatureDataRef={signatureDataRef}
-              containerRef={signatureBoardRef}
-              disableSaveSignature={disableSaveSignature}
-              setDisableSaveSignature={setDisableSaveSignature}
-            />
-          )}
-          {options === Options.mySignatures && (
-            <MySignatures
+              hideAutoSave
               signatureDataRef={signatureDataRef}
               containerRef={signatureBoardRef}
               disableSaveSignature={disableSaveSignature}
@@ -383,8 +259,4 @@ const SignatureEditModal = (props: props) => {
   )
 }
 
-export default memo(SignatureEditModal, (prevProps, nextProps) => {
-  if (prevProps.selectedSignature.id !== nextProps.selectedSignature.id) return false
-  if (prevProps.selectedSignature.pageNumber !== nextProps.selectedSignature.pageNumber) return false
-  return true
-})
+export default SignatureEditModal

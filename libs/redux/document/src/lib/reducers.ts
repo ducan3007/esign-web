@@ -26,7 +26,7 @@ export type DocumentUploading = {
 export type Document = {
   id: string
   user_id: string
-  original_hash_256: string
+  orginial_hash_256: string
   hash256: string
   final_hash256: string
   thumbnail: string
@@ -34,6 +34,7 @@ export type Document = {
   is_scanned: boolean
   name: string
   createdAt: string
+  transaction_hash: string
   updatedAt: string
   cid: string
   size: number
@@ -41,7 +42,10 @@ export type Document = {
   user: UserType
   url: string
   file: any
+  scan_status: any
   document_signer?: any[]
+  number_of_clone : number
+  sequence: any
 }
 export enum SignatureType {
   SIGNATURE = 'signature',
