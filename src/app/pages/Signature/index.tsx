@@ -59,7 +59,6 @@ const SignaturePage = (props) => {
     <Box
       sx={{
         width: '100%',
-        display: 'flex',
         flexDirection: 'column',
         position: 'relative',
       }}
@@ -107,14 +106,9 @@ const SignaturePage = (props) => {
           </Box>
         </Box>
       </Box>
-
       <Box
         sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
           height: '85vh',
-          gridGap: '1rem',
-          padding: '1rem',
           overflowY: 'auto',
           '&::-webkit-scrollbar': {
             width: '10px',
@@ -129,14 +123,23 @@ const SignaturePage = (props) => {
           },
         }}
       >
-        {signatures.map((item, index) => {
-          return <Item key={index} item={item} />
-        })}
-        {signatures.length === 0 &&
-          loading === true &&
-          Array.from(Array(12).keys()).map((item, index) => {
-            return <ItemSkeleton key={index} />
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gridGap: '1rem',
+            padding: '1rem',
+          }}
+        >
+          {signatures.map((item, index) => {
+            return <Item key={index} item={item} />
           })}
+          {signatures.length === 0 &&
+            loading === true &&
+            Array.from(Array(12).keys()).map((item, index) => {
+              return <ItemSkeleton key={index} />
+            })}
+        </Box>
       </Box>
     </Box>
   )

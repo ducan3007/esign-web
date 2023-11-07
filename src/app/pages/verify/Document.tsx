@@ -9,6 +9,7 @@ export const DocumentVerifyPage = (props) => {
     },
   } = props
 
+  if (state.length === 0) return <></>
   if (state.data === 0) return <></>
 
   return (
@@ -28,18 +29,14 @@ export const DocumentVerifyPage = (props) => {
               gap: '20px',
             }}
           >
-            <Box
-              sx={{
-                flex: 1,
-                minWidth: '1000px',
-              }}
-            >
+            <Box sx={{ flex: 1, }}>
               <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--blue3)' }}>Author</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Email: {item?.user?.email}</Typography>
               <Typography sx={{ fontSize: '2rem', marginBottom: '20px' }}>
                 Name: {item?.user?.first_name} {item?.user?.last_name}
               </Typography>
               <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--blue3)' }}>Document</Typography>
+              <Typography sx={{ fontSize: '2rem', letterSpacing: '0.5px' }}>Copy: {item?.sequence}</Typography>
               <Typography sx={{ fontSize: '2rem', letterSpacing: '0.5px' }}>Name: {item?.name}</Typography>
               <Typography sx={{ fontSize: '2rem', letterSpacing: '0.5px' }}>
                 Hash:{' '}
@@ -100,15 +97,11 @@ export const DocumentVerifyPage = (props) => {
                 )
               })}
             </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flex: 1,
-              }}
-            >
-              <img src={item?.thumbnail} style={{ width: '400px', marginTop: '15px', alignSelf: 'center' }} />
+            <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <img src={item?.thumbnail} style={{ maxWidth:'100%', height: 'auto', marginTop: '15px' }} />
+              </Box>
+              <Box sx={{ display: 'flex' }}></Box>
             </Box>
           </Box>
         )

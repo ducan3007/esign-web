@@ -1,50 +1,43 @@
-import { Logout, PersonAdd, Settings } from '@mui/icons-material'
 import {
-  Avatar,
   Box,
   CircularProgress,
   Dialog,
   DialogContent,
   Divider,
-  IconButton,
-  ListItemIcon,
   Menu,
-  MenuItem,
-  Tooltip,
-  Typography,
+  Typography
 } from '@mui/material'
 import * as _ from 'lodash'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { headerTitles } from 'src/app/routes'
-import { DefaultHeader } from './__DefaultHeader'
-import { useDispatch, useSelector } from 'react-redux'
+import { Toast, baseApi } from '@esign-web/libs/utils'
 import { selectors } from '@esign-web/redux/auth'
-import { selectors as selectorsDocument } from '@esign-web/redux/document'
 import { selectors as selectorsCert } from '@esign-web/redux/certificate'
-import MButton from 'src/app/components/Button'
+import { selectors as selectorsDocument } from '@esign-web/redux/document'
+import { selectors as walletSelectors } from '@esign-web/redux/wallet'
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined'
-import WalletIcon from '@mui/icons-material/Wallet'
-import ClassIcon from '@mui/icons-material/Class'
-import { Toast, baseApi, parseCandidate } from '@esign-web/libs/utils'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ENABLE_SAVE_DRAFT } from 'libs/redux/document/src/lib/constants'
-import MetamaskIcon from 'src/assets/metamask.svg'
-import Coinbase from 'src/assets/coinbase.svg'
-import Walletconnect from 'src/assets/walletconnect.svg'
-import SuccessIcon from 'src/assets/success.svg'
 import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone'
+import ClassIcon from '@mui/icons-material/Class'
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
-import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined'
-import FileSaver from 'file-saver'
-import { SET_CONTRACT_ABI, WALLET_SET_CONNECTED } from 'libs/redux/wallet/src/lib/constants'
-import { SET_WALLET_ADDRESS } from 'libs/redux/auth/src/lib/constants'
-import { MTooltip } from 'src/app/components/Tooltip'
+import WalletIcon from '@mui/icons-material/Wallet'
 import { ethers } from 'ethers'
-import { selectors as walletSelectors } from '@esign-web/redux/wallet'
+import FileSaver from 'file-saver'
+import { SET_WALLET_ADDRESS } from 'libs/redux/auth/src/lib/constants'
+import { ENABLE_SAVE_DRAFT } from 'libs/redux/document/src/lib/constants'
+import { SET_CONTRACT_ABI } from 'libs/redux/wallet/src/lib/constants'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import MButton from 'src/app/components/Button'
 import AlertDialog from 'src/app/components/Dialog'
+import { MTooltip } from 'src/app/components/Tooltip'
+import { headerTitles } from 'src/app/routes'
+import Coinbase from 'src/assets/coinbase.svg'
+import MetamaskIcon from 'src/assets/metamask.svg'
+import Walletconnect from 'src/assets/walletconnect.svg'
+import { DefaultHeader } from './__DefaultHeader'
 
 export const DashboardHeader = () => {
   const localtion = window.location.pathname
@@ -475,6 +468,9 @@ export const DashboardHeader = () => {
 
   const isRevoked = certDetail?.status === 'REVOKED'
   const isIssued = certDetail?.status === 'ISSUED'
+
+  console.log('certDetail',certDetail)
+
   const Certificate = {
     TEMPLATE: (
       <Box sx={{ display: 'flex' }}>
@@ -551,7 +547,7 @@ export const DashboardHeader = () => {
         </MButton>
         <MButton
           onClick={async () => {
-            await downloadDocument(certDetail?.id, certDetail?.certificate?.name)
+            await downloadDocument(certDetail?.id, certDetail?.name)
           }}
           sx={{
             display: 'flex',

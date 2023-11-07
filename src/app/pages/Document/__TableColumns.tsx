@@ -44,8 +44,8 @@ export const Columns = {
               >
                 {props.name}
               </Typography>
-              <Typography sx={{ fontSize: '1.2rem' }}>
-                Sequence: <span style={{ fontSize: '1.2rem' }}>{props.sequence}</span>
+              <Typography sx={{ fontSize: '1.5rem' }}>
+                Sequence: <span style={{ fontSize: '1.6rem' }}>{props.sequence}</span>
               </Typography>
             </Box>
             <img

@@ -70,7 +70,7 @@ export const headerTitles = [
   { to: '/certificate',           name: 'Certificates',            },
   { to: '/wallet',                name: '',                        },
   { to: '/ums',                   name: 'Organization',            },
-  { to: '/logs',                  name: 'Logs',                    },
+  { to: '/logs',                  name: '',              },
   { to: '/account-setting',       name: 'Account Settings',        },
   { to: '/document/info',         name: 'Document Detail',         },
   { to: '/document/sign',         name: 'Document Signning Page',  },

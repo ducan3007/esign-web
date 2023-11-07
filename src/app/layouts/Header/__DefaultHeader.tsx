@@ -14,7 +14,7 @@ import MButton from 'src/app/components/Button'
 import { SignIcon } from 'src/app/components/Icon'
 import { MTooltip } from 'src/app/components/Tooltip'
 import { SET_CERT_DETAIL } from 'libs/redux/certificate/src/lib/constants'
-import { baseApi } from '@esign-web/libs/utils'
+import { Toast, baseApi } from '@esign-web/libs/utils'
 import AlertDialog from 'src/app/components/Dialog'
 
 interface DefaultHeaderProps {
@@ -53,6 +53,9 @@ export const DefaultHeader = (props: DefaultHeaderProps) => {
     case '/signatures':
       return <SignatureHeader />
 
+    case '/logs':
+      return <AuditLogHeader />
+
     default:
       return (
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingLeft: '2rem' }}>
@@ -62,6 +65,23 @@ export const DefaultHeader = (props: DefaultHeaderProps) => {
         </Box>
       )
   }
+}
+
+const AuditLogHeader = () => {
+  return (
+    <Box sx={{ flex: 1, display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
+      <Typography
+        sx={{
+          fontSize: '2.4rem',
+          fontWeight: 'bold',
+          letterSpacing: '1px',
+          color: 'var(--blue3)',
+        }}
+      >
+        Audit logs
+      </Typography>
+    </Box>
+  )
 }
 
 const SignatureHeader = () => {
@@ -234,6 +254,8 @@ const DocumentInfoHeader = () => {
         yesAction="close"
         noAction={async () => {
           await baseApi.post('/document/clone', { documentId: documentId })
+          Toast({ message: 'Clone Document Successfully', type: 'success' })
+          window.location.reload()
         }}
       >
         <MButton
@@ -335,7 +357,7 @@ const VerifyHeader = () => {
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', paddingLeft: '6px', paddingTop: '17px' }}>
       <Typography sx={{ fontSize: '2.2rem', color: 'var(--ligh-blue1)', fontWeight: 'bold', letterSpacing: '1px' }}>
-        Authenticity of Email Addresses, Wallet Addresses, and Documents
+        Authenticity of Email Addresses, Wallet Addresses and Documents
       </Typography>
     </Box>
   )

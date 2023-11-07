@@ -24,7 +24,12 @@ function* uploadDocumentSaga({ payload }) {
         },
       })
     } else {
-      yield put(actions.documentGetAll())
+      yield put(
+        actions.documentGetAll({
+          limit: 10,
+          offset: 1,
+        })
+      )
     }
   } catch (error) {
     const message = get(error, 'response.data.message')

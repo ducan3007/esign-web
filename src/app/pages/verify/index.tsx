@@ -11,6 +11,7 @@ import { BACKDROP_OFF, TOOGLE_BACKDROP } from 'libs/redux/auth/src/lib/constants
 import { AddressVerifyPage, EmailVerifyPage } from './Email'
 import { set } from 'lodash'
 import { DocumentVerifyPage } from './Document'
+import { CertTemplateVerifyPage, CertificantsVerifyPage } from './Certificate'
 
 const VerifyPage = () => {
   const navigate = useNavigate()
@@ -65,17 +66,24 @@ const VerifyPage = () => {
           query: searchParams.get('q') || '',
         })
         const data = res.data
+        console.log('data 11', data)
 
-        if (!data || data.length === 0) {
+        if (!data) {
+          setError('No data available, please try again')
+          setState([])
+        }
+
+        if (data.length === 0 || (data.data && data.data.length === 0)) {
           setError('No data available, please try again')
           setState([])
           return
+        } else {
+          console.log('data', data)
+          setState(data)
+          setError(null)
         }
-
-        console.log('data', data)
-        setState(data)
-        setError(null)
       } catch (error) {
+        console.log('error', error)
         setError('Please try again')
       }
     })()
@@ -93,6 +101,8 @@ const VerifyPage = () => {
     email: <EmailVerifyPage state={state} />,
     address: <AddressVerifyPage state={state} />,
     document: <DocumentVerifyPage state={state} />,
+    certTemplate: <CertTemplateVerifyPage state={state} />,
+    cert: <CertificantsVerifyPage state={state} />,
   }[type]
 
   const uploadRef = useRef<HTMLInputElement>(null)
@@ -123,6 +133,8 @@ const VerifyPage = () => {
     }
     uploadRef.current!.value = ''
   }
+
+  console.log(error)
 
   return (
     <Fade in>

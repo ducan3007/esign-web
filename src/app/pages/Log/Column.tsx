@@ -265,21 +265,6 @@ export const Fields = {
             Issue Certificate
           </Typography>
         ),
-        REVOKE_CERTIFICATE: (
-          <Typography
-            sx={{
-              fontSize: '1.5rem',
-              color: 'var(--dark3)',
-              padding: '2px 7px 2px 7px',
-              fontWeight: 'bold',
-              borderRadius: '6px',
-              backgroundColor: 'var(--yellow8)',
-              width: 'fit-content',
-            }}
-          >
-            Revoke Certificate
-          </Typography>
-        ),
         INVITE_SIGNER: (
           <Typography
             sx={{
@@ -293,21 +278,6 @@ export const Fields = {
             }}
           >
             Request to sign
-          </Typography>
-        ),
-        SIGN_BY_WALLLET: (
-          <Typography
-            sx={{
-              fontSize: '1.5rem',
-              color: 'var(--dark3)',
-              padding: '2px 7px 2px 7px',
-              fontWeight: 'bold',
-              borderRadius: '6px',
-              backgroundColor: 'var(--orange222)',
-              width: 'fit-content',
-            }}
-          >
-            Sign by Metamask
           </Typography>
         ),
       }[props.row.action]
