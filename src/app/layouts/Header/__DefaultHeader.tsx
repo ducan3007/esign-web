@@ -2,6 +2,7 @@ import { selectors as authSelectors } from '@esign-web/redux/auth'
 import { selectors } from '@esign-web/redux/document'
 import { selectors as certSelector } from '@esign-web/redux/certificate'
 import { selectors as sigSelector, actions as sigActions } from '@esign-web/redux/signatures'
+import { selectors as documentSelectors } from '@esign-web/redux/document'
 import { selectors as walletSelectors } from '@esign-web/redux/wallet'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
@@ -16,6 +17,7 @@ import { MTooltip } from 'src/app/components/Tooltip'
 import { SET_CERT_DETAIL } from 'libs/redux/certificate/src/lib/constants'
 import { Toast, baseApi } from '@esign-web/libs/utils'
 import AlertDialog from 'src/app/components/Dialog'
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
 
 interface DefaultHeaderProps {
   title?: string
@@ -130,9 +132,7 @@ const DocumentSignHeader = () => {
         </Box>
         <Box sx={{ display: 'flex', gap: '60px' }}>
           <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>Sequence</Typography>
-          <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>
-            {documentDetail?.sequence} / {documentDetail?.number_of_clone}
-          </Typography>
+          <Typography sx={{ fontSize: '1.2rem', color: 'var(--gray6)' }}>{documentDetail?.sequence}</Typography>
         </Box>
       </Box>
       <Box sx={{ display: 'flex' }}></Box>
@@ -226,6 +226,11 @@ const DocumentInfoHeader = () => {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const documentId = searchParams.get('id')
+  const documentDetail = useSelector(selectors.getDocumentDetail)
+  const authState = useSelector(authSelectors.getAuthState)
+  const disabled = ['READY_TO_SIGN', 'SIGNED', 'COMPLETED'].includes(documentDetail?.status)
+  const canMakeCopy = documentDetail?.user.email === authState?.data.email
+
   return (
     <Box sx={{ flex: 1, gap: '15px', display: 'flex', paddingLeft: '20px', alignItems: 'center' }}>
       <MButton
@@ -252,6 +257,7 @@ const DocumentInfoHeader = () => {
         no={'Confirm'}
         yes={'Cancel'}
         yesAction="close"
+        disabled={!canMakeCopy}
         noAction={async () => {
           await baseApi.post('/document/clone', { documentId: documentId })
           Toast({ message: 'Clone Document Successfully', type: 'success' })
@@ -269,8 +275,39 @@ const DocumentInfoHeader = () => {
             display: 'flex',
             gap: '12px',
           }}
+          disabled={!canMakeCopy}
         >
           <Typography sx={{ fontSize: '1.8rem', fontWeight: 'bold', letterSpacing: '1px', color: 'var(--dark3)' }}>Make a copy</Typography>
+        </MButton>
+      </AlertDialog>
+
+      <AlertDialog
+        title="Are you sure you want to delete this document?"
+        content=""
+        disabled={disabled}
+        callBack={async () => {
+          try {
+            await baseApi.delete(`/document/${documentId}`)
+            window.location.href = '/document'
+          } catch (error) {
+            console.log(error)
+          }
+        }}
+      >
+        <MButton
+          disableRipple
+          sx={{
+            width: '70px',
+            borderRadius: '12px',
+            backgroundColor: '#f5e9e9',
+            padding: '8px 6px',
+            display: 'flex',
+            gap: '12px',
+            cursor: disabled ? 'not-allowed' : 'pointer',
+          }}
+          disabled={disabled}
+        >
+          <DeleteOutlineRoundedIcon sx={{ fontSize: '2.9rem', color: disabled ? 'var(--gray3)' : 'var(--red1)' }} />
         </MButton>
       </AlertDialog>
     </Box>

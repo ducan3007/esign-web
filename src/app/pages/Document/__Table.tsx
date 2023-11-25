@@ -33,6 +33,7 @@ export const DocumentTable = (props: any) => {
       actions.documentGetAll({
         limit: limit,
         offset: page,
+        search: textSearch,
       })
     )
   }, [textSearch, page])

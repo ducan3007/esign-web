@@ -1,0 +1,8 @@
+.signature_delete_btn {
+  position: absolute;
+  right: 0;
+  display: none;
+}
+.signature_item:hover .signature_delete_btn {
+  display: block;
+}

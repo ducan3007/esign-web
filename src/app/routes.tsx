@@ -41,7 +41,7 @@ import { Certificants } from './pages/Certificant';
 import { CertificateSignPage } from './pages/Certificate/SigningPage';
 import { CertificateDetailPage } from './pages/Certificate/Detail';
 import { CertificantDetailPage } from './pages/Certificant/Detail';
-
+import { WelcometoEsign } from './pages/account-verify';
 
 
 export interface RouteObject {
@@ -88,9 +88,10 @@ export const paths = {
   document:                       '/document',
   document_detail:                '/document/info',
   document_sign:                  '/document/sign',
-  verify:                            '/verify',
+  verify:                         '/verify',
   logs:                           '/logs',
   accountSetting:                 '/account-setting',
+  accountVerify:                  '/account-verify', 
   wallet:                         '/wallet',
   signatures:                     '/signatures',
   certificate:                    '/certificate',
@@ -119,7 +120,8 @@ const appRoutes: RouteObject[] = [
   { path: paths.cert_detail,            layout: DashboardLayout,          component: CertificateDetailPage,      protected: true    },
   { path: paths.cert_sign,              layout: DashboardLayout,          component: CertificateSignPage,        protected: true    },
   { path: paths.certificant,            layout: DashboardLayout,          component: Certificants,               protected: true    },
-  { path: paths.certificant_detail,     layout: DashboardLayout,          component: CertificantDetailPage,      protected: true    }
+  { path: paths.certificant_detail,     layout: DashboardLayout,          component: CertificantDetailPage,      protected: true    },
+  { path: paths.accountVerify,          layout: null,                     component: WelcometoEsign,             protected: false   }
 ];
 
 export { appRoutes };

@@ -13,6 +13,7 @@ export default function AlertDialog(props: any) {
   const [open, setOpen] = useState(false)
 
   const handleClickOpen = () => {
+    if (props.disabled) return
     setOpen(true)
   }
 
@@ -35,8 +36,15 @@ export default function AlertDialog(props: any) {
   }
 
   return (
-    <div>
-      <div onClick={handleClickOpen}>{children}</div>
+    <div style={props.styles} className={props.className}>
+      <div
+        onClick={handleClickOpen}
+        style={{
+          cursor: props.disabled ? 'not-allowed' : 'pointer',
+        }}
+      >
+        {children}
+      </div>
 
       <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
         <DialogTitle>

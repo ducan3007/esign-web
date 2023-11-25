@@ -1,12 +1,4 @@
-import {
-  Box,
-  CircularProgress,
-  Dialog,
-  DialogContent,
-  Divider,
-  Menu,
-  Typography
-} from '@mui/material'
+import { Box, CircularProgress, Dialog, DialogContent, Divider, Menu, Typography } from '@mui/material'
 import * as _ from 'lodash'
 import { useEffect, useState } from 'react'
 
@@ -162,7 +154,11 @@ export const DashboardHeader = () => {
 
   const downloadDocument = async (id, name) => {
     if (isDownloading) return
-    let url = process.env.NX_SERVER_URL + '/file/save/' + id
+    let res = await baseApi.get(`/file/save/${id}`)
+    let url = res.data.url
+
+    if (!url) return Toast({ message: 'Could not download the file', type: 'error' })
+
     let fileName = `${name}.pdf`
     setDownloading(true)
     await new Promise((resolve) => setTimeout(resolve, 500))
@@ -469,7 +465,7 @@ export const DashboardHeader = () => {
   const isRevoked = certDetail?.status === 'REVOKED'
   const isIssued = certDetail?.status === 'ISSUED'
 
-  console.log('certDetail',certDetail)
+  console.log('certDetail', certDetail)
 
   const Certificate = {
     TEMPLATE: (

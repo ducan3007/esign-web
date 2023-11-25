@@ -2,9 +2,13 @@ import { Box, InputBase, Skeleton } from '@mui/material'
 import { nanoid } from 'nanoid'
 import { useEffect, useState } from 'react'
 import SignatureEditModal from './_SignatureModal'
-import { baseApi } from '@esign-web/libs/utils'
+import { Toast, baseApi } from '@esign-web/libs/utils'
 import SearchSharpIcon from '@mui/icons-material/SearchSharp'
 import { useNavigate } from 'react-router-dom'
+import MButton from 'src/app/components/Button'
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded'
+import AlertDialog from 'src/app/components/Dialog'
+import './style.scss'
 
 const SignaturePage = (props) => {
   const navigate = useNavigate()
@@ -21,8 +25,10 @@ const SignaturePage = (props) => {
   }, [])
 
   const Item = ({ item }) => {
+    const id = item?.id
     return (
       <Box
+        className="signature_item"
         sx={{
           width: '100%',
           height: '150px',
@@ -47,6 +53,33 @@ const SignaturePage = (props) => {
             objectFit: 'contain',
           }}
         />
+        <AlertDialog
+          className="signature_delete_btn"
+          title="Are you sure you want to delete this document?"
+          content=""
+          callBack={async () => {
+            try {
+              await baseApi.delete(`/signature/template/${id}`)
+              window.location.reload()
+            } catch (error) {
+              Toast({ message: 'Cannot delete Signature as it being used in a document', type: 'error' })
+              console.log('>>>>> error', error)
+            }
+          }}
+        >
+          <MButton
+            disableRipple
+            sx={{
+              width: '70px',
+              borderRadius: '12px',
+              backgroundColor: '#f5e9e9',
+              display: 'flex',
+              gap: '12px',
+            }}
+          >
+            <DeleteOutlineRoundedIcon sx={{ fontSize: '2.9rem', color: 'var(--red1)' }} />
+          </MButton>
+        </AlertDialog>
       </Box>
     )
   }

@@ -1,4 +1,5 @@
 import { Box, Typography } from '@mui/material'
+import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight'
 import { useEffect } from 'react'
 
 export const CertTemplateVerifyPage = (props) => {
@@ -151,7 +152,7 @@ export const CertificantsVerifyPage = (props) => {
             }}
           >
             <Box sx={{ flex: 1 }}>
-              <Typography sx={{ fontSize: '2rem', marginBottom: '20px',  fontWeight: 'bold', color: 'var(--blue3)' }}>Certificate Holder</Typography>
+              <Typography sx={{ fontSize: '2rem', marginBottom: '20px', fontWeight: 'bold', color: 'var(--blue3)' }}>Certificate Holder</Typography>
               <Typography sx={{ fontSize: '2rem' }}>First name: {item?.first_name}</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Last name: {item?.last_name}</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Email: {item?.certificant_email}</Typography>
@@ -159,8 +160,14 @@ export const CertificantsVerifyPage = (props) => {
               <Typography sx={{ fontSize: '2rem' }}>Issue: {new Date(item?.issued_date).toLocaleString()}</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Expire: {new Date(item?.expired_date).toLocaleString()}</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Revoke: {item?.revoked_date ? new Date(item?.revoked_date).toLocaleString() : 'N/A'}</Typography>
-              <Typography sx={{ fontSize: '2rem' }}>Hash: {item?.hash256}</Typography>
+              <Typography sx={{ fontSize: '2rem' }}>
+                Hash:{' '}
+                <span className={matched === 'hash256' ? 'matched' : ''} style={{ fontWeight: 'bold', fontSize: '2rem' }}>
+                  {item?.hash256}
+                </span>
+              </Typography>
               <Typography sx={{ fontSize: '2rem' }}>Transaction: {item?.tx_hash || 'N/A'}</Typography>
+              <Typography sx={{ fontSize: '2rem' }}>Issuer: {item?.certificate?.issuer_address || 'N/A'}</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Time: {item?.tx_timestamp ? new Date(item?.expired_date).toLocaleString() : 'N/A'}</Typography>
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
