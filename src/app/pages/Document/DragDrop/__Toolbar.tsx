@@ -29,44 +29,50 @@ type props = {
   can_delete: boolean
 }
 
-export const FontSizeToolbar = [
-  // { pt: `${Math.floor(6 * PDF_SCALING_RATIO)}`, pixel: `${6 * PDF_SCALING_RATIO}px` },
-  {
-    pt: `${Math.floor(12 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${12 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(12 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(13 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${13 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(13 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${14 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${16 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${18 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${20 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(22 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${22 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(22 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-]
+export const FontSizeToolbar = (index?: number):any => {
+  let arr =  [
+    // { pt: `${Math.floor(6 * PDF_SCALING_RATIO)}`, pixel: `${6 * PDF_SCALING_RATIO}px` },
+    {
+      pt: `${Math.floor(12 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${12 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(12 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(13 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${13 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(13 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${14 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${16 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${18 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${20 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(22 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${22 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(22 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+  ]
+  if (index) {
+    return arr[index]
+  }
+  return arr
+}
 export const FontFamily = [
   { fontFamily: 'Plus Jakarta Sans', value: 'font_plus_jakarta_sans' },
   { fontFamily: 'Dancing Script', value: 'font_dancing_script' },
@@ -332,7 +338,7 @@ export const BaseToolbar = (props: props) => {
                   </>
                 }
                 content2={({ handleClose }) => {
-                  return FontSizeToolbar.map((item, index) => {
+                  return FontSizeToolbar().map((item, index) => {
                     return (
                       <Box
                         sx={{

@@ -23,11 +23,12 @@ export const SignatureTextAreaType = (props: TextareaSignatureType) => {
   const textareaRef = useRef<any>()
 
   useEffect(() => {
-    if(signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.data !== ''){
+    if (signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.data !== '') {
       setValue(signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.data)
     }
   }, [])
 
+  console.log('xxx1', signatureDataRefs.current[`page_${pageNumber}`][signature_id], 'signature_id: ', signature_id)
 
   return (
     <>

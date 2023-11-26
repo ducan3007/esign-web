@@ -48,8 +48,9 @@ export type Signature = {
     data?: any
     url?: string
     fontSize?: {
-      pt: number
-      pixel: string
+      pt: string
+      pixel: string,
+      lineHeight: string
     }
 
     fontFamily?: {

@@ -16,6 +16,9 @@ import { RenderSignature } from './__Signature'
 import RenderSigners from './__Signer'
 import './styles.scss'
 import { TOOGLE_BACKDROP } from 'libs/redux/auth/src/lib/constants'
+import { FontFamily, FontSizeToolbar } from '../DragDrop/__Toolbar'
+import { FontSize } from '../DragDrop/__TextOption'
+import moment from 'moment'
 
 export const DocumentSignningPage = () => {
   const dispatch = useDispatch()
@@ -474,6 +477,20 @@ const RenderLeftSide = (props: any) => {
             ...sig,
             meta_data: JSON.stringify(sig),
           })
+        } else {
+          if (sig.type === 'textField') {
+            if (Object.keys(sig.signature_data).length === 0) {
+              sig.signature_data['fontFamily'] = FontFamily[0]
+              sig.signature_data['fontSize'] = FontSizeToolbar(1)
+            }
+          }
+          if (sig.type === 'dateField') {
+            if (Object.keys(sig.signature_data).length === 0) {
+              sig.signature_data['data'] = moment().format('DD/MM/YYYY')
+              sig.signature_data['fontSize'] = FontSize(1)
+              sig.signature_data['fontFamily'] = FontFamily[0]
+            }
+          }
         }
       }
     }

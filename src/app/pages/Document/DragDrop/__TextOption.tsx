@@ -7,48 +7,53 @@ import { AutoSave } from 'src/app/pages/Document/SigningPage/__SignerAdd'
 import { MUIMenu } from '../../../components/Menu'
 import './style.scss'
 
-export const FontSize = [
-  {
-    pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${14 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${16 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${18 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${20 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(24 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${24 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(24 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(28 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${28 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(28 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(34 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${34 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(34 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-  {
-    pt: `${Math.floor(37 * PDF_SCALING_RATIO.value)}`,
-    pixel: `${37 * PDF_SCALING_RATIO.value}px`,
-    lineHeight: `${Math.floor(37 * PDF_SCALING_RATIO.value) * 1.2}px`,
-  },
-]
+export const FontSize = (index?): any => {
+  console.log('>>> FONT_SIZEEEEEE', PDF_SCALING_RATIO.value)
+  let arr = [
+    {
+      pt: `${Math.floor(14 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${14 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(14 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(16 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${16 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(16 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(18 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${18 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(18 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(20 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${20 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(20 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(24 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${24 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(24 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(28 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${28 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(28 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(34 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${34 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(34 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+    {
+      pt: `${Math.floor(37 * PDF_SCALING_RATIO.value)}`,
+      pixel: `${37 * PDF_SCALING_RATIO.value}px`,
+      lineHeight: `${Math.floor(37 * PDF_SCALING_RATIO.value) * 1.2}px`,
+    },
+  ]
+  if (index) return arr[index]
+  return arr
+}
 // prettier-ignore
 export const FontStyle = [
   { fontFamily: 'Plus Jakarta Sans',  value: 'font_plus_jakarta_sans' },
@@ -89,7 +94,7 @@ export const TextSignatureOption = (props: props) => {
   const authState = useSelector(authSelector.getAuthState)
 
   const [fontStyle, setFontStyle] = useState(FontStyle[0])
-  const [fontSize, setFontSize] = useState(FontSize[3])
+  const [fontSize, setFontSize] = useState(FontSize(3))
   const [color, setColor] = useState(Color[0])
   const [text, setText] = useState('')
   const textRef = useRef<any>(null)
@@ -256,7 +261,7 @@ export const TextSignatureOption = (props: props) => {
                 </>
               }
               content2={({ handleClose }) => {
-                return FontSize.map((item, index) => {
+                return FontSize().map((item, index) => {
                   return (
                     <Box
                       sx={{

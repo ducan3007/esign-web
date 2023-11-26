@@ -11,7 +11,6 @@ export type ImageSignatureProps = {
 export const SignatureImageType = (props: ImageSignatureProps) => {
   const { signature_id, signatureDataRefs, pageNumber } = props
   const url = signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.url
-  console.log('url', url)
   if (!signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data.url) {
     return (
       <Box

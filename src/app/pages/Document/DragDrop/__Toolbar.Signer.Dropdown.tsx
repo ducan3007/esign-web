@@ -5,6 +5,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { Avatar, Box, Menu } from '@mui/material'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { FontFamily, FontSizeToolbar } from './__Toolbar'
+import moment from 'moment'
+import { FontSize } from './__TextOption'
 
 export type Signers = {
   id: string
@@ -155,6 +158,22 @@ export const ToolbarSignerDropDown = (props: props) => {
                     signature_data: {},
                     user: signer,
                   }
+
+                  if (signatures[`page_${props.pageNumber}`][props.id].type === 'textField') {
+                    newSignatures['signature_data'] = {
+                      fontSize: FontSizeToolbar(1),
+                      fontFamily: FontFamily[0],
+                    }
+                  }
+                  
+                  if (signatures[`page_${props.pageNumber}`][props.id].type === 'dateField') {
+                    newSignatures['signature_data'] = {
+                      data: moment().format('DD/MM/YYYY'),
+                      fontSize: FontSize(1),
+                      fontFamily: FontFamily[0],
+                    }
+                  }
+
                   dispatch(actions.setSignature(newSignatures))
 
                   const signersCopy = Object.assign({}, signers)

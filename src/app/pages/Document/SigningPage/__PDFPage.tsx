@@ -101,13 +101,13 @@ export const PDFPage = (props: Props) => {
           }
 
           if (item.id === 'textField') {
-            newSingature.signature_data['fontSize'] = FontSizeToolbar[1]
+            newSingature.signature_data['fontSize'] = FontSizeToolbar(1)
             newSingature.signature_data['fontFamily'] = FontFamily[0]
           }
 
           if (item.id === 'dateField') {
             newSingature.signature_data['data'] = moment().format('DD/MM/YYYY')
-            newSingature.signature_data['fontSize'] = FontSize[1]
+            newSingature.signature_data['fontSize'] = FontSize(1)
             newSingature.signature_data['fontFamily'] = FontFamily[0]
           }
 

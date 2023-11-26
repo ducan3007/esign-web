@@ -262,7 +262,7 @@ export const BaseToolbar = (props: props) => {
                 </>
               }
               content2={({ handleClose }) => {
-                return FontSizeToolbar.map((item, index) => {
+                return FontSizeToolbar().map((item, index) => {
                   return (
                     <Box
                       sx={{

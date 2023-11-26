@@ -26,7 +26,7 @@ export const DateTextAreaType = (props: DateSignatureType) => {
         setValue(e.target.value.trim().replace(/[^0-9.\/-]/g, ''))
         signatureDataRefs.current[`page_${pageNumber}`][signature_id].signature_data = {
           data: e.target.value,
-          fontSize: FontSize[1],
+          fontSize: FontSize(1),
           fontFamily: FontStyle[0],
         }
       }}
@@ -50,7 +50,7 @@ export const DateTextAreaType = (props: DateSignatureType) => {
         outline: 'none',
         margin: '0px',
         padding: '0px',
-        fontSize: FontSize[1].pixel,
+        fontSize: FontSize(1).pixel,
         fontFamily: FontStyle[0].fontFamily,
       }}
       placeholder="Type something here..."
