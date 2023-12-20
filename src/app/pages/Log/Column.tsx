@@ -265,6 +265,51 @@ export const Fields = {
             Issue Certificate
           </Typography>
         ),
+        REVOKE_CERTIFICATE: (
+          <Typography
+            sx={{
+              fontSize: '1.5rem',
+              color: 'var(--dark3)',
+              padding: '2px 7px 2px 7px',
+              fontWeight: 'bold',
+              borderRadius: '6px',
+              backgroundColor: 'var(--yellow8)',
+              width: 'fit-content',
+            }}
+          >
+            Revoke Certificate
+          </Typography>
+        ),
+        SIGN_BY_WALLLET: (
+          <Typography
+            sx={{
+              fontSize: '1.5rem',
+              color: 'var(--dark3)',
+              padding: '2px 7px 2px 7px',
+              fontWeight: 'bold',
+              borderRadius: '6px',
+              backgroundColor: 'var(--orange222)',
+              width: 'fit-content',
+            }}
+          >
+            Sign by Metamask
+          </Typography>
+        ),
+        SIGN_BY_WALLET: (
+          <Typography
+            sx={{
+              fontSize: '1.5rem',
+              color: 'var(--dark3)',
+              padding: '2px 7px 2px 7px',
+              fontWeight: 'bold',
+              borderRadius: '6px',
+              backgroundColor: 'var(--orange222)',
+              width: 'fit-content',
+            }}
+          >
+            Sign by Metamask
+          </Typography>
+        ),
         INVITE_SIGNER: (
           <Typography
             sx={{
@@ -317,7 +362,6 @@ export const Fields = {
     renderCell: (props: any) => {
       const user = props.row.user
       const meta_data = props.row.meta_data
-      console.log('DESCRIBE: ', props.row)
       if (props.row.feature === 'DOCUMENT') {
         return (
           <TableBodyCell
@@ -351,7 +395,7 @@ export const Fields = {
       }
       if (props.row.feature === 'CERTIFICATE') {
         let isCreateCert = props.row.action === 'CREATE_CERTIFICATE'
-        let link = '/certificate/detail/?id=' + meta_data.document_id
+        let link = '/certificate/detail?id=' + meta_data.document_id
         if (!isCreateCert) {
           link = '/certificate/sign?id=' + meta_data.document_id
         }
@@ -386,6 +430,71 @@ export const Fields = {
           </TableBodyCell>
         )
       }
+      if (props.row.feature === 'SIGN_BY_WALLET') {
+        let link = '/certificate/detail?id=' + meta_data.document_id
+        return (
+          <TableBodyCell
+            _sx={{
+              height: '65px',
+              fontSize: '1.6rem',
+              color: 'var(--dark)',
+            }}
+            key={nanoid()}
+          >
+            <Typography
+              sx={{
+                color: 'var(--dark3)',
+                fontSize: '1.6rem',
+              }}
+            >
+              <b>{user.user_name}</b> {props.row.description}{' '}
+              <a
+                href={link}
+                style={{
+                  color: 'var(--blue3)',
+                  fontSize: '1.6rem',
+                  fontWeight: 'bold',
+                }}
+              >
+                {meta_data?.tx_hash}
+              </a>
+            </Typography>
+          </TableBodyCell>
+        )
+      }
+      if (props.row.feature === 'SIGN_CERT_WALLET') {
+        let link = '/certificate/sign?id=' + meta_data.document_id
+        return (
+          <TableBodyCell
+            _sx={{
+              height: '65px',
+              fontSize: '1.6rem',
+              color: 'var(--dark)',
+            }}
+            key={nanoid()}
+          >
+            <Typography
+              sx={{
+                color: 'var(--dark3)',
+                fontSize: '1.6rem',
+              }}
+            >
+              <b>{user.user_name}</b> {props.row.description}{' '}
+              <a
+                href={link}
+                style={{
+                  color: 'var(--blue3)',
+                  fontSize: '1.6rem',
+                  fontWeight: 'bold',
+                }}
+              >
+                {meta_data?.tx_hash}
+              </a>
+            </Typography>
+          </TableBodyCell>
+        )
+      }
+
       return (
         <TableBodyCell
           _sx={{

@@ -55,10 +55,10 @@ export const Sidebar = () => {
             zIndex: 100,
             gap: '1.5rem',
           }}
-          text="[III]"
+          text="Esign "
           variant="h2"
           direction="row"
-          color="var(--dark3)"
+          color="var(--blue3)"
           width="50px"
           height="auto"
         />

@@ -32,17 +32,14 @@ export const PDFPage = (props: Props) => {
   const dispatch = useDispatch()
   const signatures = useSelector(selectors.getSignatures)
   const signer2 = useSelector(selectors.getSigners2)
-
   const signatures_by_page = signatures[`page_${index + 1}`] || {}
   const signatureDataRefs_by_page = signatureDataRefs.current[`page_${index + 1}`] || {}
-
   const containerRef = useRef<HTMLDivElement>(null)
 
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: 'box',
       drop: (item: DragItem, monitor) => {
-        console.log('LPK item', item)
         const page = document.querySelector(`.pdf-page[data-page-number="${index + 1}"]`)
         const x = monitor.getClientOffset()?.x
         const y = monitor.getClientOffset()?.y

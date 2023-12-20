@@ -139,6 +139,7 @@ export const CertificantsVerifyPage = (props) => {
     <Box sx={{ width: '100%', padding: '5px' }}>
       {state?.data?.map((item) => {
         let matched = item?.matched
+        let isRevoke = item?.status === 'REVOKED'
         return (
           <Box
             key={item?.id}
@@ -156,7 +157,9 @@ export const CertificantsVerifyPage = (props) => {
               <Typography sx={{ fontSize: '2rem' }}>First name: {item?.first_name}</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Last name: {item?.last_name}</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Email: {item?.certificant_email}</Typography>
-              <Typography sx={{ fontSize: '2rem' }}>Status: {item?.status}</Typography>
+              <Typography sx={{ fontSize: '2rem' }}>
+                Status: {<span style={{ fontSize: '2.3rem', fontWeight: 'bold', color: isRevoke ? 'red' : 'green' }}>{item?.status}</span>}
+              </Typography>
               <Typography sx={{ fontSize: '2rem' }}>Issue: {new Date(item?.issued_date).toLocaleString()}</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Expire: {new Date(item?.expired_date).toLocaleString()}</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Revoke: {item?.revoked_date ? new Date(item?.revoked_date).toLocaleString() : 'N/A'}</Typography>

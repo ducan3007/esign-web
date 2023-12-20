@@ -43,12 +43,6 @@ export const CanvasSignatureOption = (props: props) => {
     }
   }, [])
 
-  console.log('boundRectRefMin', boundRectRefMin.current)
-  console.log('boundRectRefMax', boundRectRefMax.current)
-  console.log('boundRect', {
-    width: boundRectRefMax.current.left - boundRectRefMin.current.left,
-    height: boundRectRefMax.current.top - boundRectRefMin.current.top,
-  })
 
   /* Effect to get Canvas board width */
   useEffect(() => {

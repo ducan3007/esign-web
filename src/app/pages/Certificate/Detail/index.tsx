@@ -115,7 +115,7 @@ export const CertificateDetailPage = (props: any) => {
           padding: '15px 25px 15px 25px',
         }}
       >
-        {certDetail?.cert_template_certificant.map((item: any) => {
+        {certDetail?.cert_template_certificant && certDetail?.cert_template_certificant.map((item: any) => {
           console.log('item', item)
           return (
             <Box

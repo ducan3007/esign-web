@@ -7,9 +7,9 @@ import { useDrop } from 'react-dnd'
 import { Page } from 'react-pdf'
 import { useDispatch, useSelector } from 'react-redux'
 import DraggableItem from 'src/app/pages/Document/DragDrop'
-import { DragItem } from './__Signature'
-import { FontFamily, FontSizeToolbar } from '../DragDrop/__Toolbar'
 import { FontSize } from '../DragDrop/__TextOption'
+import { FontFamily, FontSizeToolbar } from '../DragDrop/__Toolbar'
+import { DragItem } from './__Signature'
 
 type Props = {
   index: number
@@ -18,8 +18,6 @@ type Props = {
   pageWidth: number
   totalPage: number
   me_id: string
-  // setSignatures: (signatures: any) => void
-
   selectedSignature: any
 
   setSelectedSignature: (signature: any) => void
@@ -29,16 +27,12 @@ type Props = {
 
 export const PDFPage = (props: Props) => {
   const dispatch = useDispatch()
-  // const signer = useSelector(selectors.getSigners)
   const signer2 = useSelector(selectors.getSigners2)
   const signatures = useSelector(documentSelectors.getSignatures)
   const { index, style, pageHeight, pageWidth, signatureDataRefs, selectedSignature, setSelectedSignature } = props
-
   const [rerender, setRerender] = useState<any>(false)
-
   const signatures_by_page = signatures[`page_${index + 1}`] || {}
   const signatureDataRefs_by_page = signatureDataRefs.current[`page_${index + 1}`] || {}
-
   const containerRef = useRef<HTMLDivElement>(null)
 
   const [{ isOver }, drop] = useDrop(
@@ -48,7 +42,18 @@ export const PDFPage = (props: Props) => {
         const page = document.querySelector(`.pdf-page[data-page-number="${index + 1}"]`)
         const x = monitor.getClientOffset()?.x
         const y = monitor.getClientOffset()?.y
+        
         const rect = page?.getBoundingClientRect()
+
+        console.log('>>>>>>>>>>>>>> DROP', {
+          page,
+          x,
+          y,
+          rect,
+        })
+
+
+
         if (rect && x && y) {
           let itemWidth = 200
           let itemHeight = 100
@@ -117,16 +122,10 @@ export const PDFPage = (props: Props) => {
             fields: fields + 1,
           })
 
-          /* Update number of field added for signer */
           dispatch(actions.setSigners(newSigner))
           dispatch(actions.setSigner2(newSigner))
-          /* 
-            !!!!!!!!!!!!!!!!    ATTENTION    !!!!!!!!!!!!!
-            We're update ref.current and redux store with the SAME object
-            So if any update on ref, it also update redux silently
-          */
-          /* Update signature */
           dispatch(actions.setSignature(newSingature))
+
           const copy = Object.assign({}, newSingature)
           signatureDataRefs.current = {
             ...signatureDataRefs.current,
@@ -143,7 +142,7 @@ export const PDFPage = (props: Props) => {
     [signer2]
   )
 
-  /* ----------- MOVE ------------------ */
+  /* --------------------------------- MOVE ---------------------------------------- */
   const moveItemToPage = (id: string, currentPage: number, nextPage: number, callback: Function) => {
     console.log('MOVE', {
       id,
@@ -187,9 +186,6 @@ export const PDFPage = (props: Props) => {
     }
 
     delete signatureDataRefs.current[`page_${currentPage}`][id]
-
-    console.log('MOVE:signatureDataRefs', signatureDataRefs.current)
-    console.log('MOVE:signatures', signatures)
 
     /* Move Signature */
 
@@ -258,7 +254,6 @@ export const PDFPage = (props: Props) => {
               const signature = signatureDataRefs_by_page[key]
 
               if (!signature) {
-                console.log('FUCK YOU IT IS NULL')
                 return null
               }
 

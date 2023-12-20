@@ -1,7 +1,6 @@
 import { PDF_SCALING_RATIO } from './@Types'
 import html2canvas from 'html2canvas'
 
-export const FILE_SERVICE = process.env.NX_FILE_SERVER_URL
 
 export function roundToHalf(num: number) {
   if (num % 1 >= 0.5) return Math.ceil(num)

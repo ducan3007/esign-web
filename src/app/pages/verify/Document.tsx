@@ -29,7 +29,7 @@ export const DocumentVerifyPage = (props) => {
               gap: '20px',
             }}
           >
-            <Box sx={{ flex: 1, }}>
+            <Box sx={{ flex: 1 }}>
               <Typography sx={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--blue3)' }}>Author</Typography>
               <Typography sx={{ fontSize: '2rem' }}>Email: {item?.user?.email}</Typography>
               <Typography sx={{ fontSize: '2rem', marginBottom: '20px' }}>
@@ -84,7 +84,14 @@ export const DocumentVerifyPage = (props) => {
                     }}
                   >
                     <Typography sx={{ fontSize: '2rem' }}>Email: {signer?.user_email}</Typography>
-                    <Typography sx={{ fontSize: '2rem' }}>Status: {status}</Typography>
+                    <Typography sx={{ fontSize: '2rem' }}>
+                      Status:{' '}
+                      {
+                        <span style={{ fontSize: '2.5rem', fontWeight: 'bold', color: status === 'Signed' ? 'var(--green)' : 'var(--red)' }}>
+                          {status}
+                        </span>
+                      }
+                    </Typography>
                     <Typography sx={{ fontSize: '2rem' }}>
                       Sign at: {signer?.signedAt ? new Date(signer?.signedAt).toLocaleString() : 'N/A'}
                     </Typography>
@@ -99,7 +106,7 @@ export const DocumentVerifyPage = (props) => {
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
               <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <img src={item?.thumbnail} style={{ maxWidth:'100%', height: 'auto', marginTop: '15px' }} />
+                <img src={item?.thumbnail} style={{ maxWidth: '100%', height: 'auto', marginTop: '15px' }} />
               </Box>
               <Box sx={{ display: 'flex' }}></Box>
             </Box>

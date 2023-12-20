@@ -7,8 +7,6 @@ const server = require('http').Server(app)
 const cors = require('cors')
 
 
-process.env.NX_SERVER_URL = 'http://localhost:NX_SERVER_URL/api'
-
 const corsOption = {
   origin: '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -17,9 +15,9 @@ const corsOption = {
 
 app.use(cors(corsOption))
 
-app.use(express.static(path.join(__dirname, '../dist/esign-web')))
+app.use(express.static(path.join(__dirname, './esign-web')))
 app.get(/^(?!\/api\/)/, (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/esign-web/index.html'))
+  res.sendFile(path.join(__dirname, './esign-web/index.html'))
 })
 
 // send back a 404 error for any unknown api request

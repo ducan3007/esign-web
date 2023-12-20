@@ -1,5 +1,4 @@
 import { Typography } from '@mui/material'
-import { memo } from 'react'
 import { Thumbnail } from 'react-pdf'
 
 type PDFThumbnailProps = {

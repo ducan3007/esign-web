@@ -33,7 +33,7 @@ export const SignifyLogo = (props: any) => {
           fontFamily="Varela Round"
           fontWeight="bold"
         >
-          {props.text || 'signify'}
+          {props.text || ''}
         </Typography>
       )}
     </Box>
