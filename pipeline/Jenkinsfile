@@ -1,12 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        label 'agent1'
+    }
     stages {
         stage('Build') {
-            agent {
-                node {
-                    label 'agent1'
-                }
-            }
+            
             steps {
                 echo 'Building..'
             }
