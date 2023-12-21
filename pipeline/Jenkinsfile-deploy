@@ -1,0 +1,22 @@
+pipeline {
+    agent none
+
+    stages {
+        stage('Deploy'){
+            agent {
+                node {
+                    label "agent1"
+                }
+            }
+            environment {
+                ENV = "dev"
+                TAG = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
+            }
+            steps {
+                echo "Deploying: $TAG"
+
+                
+            }
+        }
+    }
+}
