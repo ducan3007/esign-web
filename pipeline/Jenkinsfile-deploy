@@ -13,13 +13,11 @@ pipeline {
 
             agent {
                 node {
-                    label params.NODE
+                    label ${params.NODE}
                 }
             }
 
             environment {
-                ENV = params.ENV
-                NODE = params.NODE
                 TAG = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
             }
 
@@ -27,11 +25,11 @@ pipeline {
             
             steps {
                 echo "Deploying: $TAG"
-                echo "Deploying to: $NODE"
-                echo "ENV: $ENV"
+                echo "Deploying to: ${params.NODE}"
+                echo "ENV: ${params.ENV}"
                 
 
-                sh "docker run -d --name esign-web-$ENV-$TAG -p 4008:4008  --env-file .env.$ENV annguyen137/esign-web:$TAG"
+                sh "docker run -d --name esign-web-${params.ENV}-$TAG -p 4008:4008  --env-file .env.${params.ENV} annguyen137/esign-web:$TAG"
 
 
             }
