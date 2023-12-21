@@ -7,10 +7,13 @@ pipeline {
     }
     stages {
         stage('Build Docker Image') { 
-           script {
-           }
+            agent {
+                node {
+                    label "agent1"
+                }
+            }
 
-            steps {
+         steps {
                 echo "Building: $TAG"
                 echo "Docker Credential: $DOCKER_CRED"
                 sh "docker build -t esign-web:$TAG ."
