@@ -1,13 +1,25 @@
 pipeline {
-    agent {
-        label 'agent1'
+    agent none
+    environment {
+        ENV = "dev"
+        TAG = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
+        DOCKER_CRED= credentials('dockerhub-credential-anduc137')
     }
     stages {
-        stage('Build') {
-            
+        stage('Build Docker Image') { 
+           script {
+           }
+
             steps {
-                echo 'Building..'
+                echo "Building: $TAG"
+                echo "Docker Credential: $DOCKER_CRED"
+                sh "docker build -t esign-web:$TAG ."
+                sh "docker login -u annguyen137 -p $DOCKER_CRED"
+                sh "docker tag esign-web:$TAG annguyen137/esign-web:$TAG"
+                sh "docker push annguyen137/esign-web:$TAG"
+                sh "docker rmi -f annguyen137/esign-web:$TAG"
             }
+            
         }
         stage('Test') {
             steps {
