@@ -13,7 +13,7 @@ pipeline {
 
             agent {
                 node {
-                    label ${params.NODE}
+                    label "${params.NODE}"
                 }
             }
 
