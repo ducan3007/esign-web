@@ -5,6 +5,10 @@ pipeline {
         string(name: 'ENV', defaultValue: 'dev', description: 'The environment to deploy to')
         booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run the tests or not')
         choice(name: 'NODE', choices: ['Build-server', 'Target-server'], description: 'The node label to run the pipeline on')
+        string(name: 'TAG', defaultValue: '', description: 'The tag to deploy',
+            trim: true, validator: {it.length() > 0 ? true : false})
+
+
     }
 
     stages {
