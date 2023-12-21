@@ -13,7 +13,7 @@ pipeline {
             environment {
                 ENV = "dev"
                 TAG = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
-                DOCKER_CRED = load credentials('dockerhub-credential-anduc137')
+                DOCKER_CRED = credentials('dockerhub-credential-anduc137')
             }
 
             steps {
