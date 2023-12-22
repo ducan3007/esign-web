@@ -3,7 +3,7 @@ pipeline {
 
     parameters {
         choice(name: 'ENV', choices: ['dev', 'prod', 'stage'], description: 'The node label to run the pipeline on')
-        choice(name: 'NODE', choices: ['agent1', 'built-in-node'], description: 'The node label to run the pipeline on')
+        choice(name: 'NODE', choices: ['agent1', 'built-in-node','jenkins-prod'], description: 'The node label to run the pipeline on')
     }
 
 
