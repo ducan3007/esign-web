@@ -2,6 +2,10 @@ pipeline {
     agent none
    
 
+    def getGitBranchName() {
+        return scm.branches[0].name
+    }   
+
     stages {
         stage('Build Docker Image') { 
             agent {
@@ -12,14 +16,14 @@ pipeline {
 
             environment {
                 ENV = "dev"
-                BRANCH = scm.branches[0].name
-                VERSION = BRANCH + "-" + BUILD_NUMBER
+                BRANCH = getGitBranchName()
                 TAG = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
                 DOCKER_CRED = credentials('dockerhub-credential-anduc137')
             }
 
             steps {
-                    echo "Building: $TAG $VERSION"
+                    echo "Building: $TAG"
+                    echo "Building $BRANCH $BUILD_NUMBER"
                     echo "Docker Credential: $DOCKER_CRED"
                     sh "docker build -t esign-web:$TAG ."
                     sh "docker login -u annguyen137 -p $DOCKER_CRED"
