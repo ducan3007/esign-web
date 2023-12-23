@@ -13,14 +13,13 @@ pipeline {
 
             environment {
                 ENV = "dev"
-                BRANCH = env.BRANCH_NAME
                 TAG = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
                 DOCKER_CRED = credentials('dockerhub-credential-anduc137')
             }
 
             steps {
                     echo "Building: $TAG"
-                    echo "Building $BRANCH $BUILD_NUMBER"
+                    echo "Building $BRANCH_NAME $BUILD_NUMBER"
                     echo "Docker Credential: $DOCKER_CRED"
                     sh "docker build -t esign-web:$TAG ."
                     sh "docker login -u annguyen137 -p $DOCKER_CRED"
