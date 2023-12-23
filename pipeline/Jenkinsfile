@@ -19,7 +19,7 @@ pipeline {
 
             steps {
                     echo "Building: $TAG"
-                    echo "Building $BRANCH_NAME $BUILD_NUMBER"
+                    echo "Building ${env.BRANCH_NAME} ${env.BUILD_NUMBER}"
                     echo "Docker Credential: $DOCKER_CRED"
                     sh "docker build -t esign-web:$TAG ."
                     sh "docker login -u annguyen137 -p $DOCKER_CRED"
