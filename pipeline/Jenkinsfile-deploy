@@ -18,6 +18,7 @@ pipeline {
             }
 
             environment {
+                VERSION = env.BRANCH_NAME+"-"+env.BUILD_NUMBER
                 TAG = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
             }
 
@@ -26,6 +27,7 @@ pipeline {
             steps {
                 echo "Deploying: $TAG"
                 echo "Deploying: ${env.BRANCH_NAME}"
+                echo "Deploying: $VERSION"
                 echo "Deploying to: ${params.NODE}"
                 echo "ENV: ${params.ENV}"
 
