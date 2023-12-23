@@ -25,6 +25,7 @@ pipeline {
             
             steps {
                 echo "Deploying: $TAG"
+                echo "Deploying: ${env.BRANCH_NAME}"
                 echo "Deploying to: ${params.NODE}"
                 echo "ENV: ${params.ENV}"
 
