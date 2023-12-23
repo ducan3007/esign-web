@@ -18,7 +18,7 @@ pipeline {
             }
 
             environment {
-                VERSION = env.BRANCH_NAME+"-"+env.BUILD_NUMBER
+                VERSION = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
                 TAG = sh(returnStdout: true, script: "git rev-parse --short=10 HEAD").trim()
             }
 
