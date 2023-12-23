@@ -27,7 +27,6 @@ pipeline {
                 echo "Deploying: $TAG"
                 echo "Deploying to: ${params.NODE}"
                 echo "ENV: ${params.ENV}"
-                
 
                 sh "docker run -d --name esign-web-${params.ENV}-$TAG -p 4008:4008  --env-file .env.${params.ENV} annguyen137/esign-web:$TAG"
 
